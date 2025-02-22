@@ -41,6 +41,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAchivementRepository, AchivementRepository>();
 builder.Services.AddScoped<IAchivementService, AchivementService>();
+builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
+builder.Services.AddScoped<IQuoteService, QuoteService>();
 
 // Додаємо Swagger
 builder.Services.AddEndpointsApiExplorer();
