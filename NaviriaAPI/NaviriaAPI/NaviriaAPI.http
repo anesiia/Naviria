@@ -1,0 +1,6 @@
+@NaviriaAPI_HostAddress = http://localhost:5186
+
+GET {{NaviriaAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,44 @@
+﻿using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.IRepositories;
+using NaviriaAPI.Mappings;
+using NaviriaAPI.IServices;
+using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.DTOs;
+
+namespace NaviriaAPI.Services
+{
+    public class CategoryService : ICategoryService
+    {
+        private readonly ICategoryRepository _categoryRepository;
+        public CategoryService(ICategoryRepository categoryRepository)
+        {
+            _categoryRepository = categoryRepository;
+        }
+        public async Task<CategoryDto> CreateAsync(CategoryCreateDto createDto)
+        {
+            var entity = CategoryMapper.ToEntity(createDto);
+            await _categoryRepository.CreateAsync(entity);
+            return CategoryMapper.ToDto(entity);
+        }
+        public async Task<bool> UpdateAsync(string id, CategoryUpdateDto updateDto)
+        {
+            var entity = CategoryMapper.ToEntity(id, updateDto);
+            return await _categoryRepository.UpdateAsync(entity);
+        }
+        public async Task<CategoryDto?> GetByIdAsync(string id)
+        {
+            var entity = await _categoryRepository.GetByIdAsync(id);
+            return entity == null ? null : CategoryMapper.ToDto(entity);
+        }
+
+        public async Task<bool> DeleteAsync(string id) =>
+            await _categoryRepository.DeleteAsync(id);
+
+        public async Task<IEnumerable<CategoryDto>> GetAllAsync()
+        {
+            var categories = await _categoryRepository.GetAllAsync();
+            return categories.Select(CategoryMapper.ToDto).ToList();
+        }
+
+    }
+}

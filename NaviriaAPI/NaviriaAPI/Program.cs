@@ -1,0 +1,52 @@
+﻿using NaviriaAPI.IRepositories;
+using NaviriaAPI.IServices;
+using NaviriaAPI.Repositories;
+using NaviriaAPI.Services;
+using NaviriaAPI.Data;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Додаємо налаштування для MongoDB
+builder.Services.Configure<MongoDbSettings>(
+    builder.Configuration.GetSection("MongoDbSettings"));
+
+// Реєструємо `IMongoDatabase`
+builder.Services.AddSingleton<IMongoDatabase>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+    var client = new MongoClient(settings.ConnectionString);
+    return client.GetDatabase(settings.DatabaseName);
+});
+
+// Додаємо контролери
+builder.Services.AddControllers();
+
+// Реєструємо репозиторії та сервіси
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IAchivementRepository, AchivementRepository>();
+builder.Services.AddScoped<IAchivementService, AchivementService>();
+
+// Додаємо Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+app.UseAuthorization();
+app.MapControllers(); // Реєструє контролери
+
+// Включаємо Swagger у режимі розробки
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+// Використовуємо HTTPS
+app.UseHttpsRedirection();
+
+
+app.Run();
