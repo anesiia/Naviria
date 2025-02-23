@@ -8,10 +8,7 @@ namespace NaviriaAPI.IServices
     {
         Task<IEnumerable<CategoryDto>> GetAllAsync();
         Task<CategoryDto?> GetByIdAsync(string id);
-        //Task CreateAsync(CategoryCreateDto categoryDto);
-
         Task<CategoryDto> CreateAsync(CategoryCreateDto categoryDto);
- 
         Task<bool> UpdateAsync(string id, CategoryUpdateDto categoryDto);
         Task<bool> DeleteAsync(string id);
     }

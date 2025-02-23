@@ -12,7 +12,6 @@ namespace NaviriaAPI.Repositories
         public CategoryRepository(IMongoDatabase database)
         {
             _categories = database.GetCollection<CategoryEntity>("categories");
-           // _categories = database.GetDatabase().GetCollection<CategoryEntity>("categories");
         }
 
         public async Task<List<CategoryEntity>> GetAllAsync() =>
