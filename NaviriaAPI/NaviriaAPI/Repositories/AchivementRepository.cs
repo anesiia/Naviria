@@ -10,9 +10,9 @@ namespace NaviriaAPI.Repositories
     {
         private readonly IMongoCollection<AchivementEntity> _achivements;
 
-        public AchivementRepository(IMongoDatabase database)
+        public AchivementRepository(IMongoDbContext database)
         {
-            _achivements = database.GetCollection<AchivementEntity>("achivements");
+            _achivements = database.Achivements;
         }
 
         public async Task<List<AchivementEntity>> GetAllAsync() =>

@@ -9,9 +9,9 @@ namespace NaviriaAPI.Repositories
     {
         private readonly IMongoCollection<CategoryEntity> _categories;
 
-        public CategoryRepository(IMongoDatabase database)
+        public CategoryRepository(IMongoDbContext database)
         {
-            _categories = database.GetCollection<CategoryEntity>("categories");
+            _categories = database.Categories;
         }
 
         public async Task<List<CategoryEntity>> GetAllAsync() =>

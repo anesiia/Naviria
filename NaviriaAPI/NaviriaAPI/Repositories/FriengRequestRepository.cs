@@ -12,7 +12,6 @@ public class FriendRequestRepository : IFriendRequestRepository
     public FriendRequestRepository(IMongoDbContext database)
     {
         _friendsRequests = database.FriendsRequests;
-        //_friendsRequests = database.GetDatabase<FriendRequestEntity>("friends_requests");
     }
 
     public async Task<List<FriendRequestEntity>> GetAllAsync() =>

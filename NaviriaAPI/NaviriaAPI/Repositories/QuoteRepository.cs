@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using NaviriaAPI.Data;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
 
@@ -8,9 +9,9 @@ namespace NaviriaAPI.Repositories
     {
         private readonly IMongoCollection<QuoteEntity> _quotes;
 
-        public QuoteRepository(IMongoDatabase database)
+        public QuoteRepository(IMongoDbContext database)
         {
-            _quotes = database.GetCollection<QuoteEntity>("quotes");
+            _quotes = database.Quotes;
         }
 
         public async Task<List<QuoteEntity>> GetAllAsync() =>
