@@ -33,14 +33,19 @@ builder.Services.AddSingleton<IMongoDatabase>(sp =>
     return client.GetDatabase(settings.DatabaseName);
 });
 
+// Реєструємо `IMongoDbContext`
+builder.Services.AddSingleton<IMongoDbContext, MongoDbContext>();
+
 // Додаємо контролери
 builder.Services.AddControllers();
 
 // Реєструємо репозиторії та сервіси
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAchivementRepository, AchivementRepository>();
 builder.Services.AddScoped<IAchivementService, AchivementService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
+builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
 builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
 builder.Services.AddScoped<IQuoteService, QuoteService>();
 

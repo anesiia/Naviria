@@ -6,7 +6,11 @@ namespace NaviriaAPI.Data
     public interface IMongoDbContext
     {
         IMongoDatabase GetDatabase();
+        IMongoCollection<AchivementEntity> Achivements { get; }
         IMongoCollection<CategoryEntity> Categories { get; }
+        IMongoCollection<FriendRequestEntity> FriendsRequests { get; }
+        IMongoCollection<QuoteEntity> Quotes { get; }
+        
     }
 
 }
