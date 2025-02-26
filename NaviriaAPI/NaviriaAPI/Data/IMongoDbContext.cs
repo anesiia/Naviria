@@ -10,7 +10,8 @@ namespace NaviriaAPI.Data
         IMongoCollection<CategoryEntity> Categories { get; }
         IMongoCollection<FriendRequestEntity> FriendsRequests { get; }
         IMongoCollection<QuoteEntity> Quotes { get; }
-        
+        IMongoCollection<UserEntity> Users { get; }
+
     }
 
 }
