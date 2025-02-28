@@ -40,8 +40,8 @@ builder.Services.AddSingleton<IMongoDbContext, MongoDbContext>();
 builder.Services.AddControllers();
 
 // Реєструємо репозиторії та сервіси
-builder.Services.AddScoped<IAchivementRepository, AchivementRepository>();
-builder.Services.AddScoped<IAchivementService, AchivementService>();
+builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
+builder.Services.AddScoped<IAchievementService, AchievementService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();

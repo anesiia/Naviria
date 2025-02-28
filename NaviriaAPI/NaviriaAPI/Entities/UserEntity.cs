@@ -36,8 +36,8 @@ namespace NaviriaAPI.Entities
         [BsonElement("friends")]
         public string[] Friends { get; set; } = [];
 
-        [BsonElement("achivements")]
-        public string[] Achivements { get; set; } = [];//id or names?
+        [BsonElement("Achievements")]
+        public string[] Achievements { get; set; } = [];//id or names?
 
         [BsonElement("future_message"), BsonRepresentation(BsonType.String)]
         public string FutureMessage { get; set; } = string.Empty;

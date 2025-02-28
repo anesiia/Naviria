@@ -25,7 +25,7 @@ namespace NaviriaAPI.DTOs
 
         public string[] Friends { get; set; } = [];
 
-        public string[] Achivements { get; set; } = [];
+        public string[] Achievements { get; set; } = [];
 
         public string FutureMessage { get; set; } = string.Empty;
 

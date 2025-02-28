@@ -15,7 +15,7 @@ namespace NaviriaAPI.Data
         }
 
         public IMongoDatabase GetDatabase() => _database;
-        public IMongoCollection<AchivementEntity> Achivements => _database.GetCollection<AchivementEntity>("achivements");
+        public IMongoCollection<AchievementEntity> Achievements => _database.GetCollection<AchievementEntity>("achievements");
         public IMongoCollection<CategoryEntity> Categories => _database.GetCollection<CategoryEntity>("categories");
         public IMongoCollection<FriendRequestEntity> FriendsRequests => _database.GetCollection<FriendRequestEntity>("friends_requests");
         public IMongoCollection<QuoteEntity> Quotes => _database.GetCollection<QuoteEntity>("quotes");

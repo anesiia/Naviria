@@ -8,37 +8,37 @@ using NaviriaAPI.DTOs.UdateDTOs;
 
 namespace NaviriaAPI.Services
 {
-    public class AchivementService : IAchivementService
+    public class AchievementService : IAchievementService
     {
-        private readonly IAchivementRepository _achivementRepository;
-        public AchivementService(IAchivementRepository achivementRepository)
+        private readonly IAchievementRepository _achievementRepository;
+        public AchievementService(IAchievementRepository achievementRepository)
         {
-            _achivementRepository = achivementRepository;
+            _achievementRepository = achievementRepository;
         }
-        public async Task<AchivementDto> CreateAsync(AchivementCreateDto createDto)
+        public async Task<AchievementDto> CreateAsync(AchievementCreateDto createDto)
         {
-            var entity = AchivementMapper.ToEntity(createDto);
-            await _achivementRepository.CreateAsync(entity);
-            return AchivementMapper.ToDto(entity);
+            var entity = AchievementMapper.ToEntity(createDto);
+            await _achievementRepository.CreateAsync(entity);
+            return AchievementMapper.ToDto(entity);
         }
-        public async Task<bool> UpdateAsync(string id, AchivementUpdateDto updateDto)
+        public async Task<bool> UpdateAsync(string id, AchievementUpdateDto updateDto)
         {
-            var entity = AchivementMapper.ToEntity(id, updateDto);
-            return await _achivementRepository.UpdateAsync(entity);
+            var entity = AchievementMapper.ToEntity(id, updateDto);
+            return await _achievementRepository.UpdateAsync(entity);
         }
-        public async Task<AchivementDto?> GetByIdAsync(string id)
+        public async Task<AchievementDto?> GetByIdAsync(string id)
         {
-            var entity = await _achivementRepository.GetByIdAsync(id);
-            return entity == null ? null : AchivementMapper.ToDto(entity);
+            var entity = await _achievementRepository.GetByIdAsync(id);
+            return entity == null ? null : AchievementMapper.ToDto(entity);
         }
 
         public async Task<bool> DeleteAsync(string id) =>
-            await _achivementRepository.DeleteAsync(id);
+            await _achievementRepository.DeleteAsync(id);
 
-        public async Task<IEnumerable<AchivementDto>> GetAllAsync()
+        public async Task<IEnumerable<AchievementDto>> GetAllAsync()
         {
-            var categories = await _achivementRepository.GetAllAsync();
-            return categories.Select(AchivementMapper.ToDto).ToList();
+            var achievements = await _achievementRepository.GetAllAsync();
+            return achievements.Select(AchievementMapper.ToDto).ToList();
         }
     }
 }

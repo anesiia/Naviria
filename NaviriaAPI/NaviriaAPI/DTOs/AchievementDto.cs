@@ -1,6 +1,6 @@
 ﻿namespace NaviriaAPI.DTOs
 {
-    public class AchivementDto
+    public class AchievementDto
     {
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;

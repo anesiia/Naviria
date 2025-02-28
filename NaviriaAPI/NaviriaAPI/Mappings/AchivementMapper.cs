@@ -7,22 +7,22 @@ using SharpCompress.Common;
 
 namespace NaviriaAPI.Mappings
 {
-    public class AchivementMapper
+    public class AchievementMapper
     {
         // Entity → DTO (для відправки в API)
-        public static AchivementDto ToDto(AchivementEntity entity) =>
-            new AchivementDto { Id = entity.Id, Name = entity.Name, Description = entity.Description };
+        public static AchievementDto ToDto(AchievementEntity entity) =>
+            new AchievementDto { Id = entity.Id, Name = entity.Name, Description = entity.Description };
 
         // 🟩 DTO → Entity (для збереження в БД)
-        public static AchivementEntity ToEntity(AchivementDto dto) =>
-            new AchivementEntity { Id = dto.Id, Name = dto.Name, Description = dto.Description };
+        public static AchievementEntity ToEntity(AchievementDto dto) =>
+            new AchievementEntity { Id = dto.Id, Name = dto.Name, Description = dto.Description };
 
         // CreateDto → Entity (для створення)
-        public static AchivementEntity ToEntity(AchivementCreateDto dto) =>
-            new AchivementEntity { Name = dto.Name, Description = dto.Description };
+        public static AchievementEntity ToEntity(AchievementCreateDto dto) =>
+            new AchievementEntity { Name = dto.Name, Description = dto.Description };
 
         // UpdateDto → Entity (для оновлення)
-        public static AchivementEntity ToEntity(string id, AchivementUpdateDto dto) =>
-            new AchivementEntity { Id = id, Name = dto.Name, Description = dto.Description };
+        public static AchievementEntity ToEntity(string id, AchievementUpdateDto dto) =>
+            new AchievementEntity { Id = id, Name = dto.Name, Description = dto.Description };
     }
 }

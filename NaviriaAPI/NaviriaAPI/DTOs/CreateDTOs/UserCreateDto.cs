@@ -11,7 +11,7 @@
         public string Password { get; set; } = string.Empty;
         public int Points { get; set; } = 0;
         public string[] Friends { get; set; } = [];
-        public string[] Achivements { get; set; } = [];
+        public string[] Achievements { get; set; } = [];
         public string FutureMessage { get; set; } = string.Empty;
         public string Photo { get; set; } = string.Empty;
     }

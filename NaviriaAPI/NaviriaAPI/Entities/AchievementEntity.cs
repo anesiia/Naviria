@@ -3,7 +3,7 @@ using MongoDB.Bson;
 
 namespace NaviriaAPI.Entities
 {
-    public class AchivementEntity
+    public class AchievementEntity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
