@@ -12,9 +12,9 @@ namespace NaviriaAPI.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-        private readonly ILogger<AchievementsController> _logger;
+        private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(ICategoryService categoryService, ILogger<AchievementsController> logger)
+        public CategoryController(ICategoryService categoryService, ILogger<CategoryController> logger)
         {
             _categoryService = categoryService;
             _logger = logger;
@@ -33,8 +33,6 @@ namespace NaviriaAPI.Controllers
                 _logger.LogError(ex, "Failed to get categories");
                 return StatusCode(500, "Failed to get categories");
             }
-
-            
         }
         
         [HttpGet("{id}")]
@@ -50,8 +48,7 @@ namespace NaviriaAPI.Controllers
             {
                 _logger.LogError(ex, "Failed to get category with ID {0}", id);
                 return StatusCode(500, $"Failed to get category with ID {id}");
-            }
-            
+            }    
         }
 
         [HttpPost]
@@ -67,7 +64,6 @@ namespace NaviriaAPI.Controllers
                 _logger.LogError(ex, "Failed to add new category");
                 return StatusCode(500, "Failed to add new category");
             }
-            
         }
 
         [HttpPut("{id}")]
@@ -83,7 +79,6 @@ namespace NaviriaAPI.Controllers
                 _logger.LogError(ex, "Failed to update category with ID {0}", id);
                 return StatusCode(500, $"Failed to update category with ID {id}");
             }
-            
         }
 
         [HttpDelete("{id}")]
