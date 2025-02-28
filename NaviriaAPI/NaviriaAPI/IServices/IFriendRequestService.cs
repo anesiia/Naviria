@@ -2,7 +2,6 @@
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
 using System;
-using NaviriaAPI.DTOs.UdateDTOs;
 
 public interface IFriendRequestService
 {

@@ -2,7 +2,7 @@
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.Entities;
-using NaviriaAPI.DTOs.UdateDTOs;
+using NaviriaAPI.DTOs.UpdateDTOs;
 using SharpCompress.Common;
 
 namespace NaviriaAPI.Mappings

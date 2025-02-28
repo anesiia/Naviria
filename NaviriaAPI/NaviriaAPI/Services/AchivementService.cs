@@ -4,7 +4,7 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Mappings;
-using NaviriaAPI.DTOs.UdateDTOs;
+using NaviriaAPI.DTOs.UpdateDTOs;
 
 namespace NaviriaAPI.Services
 {

@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-namespace NaviriaAPI.DTOs.UdateDTOs
+namespace NaviriaAPI.DTOs.UpdateDTOs
 {
     public class FriendRequestUpdateDto
     {

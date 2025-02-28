@@ -1,4 +1,4 @@
-﻿namespace NaviriaAPI.DTOs.UdateDTOs
+﻿namespace NaviriaAPI.DTOs.UpdateDTOs
 {
     public class QuoteUpdateDto
     {
