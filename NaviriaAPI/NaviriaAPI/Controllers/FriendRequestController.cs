@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NaviriaAPI.DTOs;
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UdateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
 
 namespace NaviriaAPI.Controllers
@@ -11,46 +11,88 @@ namespace NaviriaAPI.Controllers
     public class FriendRequestController : ControllerBase
     {
         private readonly IFriendRequestService _friendRequestService;
+        private readonly ILogger<FriendRequestController> _logger;
 
-        public FriendRequestController(IFriendRequestService friendRequestService)
+        public FriendRequestController(IFriendRequestService friendRequestService, ILogger<FriendRequestController> logger)
         {
             _friendRequestService = friendRequestService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var friendsRequests = await _friendRequestService.GetAllAsync();
-            return Ok(friendsRequests);
+            try
+            {
+                var friendsRequests = await _friendRequestService.GetAllAsync();
+                return Ok(friendsRequests);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get friends requests");
+                return StatusCode(500, "Failed to get friends requests");
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            var FriendRequest = await _friendRequestService.GetByIdAsync(id);
-            if (FriendRequest == null) return NotFound();
-            return Ok(FriendRequest);
+            try
+            {
+                var FriendRequest = await _friendRequestService.GetByIdAsync(id);
+                if (FriendRequest == null) return NotFound();
+                return Ok(FriendRequest);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get friend request with ID {0}", id);
+                return StatusCode(500, $"Failed to get friend request with ID {id}");
+            }
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] FriendRequestCreateDto FriendRequestDto)
         {
-            var createdFriendRequest = await _friendRequestService.CreateAsync(FriendRequestDto);
-            return CreatedAtAction(nameof(GetById), new { id = createdFriendRequest.Id }, createdFriendRequest);
+            try
+            {
+                var createdFriendRequest = await _friendRequestService.CreateAsync(FriendRequestDto);
+                return CreatedAtAction(nameof(GetById), new { id = createdFriendRequest.Id }, createdFriendRequest);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to add new friend request");
+                return StatusCode(500, "Failed to add new friend request");
+            }
         }
 
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] FriendRequestUpdateDto FriendRequestDto)
         {
-            var updated = await _friendRequestService.UpdateAsync(id, FriendRequestDto);
-            return updated ? NoContent() : NotFound();
+            try
+            {
+                var updated = await _friendRequestService.UpdateAsync(id, FriendRequestDto);
+                return updated ? NoContent() : NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update friend request with ID {0}", id);
+                return StatusCode(500, $"Failed to update friend request with ID {id}");
+            }
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var deleted = await _friendRequestService.DeleteAsync(id);
-            return deleted ? NoContent() : NotFound();
+            try
+            {
+                var deleted = await _friendRequestService.DeleteAsync(id);
+                return deleted ? NoContent() : NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to delete friend request with ID {0}", id);
+                return StatusCode(500, $"Failed to delete friend request with ID {id}");
+            }
         }
     }
 }
