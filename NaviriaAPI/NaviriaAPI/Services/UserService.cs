@@ -4,27 +4,35 @@ using NaviriaAPI.DTOs;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
+using Microsoft.AspNetCore.Identity;
+using NaviriaAPI.Entities;
 
 namespace NaviriaAPI.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        public UserService(IUserRepository userRepository)
+        private readonly IPasswordHasher<UserEntity> _passwordHasher;
+        public UserService(
+            IUserRepository userRepository, 
+            IPasswordHasher<UserEntity> passwordHasher)
         {
             _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
         }
-        public async Task<UserDto> CreateAsync(UserCreateDto newUser)
+        public async Task<UserDto> CreateAsync(UserCreateDto newUserDto)
         {
-            newUser.LastSeen = newUser.LastSeen.ToUniversalTime();
-            var entity = UserMapper.ToEntity(newUser);
+
+            newUserDto.LastSeen = newUserDto.LastSeen.ToUniversalTime();
+            var entity = UserMapper.ToEntity(newUserDto);
+            entity.Password = _passwordHasher.HashPassword(entity, newUserDto.Password);
             await _userRepository.CreateAsync(entity);
             return UserMapper.ToDto(entity);
         }
-        public async Task<bool> UpdateAsync(string id, UserUpdateDto updateUser)
+        public async Task<bool> UpdateAsync(string id, UserUpdateDto newUserDto)
         {
-            updateUser.LastSeen = updateUser.LastSeen.ToUniversalTime();
-            var entity = UserMapper.ToEntity(id, updateUser);
+            newUserDto.LastSeen = newUserDto.LastSeen.ToUniversalTime();
+            var entity = UserMapper.ToEntity(id, newUserDto);
             return await _userRepository.UpdateAsync(entity);
         }
         public async Task<UserDto?> GetByIdAsync(string id)

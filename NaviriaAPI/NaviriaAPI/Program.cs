@@ -5,6 +5,8 @@ using NaviriaAPI.Services;
 using NaviriaAPI.Data;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Microsoft.AspNetCore.Identity;
+using NaviriaAPI.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,7 @@ builder.Services.AddSingleton<IMongoDbContext, MongoDbContext>();
 
 // Додаємо контролери
 builder.Services.AddControllers();
+builder.Services.AddLogging();
 
 // Реєструємо репозиторії та сервіси
 builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
@@ -50,6 +53,8 @@ builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
 builder.Services.AddScoped<IQuoteService, QuoteService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
 
 // Додаємо Swagger
 builder.Services.AddEndpointsApiExplorer();
