@@ -14,20 +14,23 @@ namespace NaviriaAPI.Services
         {
             _userRepository = userRepository;
         }
-        public async Task<UserDto> CreateAsync(UserCreateDto createDto)
+        public async Task<UserDto> CreateAsync(UserCreateDto newUser)
         {
-            var entity = UserMapper.ToEntity(createDto);
+            newUser.LastSeen = newUser.LastSeen.ToUniversalTime();
+            var entity = UserMapper.ToEntity(newUser);
             await _userRepository.CreateAsync(entity);
             return UserMapper.ToDto(entity);
         }
-        public async Task<bool> UpdateAsync(string id, UserUpdateDto updateDto)
+        public async Task<bool> UpdateAsync(string id, UserUpdateDto updateUser)
         {
-            var entity = UserMapper.ToEntity(id, updateDto);
+            updateUser.LastSeen = updateUser.LastSeen.ToUniversalTime();
+            var entity = UserMapper.ToEntity(id, updateUser);
             return await _userRepository.UpdateAsync(entity);
         }
         public async Task<UserDto?> GetByIdAsync(string id)
         {
             var entity = await _userRepository.GetByIdAsync(id);
+            entity.LastSeen = entity.LastSeen.ToLocalTime();
             return entity == null ? null : UserMapper.ToDto(entity);
         }
 
@@ -36,8 +39,9 @@ namespace NaviriaAPI.Services
 
         public async Task<IEnumerable<UserDto>> GetAllAsync()
         {
-            var categories = await _userRepository.GetAllAsync();
-            return categories.Select(UserMapper.ToDto).ToList();
+            var users = await _userRepository.GetAllAsync();
+            users.ForEach(user => user.LastSeen = user.LastSeen.ToLocalTime());
+            return users.Select(UserMapper.ToDto).ToList();
         }
     }
 }
