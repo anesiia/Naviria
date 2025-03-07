@@ -23,7 +23,8 @@ namespace NaviriaAPI.Mappings
                 Friends = entity.Friends,
                 FutureMessage = entity.FutureMessage,
                 Photo = entity.Photo,
-                Points = entity.Points
+                Points = entity.Points,
+                LastSeen = entity.LastSeen
             };
 
         // 🟩 DTO → Entity (для збереження в БД)
@@ -41,7 +42,8 @@ namespace NaviriaAPI.Mappings
             Friends = dto.Friends,
             FutureMessage = dto.FutureMessage,
             Photo = dto.Photo,
-            Points = dto.Points
+            Points = dto.Points,
+            LastSeen = dto.LastSeen
         };
 
         // CreateDto → Entity (для створення)
@@ -58,7 +60,8 @@ namespace NaviriaAPI.Mappings
                 Friends = dto.Friends,
                 FutureMessage = dto.FutureMessage,
                 Photo = dto.Photo,
-                Points = dto.Points
+                Points = dto.Points,
+                LastSeen = dto.LastSeen
             };
 
         // UpdateDto → Entity (для оновлення)
@@ -75,7 +78,8 @@ namespace NaviriaAPI.Mappings
                 Friends = dto.Friends,
                 FutureMessage = dto.FutureMessage,
                 Photo = dto.Photo,
-                Points = dto.Points
+                Points = dto.Points,
+                LastSeen = dto.LastSeen
             };
     }
 }

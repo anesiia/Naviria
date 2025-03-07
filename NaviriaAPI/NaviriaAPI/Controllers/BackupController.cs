@@ -193,6 +193,7 @@ namespace NaviriaAPI.Controllers
             }
         }*/
 
+        /*
         [HttpPost("export-collection")]
         public async Task<IActionResult> CreateBackup([FromQuery] string collectionName)
         {
@@ -223,6 +224,8 @@ namespace NaviriaAPI.Controllers
                 return StatusCode(500, $"Failed to create backup: {ex.Message}");
             }
         }
+        */
+
 
         /*
 

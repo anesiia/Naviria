@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
+using NaviriaAPI.Entities;
+using NaviriaAPI.DTOs;
 
 namespace NaviriaAPI.Controllers
 {
@@ -10,46 +13,91 @@ namespace NaviriaAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(IUserService userService)
+        public UserController(
+            IUserService userService,
+            ILogger<UserController> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var qoutes = await _userService.GetAllAsync();
-            return Ok(qoutes);
+            try
+            {
+                var qoutes = await _userService.GetAllAsync();
+                return Ok(qoutes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get all users");
+                return StatusCode(500, "Failed to get all users");
+            }            
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            var User = await _userService.GetByIdAsync(id);
-            if (User == null) return NotFound();
-            return Ok(User);
+            try
+            {
+                var User = await _userService.GetByIdAsync(id);
+                if (User == null) return NotFound();
+                return Ok(User);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get user by id");
+                return StatusCode(500, "Failed to get user by id");
+            }
+            
         }
 
         [HttpPost("add")]
         public async Task<IActionResult> Create([FromBody] UserCreateDto UserDto)
         {
-            var createdUser = await _userService.CreateAsync(UserDto);
-            return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
+            try
+            {
+                var createdUser = await _userService.CreateAsync(UserDto);
+                return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to create user");
+                return StatusCode(500, "Failed to create user");
+            }    
         }
 
         [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] UserUpdateDto UserDto)
         {
-            var updated = await _userService.UpdateAsync(id, UserDto);
-            return updated ? NoContent() : NotFound();
+            try
+            {
+                var updated = await _userService.UpdateAsync(id, UserDto);
+                return updated ? NoContent() : NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update user with ID {0}", id);
+                return StatusCode(500, $"Failed to get create user with ID {id}");
+            }
         }
 
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var deleted = await _userService.DeleteAsync(id);
-            return deleted ? NoContent() : NotFound();
+            try
+            {
+                var deleted = await _userService.DeleteAsync(id);
+                return deleted ? NoContent() : NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to delete user with ID {0}", id);
+                return StatusCode(500, $"Failed to delete create user with ID {id}");
+            }
         }
     }
 }

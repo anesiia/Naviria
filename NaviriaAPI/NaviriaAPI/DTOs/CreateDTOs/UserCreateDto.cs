@@ -14,5 +14,6 @@
         public string[] Achievements { get; set; } = [];
         public string FutureMessage { get; set; } = string.Empty;
         public string Photo { get; set; } = string.Empty;
+        public DateTime LastSeen { get; set; } = DateTime.Now;
     }
 }

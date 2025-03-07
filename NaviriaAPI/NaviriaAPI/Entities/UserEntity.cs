@@ -36,7 +36,7 @@ namespace NaviriaAPI.Entities
         [BsonElement("friends")]
         public string[] Friends { get; set; } = [];
 
-        [BsonElement("Achievements")]
+        [BsonElement("achievements")]
         public string[] Achievements { get; set; } = [];//id or names?
 
         [BsonElement("future_message"), BsonRepresentation(BsonType.String)]
@@ -44,5 +44,8 @@ namespace NaviriaAPI.Entities
 
         [BsonElement("photo"), BsonRepresentation(BsonType.String)]
         public string Photo { get; set; } = string.Empty; //link to photo in Google Disk
+
+        [BsonElement("LastSeen"), BsonRepresentation(BsonType.DateTime)]
+        public DateTime LastSeen { get; set; } = DateTime.Now; // local or universal time
     }
 }
