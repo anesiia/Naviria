@@ -22,7 +22,6 @@ namespace NaviriaAPI.Services
         }
         public async Task<UserDto> CreateAsync(UserCreateDto newUserDto)
         {
-
             newUserDto.LastSeen = newUserDto.LastSeen.ToUniversalTime();
             var entity = UserMapper.ToEntity(newUserDto);
             entity.Password = _passwordHasher.HashPassword(entity, newUserDto.Password);
