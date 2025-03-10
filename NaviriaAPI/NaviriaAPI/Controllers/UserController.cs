@@ -5,6 +5,7 @@ using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs;
+using NaviriaAPI.DTOs.FeaturesDTOs;
 
 namespace NaviriaAPI.Controllers
 {
@@ -97,6 +98,21 @@ namespace NaviriaAPI.Controllers
             {
                 _logger.LogError(ex, "Failed to delete user with ID {0}", id);
                 return StatusCode(500, $"Failed to delete create user with ID {id}");
+            }
+        }
+
+        [HttpGet("ask-chat-gpt")]
+        public async Task<IActionResult> AskChatGPT(string question)
+        {
+            try
+            {
+                var answer = await _userService.GetAiAnswerAsync(question);
+                return Ok(answer);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to ask chat gpt question: ", question);
+                return StatusCode(500, $"Failed to ask chat gpt question: {question}");
             }
         }
     }

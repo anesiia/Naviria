@@ -15,6 +15,10 @@ if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddUserSecrets<Program>();
 }
+
+// Зчитуємо секрет OpenAIKey
+var openAIKey = builder.Configuration["OpenAIKey"];
+
 // Отримуємо налаштування MongoDB
 var mongoDbSettings = builder.Configuration.GetSection("MongoDbSettings").Get<MongoDbSettings>();
 
@@ -22,6 +26,8 @@ builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("Mo
 
 // Додаємо MongoDB в DI-контейнер
 builder.Services.AddSingleton<IMongoClient>(new MongoClient(mongoDbSettings.ConnectionString));
+builder.Services.AddSingleton(sp => openAIKey);
+
 
 // Додаємо налаштування для MongoDB
 builder.Services.Configure<MongoDbSettings>(

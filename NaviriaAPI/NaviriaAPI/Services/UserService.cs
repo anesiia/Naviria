@@ -6,6 +6,8 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
 using Microsoft.AspNetCore.Identity;
 using NaviriaAPI.Entities;
+using Microsoft.VisualBasic;
+using OpenAI.Chat;
 
 namespace NaviriaAPI.Services
 {
@@ -13,12 +15,15 @@ namespace NaviriaAPI.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher<UserEntity> _passwordHasher;
+        private readonly string _openAIKey;
         public UserService(
             IUserRepository userRepository, 
-            IPasswordHasher<UserEntity> passwordHasher)
+            IPasswordHasher<UserEntity> passwordHasher,
+            string openAIKey)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
+            _openAIKey = openAIKey;
         }
         public async Task<UserDto> CreateAsync(UserCreateDto newUserDto)
         {
@@ -49,6 +54,16 @@ namespace NaviriaAPI.Services
             var users = await _userRepository.GetAllAsync();
             users.ForEach(user => user.LastSeen = user.LastSeen.ToLocalTime());
             return users.Select(UserMapper.ToDto).ToList();
+        }
+
+        public async Task<string> GetAiAnswerAsync(string question)
+        {
+            var modelName = "gpt-4o-mini";
+            var client = new ChatClient(modelName, _openAIKey);
+
+            var responce = client.CompleteChat(question);
+
+            return responce.Value.Content[0].Text;
         }
     }
 }
