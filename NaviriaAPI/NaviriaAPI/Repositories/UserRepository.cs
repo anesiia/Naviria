@@ -28,7 +28,9 @@ namespace NaviriaAPI.Repositories
             var result = await _users.ReplaceOneAsync(c => c.Id == user.Id, user);
             return result.ModifiedCount > 0;
         }
-
+        public async Task<UserEntity> GetByEmailAsync(string email) =>
+            await _users.Find(u => u.Email == email).FirstOrDefaultAsync();
+        
         public async Task<bool> DeleteAsync(string id)
         {
             var result = await _users.DeleteOneAsync(c => c.Id == id);

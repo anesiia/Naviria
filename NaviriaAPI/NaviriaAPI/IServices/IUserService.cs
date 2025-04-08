@@ -1,6 +1,7 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
+using NaviriaAPI.DTOs.FeaturesDTOs;
 
 namespace NaviriaAPI.IServices
 {
@@ -12,5 +13,6 @@ namespace NaviriaAPI.IServices
         Task<bool> UpdateAsync(string id, UserUpdateDto userDto);
         Task<bool> DeleteAsync(string id);
         Task<string> GetAiAnswerAsync(string question);
+        Task<string> LoginAsync(UserLoginDto loginDto);
     }
 }
