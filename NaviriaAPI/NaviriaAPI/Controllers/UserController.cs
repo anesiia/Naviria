@@ -6,9 +6,11 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.DTOs.FeaturesDTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NaviriaAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/Users")]
     public class UserController : ControllerBase
@@ -24,6 +26,7 @@ namespace NaviriaAPI.Controllers
             _logger = logger;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -56,6 +59,7 @@ namespace NaviriaAPI.Controllers
             
         }
 
+        [AllowAnonymous]
         [HttpPost("add")]
         public async Task<IActionResult> Create([FromBody] UserCreateDto UserDto)
         {
@@ -98,6 +102,30 @@ namespace NaviriaAPI.Controllers
             {
                 _logger.LogError(ex, "Failed to delete user with ID {0}", id);
                 return StatusCode(500, $"Failed to delete create user with ID {id}");
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(UserLoginDto userLoginDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var token = await _userService.LoginAsync(userLoginDto);
+                return Ok(new { token });
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return NotFound(new { error = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return Unauthorized(new { error = ex.Message });
             }
         }
 

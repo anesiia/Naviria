@@ -31,6 +31,7 @@ namespace NaviriaAPI.DTOs
 
         public string Photo { get; set; } = string.Empty;
 
-        public DateTime LastSeen { get; set; } = DateTime.Now;
+        //public DateTime LastSeen { get; set; } = DateTime.Now;
+        public bool IsProUser { get; set; } = false;
     }
 }

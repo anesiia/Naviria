@@ -1,8 +1,7 @@
-namespace NaviriaAPI
+namespace NaviriaAPI.Helpers;
+
+public static class Roles
 {
-    static public class Roles
-    {
-        public const string Administrator = "admin";
-        public const string User = "user";
-    }
+    public const string ProUser = "ProUser";
+    public const string User = "User";
 }
