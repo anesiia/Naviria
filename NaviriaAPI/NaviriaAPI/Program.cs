@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using NaviriaAPI.Services.SignalRHub;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,6 +97,11 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
 
 builder.Services.AddEndpointsApiExplorer();
+
+// реєструємо хаб для перевірки присутності користувача
+builder.Services.AddSignalR();
+
+
 //builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -128,6 +134,17 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+        builder.WithOrigins("https://localhost:7172")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .SetIsOriginAllowed(_ => true)
+            .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
@@ -140,9 +157,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Ендпоінт для вебсокет хабу
+app.MapHub<PresenceHub>("/hubs/presence");
+
 // Використовуємо HTTPS
 app.UseHttpsRedirection();
 
+app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 

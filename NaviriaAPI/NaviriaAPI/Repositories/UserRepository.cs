@@ -36,5 +36,16 @@ namespace NaviriaAPI.Repositories
             var result = await _users.DeleteOneAsync(c => c.Id == id);
             return result.DeletedCount > 0;
         }
+
+        public async Task<bool> UpdatePresenceAsync(string id, DateTime dateTime, bool isOnline)
+        {
+            var filter = Builders<UserEntity>.Filter.Eq(u => u.Id, id);
+            var update = Builders<UserEntity>.Update
+                .Set(u => u.LastSeen, dateTime)
+                .Set(u => u.IsOnline, isOnline);
+
+            var result = await _users.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0;
+        }
     }
 }
