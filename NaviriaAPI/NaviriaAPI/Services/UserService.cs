@@ -22,13 +22,12 @@ namespace NaviriaAPI.Services
         public UserService(
             IUserRepository userRepository, 
             IPasswordHasher<UserEntity> passwordHasher,
-            IConfiguration config,
-            string openAIKey)
+            IConfiguration config)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _jwtService = new JwtService(config);
-            _openAIKey = openAIKey;
+            _openAIKey = config["OpenAIKey"];
         }
         public async Task<UserDto> CreateAsync(UserCreateDto newUserDto)
         {
