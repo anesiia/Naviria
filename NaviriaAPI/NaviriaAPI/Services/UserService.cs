@@ -1,6 +1,7 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
+using NaviriaAPI.DTOs.Auth;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using NaviriaAPI.Entities;
 using NaviriaAPI.Services.JwtTokenService;
 using Microsoft.VisualBasic;
+using Google.Apis.Auth;
 using OpenAI.Chat;
 using NaviriaAPI.DTOs.FeaturesDTOs;
 
@@ -59,22 +61,6 @@ namespace NaviriaAPI.Services
             users.ForEach(user => user.LastSeen = user.LastSeen.ToLocalTime());
             return users.Select(UserMapper.ToDto).ToList();
         }
-
-        public async Task<string> LoginAsync(UserLoginDto loginDto)
-        {
-            var user = await _userRepository.GetByEmailAsync(loginDto.Email);
-            if (user == null)
-                throw new ArgumentException("User with such email does not exist");
-
-            var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user,
-                user.Password, loginDto.Password);
-
-            if (passwordVerificationResult != PasswordVerificationResult.Success)
-                throw new UnauthorizedAccessException("Invalid email or password");
-
-            return _jwtService.GenerateUserToken(user);
-        }
-
         public async Task<string> GetAiAnswerAsync(string question)
         {
             var modelName = "gpt-4o-mini";

@@ -13,6 +13,5 @@ namespace NaviriaAPI.IServices
         Task<bool> UpdateAsync(string id, UserUpdateDto userDto);
         Task<bool> DeleteAsync(string id);
         Task<string> GetAiAnswerAsync(string question);
-        Task<string> LoginAsync(UserLoginDto loginDto);
     }
 }

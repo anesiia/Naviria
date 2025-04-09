@@ -399,3 +399,6 @@ FodyWeavers.xsd
 
 # Backup folders
 Backups/
+
+# Frontend test pages
+wwwroot/auth-test/
