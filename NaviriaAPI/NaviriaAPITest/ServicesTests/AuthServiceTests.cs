@@ -34,7 +34,7 @@ namespace NaviriaAPITest.ServicesTests
         }
 
         [Test]
-        public async Task AuthenticateAsync_ShouldReturnToken_WhenValidCredentials()
+        public async Task TC01_AuthenticateAsync_ShouldReturnToken_WhenValidCredentials()
         {
             // Arrange
             var email = "johndoe@example.com";
@@ -59,7 +59,7 @@ namespace NaviriaAPITest.ServicesTests
         }
 
         [Test]
-        public void AuthenticateAsync_ShouldThrowArgumentException_WhenUserNotFound()
+        public void TC02_AuthenticateAsync_ShouldThrowArgumentException_WhenUserNotFound()
         {
             // Arrange
             var email = "nonexistentuser@example.com";
@@ -73,7 +73,7 @@ namespace NaviriaAPITest.ServicesTests
         }
 
         [Test]
-        public void AuthenticateAsync_ShouldThrowUnauthorizedAccessException_WhenInvalidPassword()
+        public void TC03_AuthenticateAsync_ShouldThrowUnauthorizedAccessException_WhenInvalidPassword()
         {
             // Arrange
             var email = "johndoe@example.com";
@@ -95,7 +95,7 @@ namespace NaviriaAPITest.ServicesTests
         }
 
         [Test]
-        public async Task AuthenticateAsync_ShouldCallGenerateUserToken_WhenValidUser()
+        public async Task TC04_AuthenticateAsync_ShouldCallGenerateUserToken_WhenValidUser()
         {
             // Arrange
             var email = "johndoe@example.com";
