@@ -1,17 +1,13 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.Auth;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
 using Microsoft.AspNetCore.Identity;
 using NaviriaAPI.Entities;
-using NaviriaAPI.Services.JwtTokenService;
-using Microsoft.VisualBasic;
-using Google.Apis.Auth;
 using OpenAI.Chat;
-using NaviriaAPI.DTOs.FeaturesDTOs;
+using NaviriaAPI.Services.Validation;
 
 namespace NaviriaAPI.Services
 {
@@ -19,24 +15,28 @@ namespace NaviriaAPI.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher<UserEntity> _passwordHasher;
-        private readonly JwtService _jwtService;
+        private readonly UserValidationService _validation;
         private readonly string _openAIKey;
         public UserService(
             IUserRepository userRepository, 
             IPasswordHasher<UserEntity> passwordHasher,
-            IConfiguration config)
+            IConfiguration config,
+            UserValidationService validation)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
-            _jwtService = new JwtService(config);
+            _validation = validation;
             _openAIKey = config["OpenAIKey"];
         }
         public async Task<UserDto> CreateAsync(UserCreateDto newUserDto)
         {
+            await _validation.ValidateAsync(newUserDto);
+
             newUserDto.LastSeen = newUserDto.LastSeen.ToUniversalTime();
             var entity = UserMapper.ToEntity(newUserDto);
             entity.Password = _passwordHasher.HashPassword(entity, newUserDto.Password);
             await _userRepository.CreateAsync(entity);
+
             return UserMapper.ToDto(entity);
         }
         public async Task<bool> UpdateAsync(string id, UserUpdateDto newUserDto)

@@ -6,6 +6,7 @@ using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.Services.AuthServices;
 using NaviriaAPI.Services.JwtTokenService;
 using NaviriaAPI.Services.SignalRHub;
+using NaviriaAPI.Services.Validation;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,8 @@ builder.Services.AddSignalR();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<UserValidationService>();
+
 
 var app = builder.Build();
 

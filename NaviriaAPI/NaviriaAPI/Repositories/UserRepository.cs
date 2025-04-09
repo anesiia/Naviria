@@ -30,7 +30,10 @@ namespace NaviriaAPI.Repositories
         }
         public async Task<UserEntity> GetByEmailAsync(string email) =>
             await _users.Find(u => u.Email == email).FirstOrDefaultAsync();
-        
+
+        public async Task<UserEntity> GetByNicknameAsync(string nickname) =>
+            await _users.Find(u => u.Nickname == nickname).FirstOrDefaultAsync();
+
         public async Task<bool> DeleteAsync(string id)
         {
             var result = await _users.DeleteOneAsync(c => c.Id == id);
