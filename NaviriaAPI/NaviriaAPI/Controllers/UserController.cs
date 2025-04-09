@@ -105,30 +105,6 @@ namespace NaviriaAPI.Controllers
             }
         }
 
-        [AllowAnonymous]
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(UserLoginDto userLoginDto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                var token = await _userService.LoginAsync(userLoginDto);
-                return Ok(new { token });
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                return NotFound(new { error = ex.Message });
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                return Unauthorized(new { error = ex.Message });
-            }
-        }
-
         [HttpGet("ask-chat-gpt")]
         public async Task<IActionResult> AskChatGPT(string question)
         {

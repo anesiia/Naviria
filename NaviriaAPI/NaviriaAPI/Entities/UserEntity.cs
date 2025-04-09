@@ -45,8 +45,11 @@ namespace NaviriaAPI.Entities
         [BsonElement("photo"), BsonRepresentation(BsonType.String)]
         public string Photo { get; set; } = string.Empty; //link to photo in Google Disk
 
-        /*[BsonElement("LastSeen"), BsonRepresentation(BsonType.DateTime)]
-        public DateTime LastSeen { get; set; } = DateTime.Now; // local or universal time*/
+        [BsonElement("LastSeen"), BsonRepresentation(BsonType.DateTime)]
+        public DateTime LastSeen { get; set; } = DateTime.Now; // local or universal time
+
+        [BsonElement("is_online"), BsonRepresentation(BsonType.Boolean)]
+        public bool IsOnline { get; set; } = false;
 
         [BsonElement("is_pro_user"), BsonRepresentation(BsonType.Boolean)]
         public bool IsProUser { get; set; } = false;

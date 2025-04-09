@@ -1,4 +1,5 @@
 ﻿using NaviriaAPI.Entities;
+using System.Collections.Specialized;
 
 namespace NaviriaAPI.IRepositories
 {
@@ -9,6 +10,8 @@ namespace NaviriaAPI.IRepositories
         Task CreateAsync(UserEntity quote);
         Task<bool> UpdateAsync(UserEntity quote);
         Task<UserEntity> GetByEmailAsync(string email);
+        Task<UserEntity> GetByNicknameAsync(string nickname);
         Task<bool> DeleteAsync(string id);
+        Task<bool> UpdatePresenceAsync(string id, DateTime dateTime, bool isOnline);
     }
 }

@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auth Test</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <h2>🔐 Email & Password Login</h2>
+    <form id="login-form">
+        <label>Email: <input type="email" id="email" required /></label><br />
+        <label>Password: <input type="password" id="password" required /></label><br />
+        <button type="submit">Login</button>
+    </form>
+    <p id="jwt-email"></p>
+
+    <hr />
+
+    <h2>🌐 Google Login</h2>
+    <div id="g_id_onload"
+         data-client_id="480861078168-rnqaus7q1nfrli51a70vfl842a6e1ksn.apps.googleusercontent.com"
+         data-callback="handleGoogleCredential"
+         data-response_type="id_token"
+         data-response_mode="fragment">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+    <p id="jwt-google"></p>
+
+    <script>
+        const apiBase = "https://localhost:7172/api/Auth"; // бекенд API
+
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            const res = await fetch(`${apiBase}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json();
+            document.getElementById("jwt-email").textContent = data.token ? `JWT: ${data.token}` : `Error: ${data.error}`;
+        });
+
+        async function handleGoogleCredential(response) {
+            const res = await fetch(`${apiBase}/google-login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: response.credential })
+            });
+
+            const data = await res.json();
+            document.getElementById("jwt-google").textContent = data.token ? `JWT: ${data.token}` : `Error: ${data.error}`;
+        }
+    </script>
+</body>
+</html>
