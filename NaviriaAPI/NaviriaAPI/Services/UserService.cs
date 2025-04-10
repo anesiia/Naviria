@@ -28,28 +28,37 @@ namespace NaviriaAPI.Services
             _validation = validation;
             _openAIKey = config["OpenAIKey"];
         }
-        public async Task<UserDto> CreateAsync(UserCreateDto newUserDto)
+        public async Task<UserDto> CreateAsync(UserCreateDto userDto)
         {
-            await _validation.ValidateAsync(newUserDto);
+            await _validation.ValidateAsync(userDto);
 
-            newUserDto.LastSeen = newUserDto.LastSeen.ToUniversalTime();
-            var entity = UserMapper.ToEntity(newUserDto);
-            entity.Password = _passwordHasher.HashPassword(entity, newUserDto.Password);
+            userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
+            var entity = UserMapper.ToEntity(userDto);
+            entity.Password = _passwordHasher.HashPassword(entity, userDto.Password);
             await _userRepository.CreateAsync(entity);
 
             return UserMapper.ToDto(entity);
         }
-        public async Task<bool> UpdateAsync(string id, UserUpdateDto newUserDto)
+        public async Task<bool> UpdateAsync(string id, UserUpdateDto userDto)
         {
-            newUserDto.LastSeen = newUserDto.LastSeen.ToUniversalTime();
-            var entity = UserMapper.ToEntity(id, newUserDto);
+            await _validation.ValidateAsync(userDto);
+
+            var existing = await _userRepository.GetByIdAsync(id);
+            if (existing == null)
+                return false;
+
+            userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
+            var entity = UserMapper.ToEntity(id, userDto);
             return await _userRepository.UpdateAsync(entity);
         }
         public async Task<UserDto?> GetByIdAsync(string id)
         {
             var entity = await _userRepository.GetByIdAsync(id);
+            if (entity == null)
+                return null;
+
             entity.LastSeen = entity.LastSeen.ToLocalTime();
-            return entity == null ? null : UserMapper.ToDto(entity);
+            return UserMapper.ToDto(entity);
         }
 
         public async Task<bool> DeleteAsync(string id) =>
