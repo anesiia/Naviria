@@ -115,7 +115,7 @@ namespace NaviriaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to ask chat gpt question: ", question);
+                _logger.LogError(ex, "Failed to ask chat gpt question: {0}", question);
                 return StatusCode(500, $"Failed to ask chat gpt question: {question}");
             }
         }

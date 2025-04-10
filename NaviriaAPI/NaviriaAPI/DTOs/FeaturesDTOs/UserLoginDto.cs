@@ -10,7 +10,7 @@ namespace NaviriaAPI.DTOs.FeaturesDTOs
 
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
-        [MinLength(8)]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$",
         ErrorMessage = "Password must contain upper, lower letters and digits")]
         public string? Password { get; set; }
