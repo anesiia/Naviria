@@ -20,7 +20,7 @@ namespace NaviriaAPI.DTOs.CreateDTOs
         public string Gender { get; set; } = string.Empty;
 
         [Required]
-        public DateTime BirthDate { get; set; } = new DateTime(2000, 1, 1);
+        public DateTime BirthDate { get; set; } = new DateTime(2000, 1, 1).ToUniversalTime();
 
         [MaxLength(150)]
         [RegularExpression("^[a-zA-Zа-яА-ЯёЁіІїЇєЄ0-9.,!\\s]{0,150}$", ErrorMessage = "Description contains invalid characters.")]

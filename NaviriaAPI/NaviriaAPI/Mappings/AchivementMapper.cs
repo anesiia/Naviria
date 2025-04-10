@@ -2,9 +2,6 @@
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.Entities;
-using NaviriaAPI.DTOs.UpdateDTOs;
-using SharpCompress.Common;
-
 namespace NaviriaAPI.Mappings
 {
     public class AchievementMapper
@@ -13,7 +10,7 @@ namespace NaviriaAPI.Mappings
         public static AchievementDto ToDto(AchievementEntity entity) =>
             new AchievementDto { Id = entity.Id, Name = entity.Name, Description = entity.Description };
 
-        // 🟩 DTO → Entity (для збереження в БД)
+        // DTO → Entity (для збереження в БД)
         public static AchievementEntity ToEntity(AchievementDto dto) =>
             new AchievementEntity { Id = dto.Id, Name = dto.Name, Description = dto.Description };
 
