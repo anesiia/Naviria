@@ -75,7 +75,7 @@ namespace NaviriaAPI.Services
             var modelName = "gpt-4o-mini";
             var client = new ChatClient(modelName, _openAIKey);
 
-            var responce = client.CompleteChat(question);
+            var responce = await client.CompleteChatAsync(question);
 
             return responce.Value.Content[0].Text;
         }
