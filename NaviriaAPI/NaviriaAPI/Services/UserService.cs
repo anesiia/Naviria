@@ -41,7 +41,7 @@ namespace NaviriaAPI.Services
         }
         public async Task<bool> UpdateAsync(string id, UserUpdateDto userDto)
         {
-            await _validation.ValidateAsync(userDto);
+            UserValidationService.ValidateAsync(userDto);
 
             var existing = await _userRepository.GetByIdAsync(id);
             if (existing == null)
