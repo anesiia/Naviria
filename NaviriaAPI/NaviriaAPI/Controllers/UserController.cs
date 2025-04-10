@@ -45,6 +45,9 @@ namespace NaviriaAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("User ID is required.");
+
             try
             {
                 var User = await _userService.GetByIdAsync(id);
@@ -63,6 +66,9 @@ namespace NaviriaAPI.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> Create([FromBody] UserCreateDto UserDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
                 var createdUser = await _userService.CreateAsync(UserDto);
@@ -78,6 +84,12 @@ namespace NaviriaAPI.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] UserUpdateDto UserDto)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("User ID is required.");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
                 var updated = await _userService.UpdateAsync(id, UserDto);
@@ -93,6 +105,9 @@ namespace NaviriaAPI.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("User ID is required.");
+
             try
             {
                 var deleted = await _userService.DeleteAsync(id);
@@ -108,6 +123,9 @@ namespace NaviriaAPI.Controllers
         [HttpGet("ask-chat-gpt")]
         public async Task<IActionResult> AskChatGPT(string question)
         {
+            if (string.IsNullOrWhiteSpace(question))
+                return BadRequest("Question is required.");
+
             try
             {
                 var answer = await _userService.GetAiAnswerAsync(question);
