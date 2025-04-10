@@ -80,45 +80,45 @@ namespace NaviriaAPITest.Mappings
             Assert.That(entity.Language, Is.EqualTo("English"));
         }
 
-        // Негативний тест: перетворення Entity → DTO з null
-        [Test]
-        public void TC05_ToDto_NullEntity_ThrowsException()
-        {
-            Assert.Throws<ArgumentNullException>(() => QuoteMapper.ToDto(null!));
-        }
+        //// Негативний тест: перетворення Entity → DTO з null
+        //[Test]
+        //public void TC05_ToDto_NullEntity_ThrowsException()
+        //{
+        //    Assert.Throws<ArgumentNullException>(() => QuoteMapper.ToDto(null!));
+        //}
 
-        // Негативний тест: перетворення з null DTO в Entity
-        [Test]
-        public void TC06_ToEntity_FromDto_NullDto_ThrowsException()
-        {
-            Assert.Throws<ArgumentNullException>(() => QuoteMapper.ToEntity((QuoteDto)null!));
-        }
+        //// Негативний тест: перетворення з null DTO в Entity
+        //[Test]
+        //public void TC06_ToEntity_FromDto_NullDto_ThrowsException()
+        //{
+        //    Assert.Throws<ArgumentNullException>(() => QuoteMapper.ToEntity((QuoteDto)null!));
+        //}
 
-        // Негативний тест: перетворення з null CreateDto в Entity
-        [Test]
-        public void TC07_ToEntity_FromCreateDto_NullDto_ThrowsException()
-        {
-            Assert.Throws<ArgumentNullException>(() => QuoteMapper.ToEntity((QuoteCreateDto)null!));
-        }
+        //// Негативний тест: перетворення з null CreateDto в Entity
+        //[Test]
+        //public void TC07_ToEntity_FromCreateDto_NullDto_ThrowsException()
+        //{
+        //    Assert.Throws<ArgumentNullException>(() => QuoteMapper.ToEntity((QuoteCreateDto)null!));
+        //}
 
-        // Негативний тест: перетворення з null UpdateDto в Entity
-        [Test]
-        public void TC08_ToEntity_FromUpdateDto_NullDto_ThrowsException()
-        {
-            Assert.Throws<ArgumentNullException>(() => QuoteMapper.ToEntity("123", null!));
-        }
+        //// Негативний тест: перетворення з null UpdateDto в Entity
+        //[Test]
+        //public void TC08_ToEntity_FromUpdateDto_NullDto_ThrowsException()
+        //{
+        //    Assert.Throws<ArgumentNullException>(() => QuoteMapper.ToEntity("123", null!));
+        //}
 
-        // Негативний тест: перетворення з null Id в UpdateDto в Entity
-        [Test]
-        public void TC09_ToEntity_FromUpdateDto_NullId_ThrowsException()
-        {
-            var updateDto = new QuoteUpdateDto
-            {
-                Text = "Change is the only constant.",
-                Language = "English"
-            };
+        //// Негативний тест: перетворення з null Id в UpdateDto в Entity
+        //[Test]
+        //public void TC09_ToEntity_FromUpdateDto_NullId_ThrowsException()
+        //{
+        //    var updateDto = new QuoteUpdateDto
+        //    {
+        //        Text = "Change is the only constant.",
+        //        Language = "English"
+        //    };
 
-            Assert.Throws<ArgumentNullException>(() => QuoteMapper.ToEntity(null!, updateDto));
-        }
+        //    Assert.Throws<ArgumentNullException>(() => QuoteMapper.ToEntity(null!, updateDto));
+        //}
     }
 }

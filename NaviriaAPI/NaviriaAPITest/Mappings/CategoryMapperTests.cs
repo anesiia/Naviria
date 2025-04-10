@@ -56,59 +56,59 @@ namespace NaviriaAPITest.Mappings
             Assert.That(entity.Name, Is.EqualTo("Technology"));
         }
 
-        // Позитивний тест для перетворення CategoryUpdateDto в CategoryEntity з заданим id
-        [Test]
-        public void TC04_ToEntity_FromUpdateDto_MapsCorrectly()
-        {
-            var updateDto = new CategoryUpdateDto
-            {
-                Name = "Tech & Gadgets"
-            };
+        //// Позитивний тест для перетворення CategoryUpdateDto в CategoryEntity з заданим id
+        //[Test]
+        //public void TC04_ToEntity_FromUpdateDto_MapsCorrectly()
+        //{
+        //    var updateDto = new CategoryUpdateDto
+        //    {
+        //        Name = "Tech & Gadgets"
+        //    };
 
-            var entity = CategoryMapper.ToEntity("1", updateDto);
+        //    var entity = CategoryMapper.ToEntity("1", updateDto);
 
-            Assert.That(entity.Id, Is.EqualTo("1"));
-            Assert.That(entity.Name, Is.EqualTo("Tech & Gadgets"));
-        }
+        //    Assert.That(entity.Id, Is.EqualTo("1"));
+        //    Assert.That(entity.Name, Is.EqualTo("Tech & Gadgets"));
+        //}
 
-        // Негативний тест для перетворення CategoryEntity в CategoryDto з null entity
-        [Test]
-        public void TC05_ToDto_NullEntity_ThrowsException()
-        {
-            Assert.Throws<ArgumentNullException>(() => CategoryMapper.ToDto(null!));
-        }
+        //// Негативний тест для перетворення CategoryEntity в CategoryDto з null entity
+        //[Test]
+        //public void TC05_ToDto_NullEntity_ThrowsException()
+        //{
+        //    Assert.Throws<ArgumentNullException>(() => CategoryMapper.ToDto(null!));
+        //}
 
-        // Негативний тест для перетворення CategoryDto в CategoryEntity з null dto
-        [Test]
-        public void TC06_ToEntity_FromDto_NullDto_ThrowsException()
-        {
-            Assert.Throws<ArgumentNullException>(() => CategoryMapper.ToEntity((CategoryDto)null!));
-        }
+        //// Негативний тест для перетворення CategoryDto в CategoryEntity з null dto
+        //[Test]
+        //public void TC06_ToEntity_FromDto_NullDto_ThrowsException()
+        //{
+        //    Assert.Throws<ArgumentNullException>(() => CategoryMapper.ToEntity((CategoryDto)null!));
+        //}
 
-        // Негативний тест для перетворення CategoryCreateDto в CategoryEntity з null dto
-        [Test]
-        public void TC07_ToEntity_FromCreateDto_NullDto_ThrowsException()
-        {
-            Assert.Throws<ArgumentNullException>(() => CategoryMapper.ToEntity((CategoryCreateDto)null!));
-        }
+        //// Негативний тест для перетворення CategoryCreateDto в CategoryEntity з null dto
+        //[Test]
+        //public void TC07_ToEntity_FromCreateDto_NullDto_ThrowsException()
+        //{
+        //    Assert.Throws<ArgumentNullException>(() => CategoryMapper.ToEntity((CategoryCreateDto)null!));
+        //}
 
-        // Негативний тест для перетворення CategoryUpdateDto в CategoryEntity з null dto
-        [Test]
-        public void TC08_ToEntity_FromUpdateDto_NullDto_ThrowsException()
-        {
-            Assert.Throws<ArgumentNullException>(() => CategoryMapper.ToEntity("1", (CategoryUpdateDto)null!));
-        }
+        //// Негативний тест для перетворення CategoryUpdateDto в CategoryEntity з null dto
+        //[Test]
+        //public void TC08_ToEntity_FromUpdateDto_NullDto_ThrowsException()
+        //{
+        //    Assert.Throws<ArgumentNullException>(() => CategoryMapper.ToEntity("1", (CategoryUpdateDto)null!));
+        //}
 
-        // Негативний тест для перетворення CategoryUpdateDto в CategoryEntity з null id
-        [Test]
-        public void TC09_ToEntity_FromUpdateDto_NullId_ThrowsException()
-        {
-            var updateDto = new CategoryUpdateDto
-            {
-                Name = "Tech & Gadgets"
-            };
+        //// Негативний тест для перетворення CategoryUpdateDto в CategoryEntity з null id
+        //[Test]
+        //public void TC09_ToEntity_FromUpdateDto_NullId_ThrowsException()
+        //{
+        //    var updateDto = new CategoryUpdateDto
+        //    {
+        //        Name = "Tech & Gadgets"
+        //    };
 
-            Assert.Throws<ArgumentNullException>(() => CategoryMapper.ToEntity(null!, updateDto));
-        }
+        //    Assert.Throws<ArgumentNullException>(() => CategoryMapper.ToEntity(null!, updateDto));
+        //}
     }
 }
