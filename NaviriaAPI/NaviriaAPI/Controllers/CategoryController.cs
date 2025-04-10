@@ -8,7 +8,7 @@ using NaviriaAPI.DTOs;
 namespace NaviriaAPI.Controllers
 {
     [ApiController]
-    [Route("api/categories")]
+    [Route("api/[controller]")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;

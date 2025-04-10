@@ -12,7 +12,7 @@ namespace NaviriaAPI.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/Users")]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

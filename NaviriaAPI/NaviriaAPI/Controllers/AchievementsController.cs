@@ -6,7 +6,7 @@ using NaviriaAPI.DTOs.UpdateDTOs;
 namespace NaviriaAPI.Controllers
 {
     [ApiController]
-    [Route("api/Achievements")]
+    [Route("api/[controller]")]
     public class AchievementsController : ControllerBase
     {
         private readonly IAchievementService _achievementsService;
