@@ -6,7 +6,7 @@ using NaviriaAPI.IServices;
 namespace NaviriaAPI.Controllers
 {
     [ApiController]
-    [Route("api/quotes")]
+    [Route("api/[controller]")]
     public class QuotesController : ControllerBase
     {
         private readonly IQuoteService _quoteService;

@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using NaviriaAPI.Extentions;
+﻿using NaviriaAPI.Extentions;
 using NaviriaAPI.IServices.IAuthServices;
 using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.Services.AuthServices;
 using NaviriaAPI.Services.JwtTokenService;
 using NaviriaAPI.Services.SignalRHub;
 using NaviriaAPI.Services.Validation;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -4,7 +4,6 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Mappings;
-using NaviriaAPI.DTOs.UpdateDTOs;
 
 namespace NaviriaAPI.Services
 {
@@ -15,15 +14,15 @@ namespace NaviriaAPI.Services
         {
             _achievementRepository = achievementRepository;
         }
-        public async Task<AchievementDto> CreateAsync(AchievementCreateDto createDto)
+        public async Task<AchievementDto> CreateAsync(AchievementCreateDto achievementDto)
         {
-            var entity = AchievementMapper.ToEntity(createDto);
+            var entity = AchievementMapper.ToEntity(achievementDto);
             await _achievementRepository.CreateAsync(entity);
             return AchievementMapper.ToDto(entity);
         }
-        public async Task<bool> UpdateAsync(string id, AchievementUpdateDto updateDto)
+        public async Task<bool> UpdateAsync(string id, AchievementUpdateDto achievementDto)
         {
-            var entity = AchievementMapper.ToEntity(id, updateDto);
+            var entity = AchievementMapper.ToEntity(id, achievementDto);
             return await _achievementRepository.UpdateAsync(entity);
         }
         public async Task<AchievementDto?> GetByIdAsync(string id)

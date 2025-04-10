@@ -20,7 +20,7 @@ namespace NaviriaAPI.DTOs.CreateDTOs
         public string Gender { get; set; } = string.Empty;
 
         [Required]
-        public DateTime BirthDate { get; set; } = new DateTime(2000, 1, 1);
+        public DateTime BirthDate { get; set; } = new DateTime(2000, 1, 1).ToUniversalTime();
 
         [MaxLength(150)]
         [RegularExpression("^[a-zA-Zа-яА-ЯёЁіІїЇєЄ0-9.,!\\s]{0,150}$", ErrorMessage = "Description contains invalid characters.")]
@@ -28,10 +28,11 @@ namespace NaviriaAPI.DTOs.CreateDTOs
 
         [Required]
         [EmailAddress]
+        [RegularExpression("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")]
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        [MinLength(8)]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
         [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, and one digit.")]
         public string Password { get; set; } = string.Empty;
 
