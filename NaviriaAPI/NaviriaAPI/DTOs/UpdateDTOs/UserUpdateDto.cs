@@ -15,10 +15,6 @@ namespace NaviriaAPI.DTOs.UpdateDTOs
         [RegularExpression("^[a-zA-Z0-9]+$")]
         public string Nickname { get; set; } = string.Empty;
 
-        [Required]
-        [RegularExpression("^[fmFM]$")]
-        public string Gender { get; set; } = string.Empty;
-
         [MaxLength(150)]
         [RegularExpression("^[a-zA-Zа-яА-ЯёЁіІїЇєЄ0-9.,!\\s]{0,150}$")]
         public string Description { get; set; } = string.Empty;
