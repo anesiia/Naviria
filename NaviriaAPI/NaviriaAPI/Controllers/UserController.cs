@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
+using NaviriaAPI.IServices.ICloudStorage;
 using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.DTOs.FeaturesDTOs;
 using Microsoft.AspNetCore.Authorization;
+using NaviriaAPI.Services.CloudStorage;
 
 namespace NaviriaAPI.Controllers
 {
@@ -17,13 +19,16 @@ namespace NaviriaAPI.Controllers
     {
         private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
+        public readonly ICloudinaryService _cloudinaryService;
 
         public UserController(
             IUserService userService,
-            ILogger<UserController> logger)
+            ILogger<UserController> logger,
+            ICloudinaryService cloudinaryService)
         {
             _userService = userService;
             _logger = logger;
+            _cloudinaryService = cloudinaryService;
         }
 
         [Authorize]
@@ -137,5 +142,25 @@ namespace NaviriaAPI.Controllers
                 return StatusCode(500, $"Failed to ask chat gpt question: {question}");
             }
         }
+
+        [AllowAnonymous]
+        [HttpPost("upload-profile-photo")]
+        public async Task<IActionResult> UploadProfilePhoto([FromForm] string userId, [FromForm] IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded");
+
+            try
+            {
+                var answer = await _cloudinaryService.UploadImageAsync(userId, file);
+                return Ok(answer);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to upload user photo");
+                return StatusCode(500, $"Failed to upload user photo");
+            }
+        }
+
     }
 }

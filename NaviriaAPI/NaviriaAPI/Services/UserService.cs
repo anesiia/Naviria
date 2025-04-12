@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using NaviriaAPI.Entities;
 using OpenAI.Chat;
 using NaviriaAPI.Services.Validation;
+using NaviriaAPI.IServices.ICloudStorage;
 
 namespace NaviriaAPI.Services
 {
@@ -17,16 +18,19 @@ namespace NaviriaAPI.Services
         private readonly IPasswordHasher<UserEntity> _passwordHasher;
         private readonly UserValidationService _validation;
         private readonly string _openAIKey;
+        public readonly ICloudinaryService _cloudinaryService;
         public UserService(
             IUserRepository userRepository, 
             IPasswordHasher<UserEntity> passwordHasher,
             IConfiguration config,
-            UserValidationService validation)
+            UserValidationService validation,
+            ICloudinaryService cloudinaryService)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _validation = validation;
             _openAIKey = config["OpenAIKey"];
+            _cloudinaryService = cloudinaryService;
         }
         public async Task<UserDto> CreateAsync(UserCreateDto userDto)
         {
