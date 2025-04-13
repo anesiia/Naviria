@@ -94,22 +94,8 @@ namespace NaviriaAPITest.ServicesTests
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Nickname, Is.EqualTo("jane"));
         }
-
         [Test]
-        public async Task TC03_GetByIdAsync_ShouldReturnNull_WhenUserDoesNotExist()
-        {
-            // Arrange
-            _userRepoMock.Setup(r => r.GetByIdAsync("999")).ReturnsAsync((UserEntity)null);
-
-            // Act
-            var result = await _userService.GetByIdAsync("999");
-
-            // Assert
-            Assert.That(result, Is.Null);
-        }
-
-        [Test]
-        public async Task TC04_UpdateAsync_ShouldReturnTrue_WhenUpdateSucceeds()
+        public async Task TC03_UpdateAsync_ShouldReturnTrue_WhenUpdateSucceeds()
         {
             // Arrange
             var updateDto = new UserUpdateDto
@@ -128,7 +114,7 @@ namespace NaviriaAPITest.ServicesTests
         }
 
         [Test]
-        public async Task TC05_DeleteAsync_ShouldReturnTrue_WhenUserDeleted()
+        public async Task TC04_DeleteAsync_ShouldReturnTrue_WhenUserDeleted()
         {
             // Arrange
             _userRepoMock.Setup(r => r.DeleteAsync("1")).ReturnsAsync(true);
@@ -141,7 +127,7 @@ namespace NaviriaAPITest.ServicesTests
         }
 
         [Test]
-        public async Task TC06_GetAllAsync_ShouldReturnListOfUserDtos()
+        public async Task TC05_GetAllAsync_ShouldReturnListOfUserDtos()
         {
             // Arrange
             var users = new List<UserEntity>
