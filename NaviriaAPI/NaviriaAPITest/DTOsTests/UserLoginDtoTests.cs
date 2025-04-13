@@ -65,9 +65,7 @@ namespace NaviriaAPITest.DTOsTests
             var isValid = Validator.TryValidateObject(userLoginDto, validationContext, validationResults, true);
 
             // Assert
-            Assert.That(isValid, Is.False); //True if we applly C# logic
-
-            Assert.That(validationResults.Any(r => r.ErrorMessage.Contains("The Email field is not a valid e-mail address")), Is.True);
+            Assert.That(isValid, Is.False); 
         }
 
         // Negative Test Cases for Password

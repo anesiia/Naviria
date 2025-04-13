@@ -299,34 +299,10 @@ namespace NaviriaAPITest.DTOsTests
             Assert.That(isValid, Is.False);
         }
 
-        //[Test]
-        // 
-        //public void TC012_ShouldBeInvalid_WhenPhotoIsMissing()
-        //{
-        //    // Arrange
-        //    var userDto = new UserCreateDto
-        //    {
-        //        FullName = "John Doe",
-        //        Nickname = "john123",
-        //        Gender = "m",
-        //        BirthDate = new DateTime(1990, 1, 1),
-        //        Email = "john.doe@example.com",
-        //        Password = "Passw0rd123"
-        //        // Photo is missing
-        //    };
-
-        //    // Act
-        //    var validationResults = new List<ValidationResult>();
-        //    var validationContext = new ValidationContext(userDto);
-        //    var isValid = Validator.TryValidateObject(userDto, validationContext, validationResults, true);
-
-        //    // Assert
-        //    Assert.That(isValid, Is.False);
-        //    Assert.That(validationResults.Any(v => v.ErrorMessage.Contains("Photo")), Is.True);
-        //}
 
         [Test]
-        public void TC012_ShouldBeValid_WhenPhotoIsMissing()
+
+        public void TC12_ShouldBeValid_WhenPhotoIsMissing()
         {
             // Arrange
             var userDto = new UserCreateDto
@@ -347,13 +323,12 @@ namespace NaviriaAPITest.DTOsTests
 
             // Assert
             Assert.That(isValid, Is.True);
-            Assert.That(validationResults.Any(v => v.ErrorMessage.Contains("Photo")), Is.True);
+
         }
 
 
-
         [Test]
-        public void TC013_ShouldBeValid_WhenPhotoIsValidUrl()
+        public void TC13_ShouldBeValid_WhenPhotoIsValidUrl()
         {
             // Arrange
             var userDto = new UserCreateDto
@@ -377,7 +352,7 @@ namespace NaviriaAPITest.DTOsTests
         }
 
         [Test]
-        public void TC014_ShouldBeInvalid_WhenPhotoIsInvalidUrl()
+        public void TC14_ShouldBeInvalid_WhenPhotoIsInvalidUrl()
         {
             // Arrange
             var userDto = new UserCreateDto
