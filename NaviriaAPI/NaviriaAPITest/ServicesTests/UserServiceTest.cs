@@ -13,6 +13,7 @@ using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Services.Validation;
+using NaviriaAPI.IServices.ICloudStorage;
 
 namespace NaviriaAPITest.ServicesTests
 {
@@ -23,6 +24,7 @@ namespace NaviriaAPITest.ServicesTests
         private Mock<IPasswordHasher<UserEntity>> _hasherMock;
         private Mock<IConfiguration> _configMock;
         private Mock<UserValidationService> _validationMock;
+        private Mock<ICloudinaryService> _cloudinaryServiceMock; //
         private UserService _userService;
 
         [SetUp]
@@ -31,6 +33,7 @@ namespace NaviriaAPITest.ServicesTests
             _userRepoMock = new Mock<IUserRepository>();
             _hasherMock = new Mock<IPasswordHasher<UserEntity>>();
             _configMock = new Mock<IConfiguration>();
+            _cloudinaryServiceMock = new Mock<ICloudinaryService>();
 
             _configMock.Setup(c => c["OpenAIKey"]).Returns("fake-key");
 
@@ -39,7 +42,9 @@ namespace NaviriaAPITest.ServicesTests
                 _userRepoMock.Object,
                 _hasherMock.Object,
                 _configMock.Object,
-                validation
+                validation,
+                _cloudinaryServiceMock.Object
+
             );
         }
 
