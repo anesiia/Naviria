@@ -75,7 +75,6 @@ namespace NaviriaAPI.Mappings
             new UserEntity {
                 Id = id,
                 FullName = dto.FullName,
-                Gender = dto.Gender,
                 Nickname = dto.Nickname,
                 Description = dto.Description,
                 Achievements = dto.Achievements,

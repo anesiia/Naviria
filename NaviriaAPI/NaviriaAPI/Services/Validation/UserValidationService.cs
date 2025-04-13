@@ -1,4 +1,5 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IRepositories;
 using System.ComponentModel.DataAnnotations;
 
@@ -30,6 +31,13 @@ namespace NaviriaAPI.Services.Validation
             if (age > 120)
                 throw new ValidationException("User cannot be older than 120 years");
 
+            if (dto.LastSeen > now)
+                throw new ValidationException("LastSeen cannot be in the future");
+        }
+
+        public static void ValidateAsync(UserUpdateDto dto)
+        {
+            var now = DateTime.UtcNow;
             if (dto.LastSeen > now)
                 throw new ValidationException("LastSeen cannot be in the future");
         }

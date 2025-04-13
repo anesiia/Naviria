@@ -14,15 +14,15 @@ namespace NaviriaAPI.Services
         {
             _quoteRepository = quoteRepository;
         }
-        public async Task<QuoteDto> CreateAsync(QuoteCreateDto createDto)
+        public async Task<QuoteDto> CreateAsync(QuoteCreateDto quoteDto)
         {
-            var entity = QuoteMapper.ToEntity(createDto);
+            var entity = QuoteMapper.ToEntity(quoteDto);
             await _quoteRepository.CreateAsync(entity);
             return QuoteMapper.ToDto(entity);
         }
-        public async Task<bool> UpdateAsync(string id, QuoteUpdateDto updateDto)
+        public async Task<bool> UpdateAsync(string id, QuoteUpdateDto quoteDto)
         {
-            var entity = QuoteMapper.ToEntity(id, updateDto);
+            var entity = QuoteMapper.ToEntity(id, quoteDto);
             return await _quoteRepository.UpdateAsync(entity);
         }
         public async Task<QuoteDto?> GetByIdAsync(string id)

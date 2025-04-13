@@ -50,5 +50,15 @@ namespace NaviriaAPI.Repositories
             var result = await _users.UpdateOneAsync(filter, update);
             return result.ModifiedCount > 0;
         }
+
+        public async Task<bool> UpdateProfileImageAsync(string userId, string imageUrl)
+        {
+            var filter = Builders<UserEntity>.Filter.Eq(u => u.Id, userId);
+            var update = Builders<UserEntity>.Update.Set(u => u.Photo, imageUrl);
+
+            var result = await _users.UpdateOneAsync(filter, update);
+
+            return result.ModifiedCount > 0;
+        }
     }
 }

@@ -13,5 +13,6 @@ namespace NaviriaAPI.IRepositories
         Task<UserEntity> GetByNicknameAsync(string nickname);
         Task<bool> DeleteAsync(string id);
         Task<bool> UpdatePresenceAsync(string id, DateTime dateTime, bool isOnline);
+        Task<bool> UpdateProfileImageAsync(string userId, string imageUrl);
     }
 }

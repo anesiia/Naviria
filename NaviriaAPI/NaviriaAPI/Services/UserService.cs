@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using NaviriaAPI.Entities;
 using OpenAI.Chat;
 using NaviriaAPI.Services.Validation;
+using NaviriaAPI.IServices.ICloudStorage;
 
 namespace NaviriaAPI.Services
 {
@@ -17,39 +18,51 @@ namespace NaviriaAPI.Services
         private readonly IPasswordHasher<UserEntity> _passwordHasher;
         private readonly UserValidationService _validation;
         private readonly string _openAIKey;
+        public readonly ICloudinaryService _cloudinaryService;
         public UserService(
             IUserRepository userRepository, 
             IPasswordHasher<UserEntity> passwordHasher,
             IConfiguration config,
-            UserValidationService validation)
+            UserValidationService validation,
+            ICloudinaryService cloudinaryService)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _validation = validation;
             _openAIKey = config["OpenAIKey"];
+            _cloudinaryService = cloudinaryService;
         }
-        public async Task<UserDto> CreateAsync(UserCreateDto newUserDto)
+        public async Task<UserDto> CreateAsync(UserCreateDto userDto)
         {
-            await _validation.ValidateAsync(newUserDto);
+            await _validation.ValidateAsync(userDto);
 
-            newUserDto.LastSeen = newUserDto.LastSeen.ToUniversalTime();
-            var entity = UserMapper.ToEntity(newUserDto);
-            entity.Password = _passwordHasher.HashPassword(entity, newUserDto.Password);
+            userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
+            var entity = UserMapper.ToEntity(userDto);
+            entity.Password = _passwordHasher.HashPassword(entity, userDto.Password);
             await _userRepository.CreateAsync(entity);
 
             return UserMapper.ToDto(entity);
         }
-        public async Task<bool> UpdateAsync(string id, UserUpdateDto newUserDto)
+        public async Task<bool> UpdateAsync(string id, UserUpdateDto userDto)
         {
-            newUserDto.LastSeen = newUserDto.LastSeen.ToUniversalTime();
-            var entity = UserMapper.ToEntity(id, newUserDto);
+            UserValidationService.ValidateAsync(userDto);
+
+            var existing = await _userRepository.GetByIdAsync(id);
+            if (existing == null)
+                return false;
+
+            userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
+            var entity = UserMapper.ToEntity(id, userDto);
             return await _userRepository.UpdateAsync(entity);
         }
         public async Task<UserDto?> GetByIdAsync(string id)
         {
             var entity = await _userRepository.GetByIdAsync(id);
+            if (entity == null)
+                return null;
+
             entity.LastSeen = entity.LastSeen.ToLocalTime();
-            return entity == null ? null : UserMapper.ToDto(entity);
+            return UserMapper.ToDto(entity);
         }
 
         public async Task<bool> DeleteAsync(string id) =>
@@ -66,7 +79,7 @@ namespace NaviriaAPI.Services
             var modelName = "gpt-4o-mini";
             var client = new ChatClient(modelName, _openAIKey);
 
-            var responce = client.CompleteChat(question);
+            var responce = await client.CompleteChatAsync(question);
 
             return responce.Value.Content[0].Text;
         }
