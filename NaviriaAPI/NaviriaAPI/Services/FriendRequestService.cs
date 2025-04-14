@@ -3,7 +3,6 @@ using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Mappings;
-using NaviriaAPI.DTOs.UpdateDTOs;
 
 namespace NaviriaAPI.Services
 {
@@ -14,15 +13,15 @@ namespace NaviriaAPI.Services
         {
             _friendRequestRepository = FriendRequestRepository;
         }
-        public async Task<FriendRequestDto> CreateAsync(FriendRequestCreateDto createDto)
+        public async Task<FriendRequestDto> CreateAsync(FriendRequestCreateDto friendRequestDto)
         {
-            var entity = FriendRequestMapper.ToEntity(createDto);
+            var entity = FriendRequestMapper.ToEntity(friendRequestDto);
             await _friendRequestRepository.CreateAsync(entity);
             return FriendRequestMapper.ToDto(entity);
         }
-        public async Task<bool> UpdateAsync(string id, FriendRequestUpdateDto updateDto)
+        public async Task<bool> UpdateAsync(string id, FriendRequestUpdateDto friendRequestDto)
         {
-            var entity = FriendRequestMapper.ToEntity(id, updateDto);
+            var entity = FriendRequestMapper.ToEntity(id, friendRequestDto);
             return await _friendRequestRepository.UpdateAsync(entity);
         }
         public async Task<FriendRequestDto?> GetByIdAsync(string id)

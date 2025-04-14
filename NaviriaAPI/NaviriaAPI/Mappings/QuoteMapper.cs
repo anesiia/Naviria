@@ -2,12 +2,10 @@
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.Entities;
-using SharpCompress.Common;
-using NaviriaAPI.DTOs.UpdateDTOs;
 
 namespace NaviriaAPI.Mappings
 {
-    public class QuoteMapper
+    public static class QuoteMapper
     {
         // Entity → DTO (для відправки в API)
         public static QuoteDto ToDto(QuoteEntity entity) =>

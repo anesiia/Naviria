@@ -48,9 +48,9 @@ namespace NaviriaAPI.DTOs.CreateDTOs
         public string FutureMessage { get; set; } = string.Empty;
 
         [Url]
-        public string Photo { get; set; } = string.Empty;
+        public string? Photo { get; set; }
 
-        public DateTime LastSeen { get; set; } = DateTime.Now;
+        public DateTime LastSeen { get; set; } = DateTime.Now.ToUniversalTime();
 
         public bool IsOnline { get; set; } = false;
         public bool IsProUser { get; set; } = false;

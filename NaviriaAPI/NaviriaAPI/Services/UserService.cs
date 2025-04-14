@@ -29,7 +29,8 @@ namespace NaviriaAPI.Services
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _validation = validation;
-            _openAIKey = config["OpenAIKey"];
+            _openAIKey = config["OpenAIKey"]
+                ?? throw new InvalidOperationException("OpenAIKey is missing in configuration.");
             _cloudinaryService = cloudinaryService;
         }
         public async Task<UserDto> CreateAsync(UserCreateDto userDto)
