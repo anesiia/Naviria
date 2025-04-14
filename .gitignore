@@ -402,3 +402,4 @@ Backups/
 
 # Frontend test pages
 wwwroot/auth-test/
+/NaviriaAPI/NaviriaAPITest/MongoDbSettings.json
