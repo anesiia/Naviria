@@ -50,7 +50,7 @@ namespace NaviriaAPI.DTOs.CreateDTOs
         [Url]
         public string? Photo { get; set; }
 
-        public DateTime LastSeen { get; set; } = DateTime.Now;
+        public DateTime LastSeen { get; set; } = DateTime.Now.ToUniversalTime();
 
         public bool IsOnline { get; set; } = false;
         public bool IsProUser { get; set; } = false;
