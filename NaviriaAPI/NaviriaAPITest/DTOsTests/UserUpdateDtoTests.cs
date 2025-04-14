@@ -103,19 +103,39 @@ namespace NaviriaAPITest.DTOsTests
             Assert.That(isValid, Is.False);
         }
 
-        //
         [Test]
-        public void TC008_ShouldBeValid_WhenPhotoIsEmpty()
+        public void TC008_ShouldBeValid_WhenPhotoIsNull()
         {
-            var dto = GetValidDto();
-            dto.Photo = string.Empty;
+            // Arrange
+            var dto = GetValidDto();  
+            dto.Photo = null;  // Встановлюємо поле Photo в null
 
-            var isValid = ValidateDto(dto, out var results);
-            Assert.That(isValid, Is.True);
+            // Act
+            var isValid = ValidateDto(dto, out var results); 
+
+            // Assert
+            Assert.That(isValid, Is.True); 
         }
 
         [Test]
-        public void TC009_ShouldBeInvalid_WhenPhotoIsInvalidUrl()
+        public void TC009_ShouldBeInvalid_WhenPhotoIsEmptyString()
+        {
+            // Arrange
+            var dto = GetValidDto();  
+            dto.Photo = string.Empty;  // Встановлюємо поле Photo в порожній рядок
+
+            // Act
+            var isValid = ValidateDto(dto, out var results);  // Перевірка валідації
+
+            // Assert
+            Assert.That(isValid, Is.False);  // Валідація повинна бути неуспішною
+            Assert.That(results, Has.Count.GreaterThan(0));  // Перевіряємо, що є помилки валідації
+            Assert.That(results[0].MemberNames, Has.One.EqualTo("Photo"));  // Помилка має бути на полі Photo
+        }
+
+
+        [Test]
+        public void TC010_ShouldBeInvalid_WhenPhotoIsInvalidUrl()
         {
             var dto = GetValidDto();
             dto.Photo = "not-a-url";
@@ -125,7 +145,7 @@ namespace NaviriaAPITest.DTOsTests
         }
 
         [Test]
-        public void TC010_ShouldBeInvalid_WhenDescriptionTooLong()
+        public void TC011_ShouldBeInvalid_WhenDescriptionTooLong()
         {
             var dto = GetValidDto();
             dto.Description = new string('a', 151);
@@ -135,7 +155,7 @@ namespace NaviriaAPITest.DTOsTests
         }
 
         [Test]
-        public void TC011_Should_BeValid_WhenFriendsArrayIsEmpty()
+        public void TC012_Should_BeValid_WhenFriendsArrayIsEmpty()
         {
             var dto = GetValidDto();
             dto.Friends = Array.Empty<string>();
@@ -145,7 +165,7 @@ namespace NaviriaAPITest.DTOsTests
         }
 
         [Test]
-        public void TC012_Should_BeValid_WhenAchievementsArrayIsEmpty()
+        public void TC013_Should_BeValid_WhenAchievementsArrayIsEmpty()
         {
             var dto = GetValidDto();
             dto.Achievements = Array.Empty<string>();
@@ -155,7 +175,7 @@ namespace NaviriaAPITest.DTOsTests
         }
 
         [Test]
-        public void TC013_Should_BeValid_WhenFutureMessageIs2Characters()
+        public void TC014_Should_BeValid_WhenFutureMessageIs2Characters()
         {
             var dto = GetValidDto();
             dto.FutureMessage = "Hi";

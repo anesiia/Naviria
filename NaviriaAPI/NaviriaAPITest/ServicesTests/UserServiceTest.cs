@@ -106,7 +106,7 @@ namespace NaviriaAPITest.ServicesTests
             var updateDto = new UserUpdateDto
             {
                 Nickname = "updated",
-                LastSeen = DateTime.UtcNow
+                LastSeen = DateTime.Now.ToUniversalTime()
             };
 
             _userRepoMock.Setup(r => r.UpdateAsync(It.IsAny<UserEntity>())).ReturnsAsync(true);
