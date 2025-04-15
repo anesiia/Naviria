@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NaviriaAPI.Entities.EmbeddedEntities;
+using System.ComponentModel.DataAnnotations;
 
 namespace NaviriaAPI.DTOs.UpdateDTOs
 {
@@ -33,7 +34,7 @@ namespace NaviriaAPI.DTOs.UpdateDTOs
 
         public string[] Friends { get; set; } = [];
 
-        public string[] Achievements { get; set; } = [];
+        public List<UserAchievementInfo> Achievements { get; set; } = new();
 
         [MaxLength(150)]
         [RegularExpression("^[a-zA-Zа-яА-ЯёЁіІїЇєЄ0-9.,!\\s]{0,150}$")]

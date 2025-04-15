@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using NaviriaAPI.Entities.EmbeddedEntities;
 
 namespace NaviriaAPI.Entities
 {
@@ -37,7 +38,8 @@ namespace NaviriaAPI.Entities
         public string[] Friends { get; set; } = [];
 
         [BsonElement("achievements")]
-        public string[] Achievements { get; set; } = [];//id or names?
+        public List<UserAchievementInfo> Achievements { get; set; } = new();
+
 
         [BsonElement("future_message"), BsonRepresentation(BsonType.String)]
         public string FutureMessage { get; set; } = string.Empty;

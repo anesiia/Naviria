@@ -9,6 +9,8 @@ using NaviriaAPI.Entities;
 using OpenAI.Chat;
 using NaviriaAPI.Services.Validation;
 using NaviriaAPI.IServices.ICloudStorage;
+using NaviriaAPI.Entities.EmbeddedEntities;
+using NaviriaAPI.Repositories;
 
 namespace NaviriaAPI.Services
 {
@@ -19,12 +21,14 @@ namespace NaviriaAPI.Services
         private readonly UserValidationService _validation;
         private readonly string _openAIKey;
         public readonly ICloudinaryService _cloudinaryService;
+        public readonly IAchievementRepository _achievementRepository;
         public UserService(
             IUserRepository userRepository, 
             IPasswordHasher<UserEntity> passwordHasher,
             IConfiguration config,
             UserValidationService validation,
-            ICloudinaryService cloudinaryService)
+            ICloudinaryService cloudinaryService,
+            IAchievementRepository achievementRepository)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -32,12 +36,11 @@ namespace NaviriaAPI.Services
             _openAIKey = config["OpenAIKey"]
                 ?? throw new InvalidOperationException("OpenAIKey is missing in configuration.");
             _cloudinaryService = cloudinaryService;
+            _achievementRepository = achievementRepository;
         }
         public async Task<UserDto> CreateAsync(UserCreateDto userDto)
         {
             await _validation.ValidateAsync(userDto);
-
-            
 
             userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
             var entity = UserMapper.ToEntity(userDto);
@@ -62,6 +65,7 @@ namespace NaviriaAPI.Services
             userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
             var entity = UserMapper.ToEntity(id, userDto);
             return await _userRepository.UpdateAsync(entity);
+
         }
         public async Task<UserDto?> GetByIdAsync(string id)
         {
@@ -91,5 +95,30 @@ namespace NaviriaAPI.Services
 
             return responce.Value.Content[0].Text;
         }
+
+        public async Task<bool> GiveAchievementAsync(string userId, string achievementId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+                return false;
+
+            if (user.Achievements.Any(a => a.AchievementId == achievementId && a.IsReceived))
+                return false;
+
+            user.Achievements.Add(new UserAchievementInfo
+            {
+                AchievementId = achievementId,
+                IsReceived = true,
+                ReceivedAt = DateTime.UtcNow.ToUniversalTime()
+            });
+
+            // Update user points
+            var achievement = await _achievementRepository.GetByIdAsync(achievementId);
+            if (achievement != null)
+                user.Points += achievement.Points;
+
+            return await _userRepository.UpdateAsync(user);
+        }
+
     }
 }
