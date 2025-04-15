@@ -30,8 +30,7 @@ namespace NaviriaAPI.Controllers
             _logger = logger;
             _cloudinaryService = cloudinaryService;
         }
-
-        [Authorize]
+ 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

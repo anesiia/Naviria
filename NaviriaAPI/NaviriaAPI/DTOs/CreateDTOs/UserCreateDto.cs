@@ -47,8 +47,8 @@ namespace NaviriaAPI.DTOs.CreateDTOs
         [RegularExpression("^[a-zA-Zа-яА-ЯёЁіІїЇєЄ0-9.,!\\s]{0,150}$", ErrorMessage = "FutureMessage contains invalid characters.")]
         public string FutureMessage { get; set; } = string.Empty;
 
-        [Url]
-        public string? Photo { get; set; }
+        //[Url]
+        public IFormFile? Photo { get; set; }
 
         public DateTime LastSeen { get; set; } = DateTime.Now.ToUniversalTime();
 

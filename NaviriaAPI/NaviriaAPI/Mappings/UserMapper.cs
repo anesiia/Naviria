@@ -63,7 +63,7 @@ namespace NaviriaAPI.Mappings
                 Password = dto.Password,
                 Friends = dto.Friends,
                 FutureMessage = dto.FutureMessage,
-                Photo = dto.Photo,
+                //Photo = dto.Photo, мапінг вручну, через те що фото це файл, а у ентіті буде юрл
                 Points = dto.Points,
                 LastSeen = dto.LastSeen,
                 IsOnline = dto.IsOnline,

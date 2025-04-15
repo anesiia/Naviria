@@ -37,10 +37,17 @@ namespace NaviriaAPI.Services
         {
             await _validation.ValidateAsync(userDto);
 
+            
+
             userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
             var entity = UserMapper.ToEntity(userDto);
             entity.Password = _passwordHasher.HashPassword(entity, userDto.Password);
             await _userRepository.CreateAsync(entity);
+
+            if (userDto.Photo != null)
+            {
+                await _cloudinaryService.UploadImageAsync(entity.Id, userDto.Photo);
+            }
 
             return UserMapper.ToDto(entity);
         }
