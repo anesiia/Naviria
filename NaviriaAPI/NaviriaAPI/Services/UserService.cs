@@ -12,6 +12,7 @@ using NaviriaAPI.IServices.ICloudStorage;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.Exceptions;
+using NaviriaAPI.IServices.IJwtService;
 
 namespace NaviriaAPI.Services
 {
@@ -24,6 +25,7 @@ namespace NaviriaAPI.Services
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IAchievementRepository _achievementRepository;
         private readonly ILevelService _levelService;
+        private readonly IJwtService _jwtService;
 
         public UserService(
             IUserRepository userRepository,
@@ -32,7 +34,8 @@ namespace NaviriaAPI.Services
             UserValidationService validation,
             ICloudinaryService cloudinaryService,
             IAchievementRepository achievementRepository,
-            ILevelService levelService)
+            ILevelService levelService,
+            IJwtService jwtService)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -42,9 +45,10 @@ namespace NaviriaAPI.Services
             _cloudinaryService = cloudinaryService;
             _achievementRepository = achievementRepository;
             _levelService = levelService;
+            _jwtService = jwtService;
         }
 
-        public async Task<UserDto> CreateAsync(UserCreateDto userDto)
+        public async Task<string> CreateAsync(UserCreateDto userDto)
         {
             await _validation.ValidateAsync(userDto);
             userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
@@ -57,7 +61,9 @@ namespace NaviriaAPI.Services
             if (userDto.Photo != null)
                 await _cloudinaryService.UploadImageAsync(entity.Id, userDto.Photo);
 
-            return UserMapper.ToDto(entity);
+            //return UserMapper.ToDto(entity);
+
+            return _jwtService.GenerateUserToken(entity);
         }
 
         public async Task<bool> UpdateAsync(string id, UserUpdateDto userDto)
