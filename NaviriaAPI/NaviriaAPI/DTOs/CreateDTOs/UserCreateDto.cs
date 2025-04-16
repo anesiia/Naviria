@@ -38,8 +38,10 @@ namespace NaviriaAPI.DTOs.CreateDTOs
         [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, and one digit.")]
         public string Password { get; set; } = string.Empty;
 
+        [Required]
         [Range(0, int.MaxValue)]
         public int Points { get; set; } = 0;
+        public LevelProgressInfo LevelInfo { get; set; } = new();
         public string[] Friends { get; set; } = [];
         public List<UserAchievementInfo> Achievements { get; set; } = new();
 

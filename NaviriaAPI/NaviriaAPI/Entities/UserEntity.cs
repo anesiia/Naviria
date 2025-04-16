@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 using NaviriaAPI.Entities.EmbeddedEntities;
+using System.ComponentModel.DataAnnotations;
 
 namespace NaviriaAPI.Entities
 {
@@ -33,6 +34,9 @@ namespace NaviriaAPI.Entities
 
         [BsonElement("points"), BsonRepresentation(BsonType.Int32)]
         public int Points { get; set; } = 0;
+
+        [BsonElement("level_info")]
+        public LevelProgressInfo LevelInfo { get; set; } = new();
 
         [BsonElement("friends")]
         public string[] Friends { get; set; } = [];

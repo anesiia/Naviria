@@ -11,6 +11,7 @@ using NaviriaAPI.Services.Validation;
 using NaviriaAPI.IServices.ICloudStorage;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.Repositories;
+using ZstdSharp;
 
 namespace NaviriaAPI.Services
 {
@@ -63,7 +64,13 @@ namespace NaviriaAPI.Services
                 return false;
 
             userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
+
+            if(existing.Points != userDto.Points)
+            {
+                userDto.LevelInfo = CalculateLevelProgress(userDto.Points);
+            }
             var entity = UserMapper.ToEntity(id, userDto);
+
             return await _userRepository.UpdateAsync(entity);
 
         }
@@ -118,6 +125,46 @@ namespace NaviriaAPI.Services
                 user.Points += achievement.Points;
 
             return await _userRepository.UpdateAsync(user);
+        }
+
+        private LevelProgressInfo CalculateLevelProgress(int xp)
+        {
+            int level = 0;
+            int currentLevelXp = 0;
+            int nextLevelXp = 0;
+
+            while (true)
+            {
+                nextLevelXp = GetXpForLevel(level + 1);
+                if (xp < nextLevelXp)
+                    break;
+
+                currentLevelXp = nextLevelXp;
+                level++;
+            }
+
+            double progress = (double)(xp - currentLevelXp) / (nextLevelXp - currentLevelXp);
+
+            return new LevelProgressInfo
+            {
+                Level = level,
+                TotalXp = xp,
+                XpForNextLevel = nextLevelXp,
+                Progress = Math.Round(progress, 2)
+            };
+        }
+
+        private int GetXpForLevel(int level)
+        {
+            // Формула "престижу" - нелінійне зростання складності
+            double rawXp = 50 * Math.Pow(level, 2.2);
+
+            return RoundXpToNearestTen(rawXp);
+        }
+
+        private static int RoundXpToNearestTen(double xp)
+        {
+            return (int)Math.Ceiling(xp / 10.0) * 10;
         }
 
     }
