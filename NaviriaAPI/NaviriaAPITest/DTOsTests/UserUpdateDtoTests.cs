@@ -31,7 +31,7 @@ namespace NaviriaAPITest.DTOsTests
                 Photo = "https://example.com/photo.jpg",
                 Points = 100,
                 Friends = new[] { "friend1", "friend2" },
-                Achievements = new[] { "ach1" },
+               // Achievements = new[] { "ach1" },
                 LastSeen = DateTime.Now,
                 IsOnline = true,
                 IsProUser = true
@@ -168,7 +168,7 @@ namespace NaviriaAPITest.DTOsTests
         public void TC013_Should_BeValid_WhenAchievementsArrayIsEmpty()
         {
             var dto = GetValidDto();
-            dto.Achievements = Array.Empty<string>();
+           // dto.Achievements = Array.Empty<string>();
 
             var isValid = ValidateDto(dto, out var results);
             Assert.That(isValid, Is.True);

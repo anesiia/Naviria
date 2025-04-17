@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 
-namespace NaviriaAPI.Tests
+namespace NaviriaAPITest.helper
 {
     public static class ValidationHelper
     {

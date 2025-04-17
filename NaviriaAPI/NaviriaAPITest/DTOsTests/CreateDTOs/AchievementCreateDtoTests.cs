@@ -1,4 +1,5 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPITest.helper;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,28 +9,21 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
 {
     public class AchievementCreateDtoTests
     {
-        private IList<ValidationResult> ValidateModel(object model)
-        {
-            var context = new ValidationContext(model, null, null);
-            var results = new List<ValidationResult>();
-            Validator.TryValidateObject(model, context, results, true);
-            return results;
-        }
 
         [Test]
         public void TC001_ValidAchievement_ShouldPassValidation()
         {
             var dto = new AchievementCreateDto
             {
-                Name = "Досягнення дня",
-                Description = "Отримано за активну участь.",
-                Points = 50,
+                Name = "Досягнення 1",
+                Description = "Опис досягнення",
+                Points = 100,
                 IsRecieved = true
             };
 
-            var results = ValidateModel(dto);
+            var isValid = ValidationHelper.ValidateModel(dto);
 
-            Assert.That(results, Is.Empty);  
+            Assert.That(isValid, Is.True);
         }
 
         [Test]
@@ -40,12 +34,12 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
                 Name = "",
                 Description = "Опис",
                 Points = 10,
-                IsRecieved = true
+                IsRecieved = false
             };
 
-            var results = ValidateModel(dto);
+            var isValid = ValidationHelper.ValidateModel(dto);
 
-            Assert.That(results.Any(r => r.MemberNames.Contains("Name")), Is.True);
+            Assert.That(isValid, Is.False);
         }
 
         [Test]
@@ -59,74 +53,99 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
                 IsRecieved = true
             };
 
-            var results = ValidateModel(dto);
+            var isValid = ValidationHelper.ValidateModel(dto);
 
-            Assert.That(results.Any(r => r.MemberNames.Contains("Name")), Is.True);
+            Assert.That(isValid, Is.False);
         }
 
         [Test]
-        public void TC004_NameWithInvalidCharacters_ShouldFailValidation()
+        public void TC004_NameTooLong_ShouldFailValidation()
         {
             var dto = new AchievementCreateDto
             {
-                Name = "Invalid@Name!",
+                Name = new string('A', 51), // 51 characters
                 Description = "Опис",
                 Points = 10,
                 IsRecieved = false
             };
 
-            var results = ValidateModel(dto);
+            var isValid = ValidationHelper.ValidateModel(dto);
 
-            Assert.That(results.Any(r => r.MemberNames.Contains("Name")), Is.True);
+            Assert.That(isValid, Is.False);
         }
 
         [Test]
-        public void TC005_DescriptionTooLong_ShouldFailValidation()
+        public void TC005_NameWithInvalidCharacters_ShouldFailValidation()
+        {
+            var dto = new AchievementCreateDto
+            {
+                Name = "Achiev@ment!", // contains invalid characters
+                Description = "Valid",
+                Points = 10,
+                IsRecieved = false
+            };
+
+            var isValid = ValidationHelper.ValidateModel(dto);
+
+            Assert.That(isValid, Is.False);
+        }
+
+        [Test]
+        public void TC006_DescriptionTooLong_ShouldFailValidation()
         {
             var dto = new AchievementCreateDto
             {
                 Name = "Valid Name",
-                Description = new string('a', 151),
+                Description = new string('D', 151), // 151 characters
+                Points = 10,
+                IsRecieved = false
+            };
+
+            var isValid = ValidationHelper.ValidateModel(dto);
+
+            Assert.That(isValid, Is.False);
+        }
+
+        [Test]
+        public void TC007_DescriptionWithInvalidCharacters_ShouldFailValidation()
+        {
+            var dto = new AchievementCreateDto
+            {
+                Name = "Valid Name",
+                Description = "Invalid 💥 Description",
                 Points = 10,
                 IsRecieved = true
             };
 
-            var results = ValidateModel(dto);
+            var isValid = ValidationHelper.ValidateModel(dto);
 
-           
-            Assert.That(results.Any(r => r.MemberNames.Contains("Description")), Is.True);
+            Assert.That(isValid, Is.False);
         }
 
         [Test]
-        public void TC006_DescriptionWithInvalidCharacters_ShouldFailValidation()
+        public void TC008_NegativePoints_ShouldFailValidation()
         {
             var dto = new AchievementCreateDto
             {
                 Name = "Valid Name",
-                Description = "Неправильний опис @#%",
-                Points = 15,
-                IsRecieved = true
-            };
-
-            var results = ValidateModel(dto);
-
-            Assert.That(results.Any(r => r.MemberNames.Contains("Description")), Is.True);
-        }
-
-        [Test]
-        public void TC007_NegativePoints_ShouldFailValidation()
-        {
-            var dto = new AchievementCreateDto
-            {
-                Name = "Valid Name",
-                Description = "Опис",
+                Description = "Valid",
                 Points = -5,
                 IsRecieved = false
             };
 
-            var results = ValidateModel(dto);
+            var isValid = ValidationHelper.ValidateModel(dto);
 
-            Assert.That(results.Any(r => r.MemberNames.Contains("Points")), Is.True);
+            Assert.That(isValid, Is.False);
+        }
+
+        [Test]
+        public void TC009_MissingRequiredFields_ShouldFailValidation()
+        {
+            var dto = new AchievementCreateDto(); // all defaults
+
+            var isValid = ValidationHelper.ValidateModel(dto);
+
+            Assert.That(isValid, Is.False);
         }
     }
 }

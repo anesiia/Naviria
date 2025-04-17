@@ -1,19 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Moq;
+﻿using Moq;
+using NaviriaAPI.Entities; 
+using NaviriaAPI.Entities.EmbeddedEntities;
 using NUnit.Framework;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using NaviriaAPI.Services;
-using NaviriaAPI.DTOs;
+using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.Entities;
-using NaviriaAPI.IRepositories;
-using NaviriaAPI.Services.Validation;
+using NaviriaAPI.IServices;
+using NaviriaAPI.Exceptions;
+using NaviriaAPI.Mappings;
+using Microsoft.Extensions.Configuration;
+using NaviriaAPI.Services;
 using NaviriaAPI.IServices.ICloudStorage;
+using NaviriaAPI.IServices.IGamificationLogic;
+using NaviriaAPI.IServices.IJwtService;
+using NaviriaAPI.Services.Validation;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using NaviriaAPI.Entities.EmbeddedEntities;
+using NaviriaAPI.IRepositories;
+using OpenAI.Chat;
 
 namespace NaviriaAPITest.ServicesTests
 {
@@ -24,7 +30,10 @@ namespace NaviriaAPITest.ServicesTests
         private Mock<IPasswordHasher<UserEntity>> _hasherMock;
         private Mock<IConfiguration> _configMock;
         private Mock<UserValidationService> _validationMock;
-        private Mock<ICloudinaryService> _cloudinaryServiceMock; //
+        private Mock<ICloudinaryService> _cloudinaryServiceMock;
+        private Mock<IAchievementRepository> _achievementRepoMock;
+        private Mock<ILevelService> _levelServiceMock;
+        private Mock<IJwtService> _jwtServiceMock;
         private UserService _userService;
 
         [SetUp]
@@ -34,122 +43,250 @@ namespace NaviriaAPITest.ServicesTests
             _hasherMock = new Mock<IPasswordHasher<UserEntity>>();
             _configMock = new Mock<IConfiguration>();
             _cloudinaryServiceMock = new Mock<ICloudinaryService>();
+            _achievementRepoMock = new Mock<IAchievementRepository>();
+            _levelServiceMock = new Mock<ILevelService>();
+            _jwtServiceMock = new Mock<IJwtService>();
 
             _configMock.Setup(c => c["OpenAIKey"]).Returns("fake-key");
 
-            var validation = new UserValidationService(_userRepoMock.Object); // реальний інстанс
+            var validation = new UserValidationService(_userRepoMock.Object);
             _userService = new UserService(
                 _userRepoMock.Object,
                 _hasherMock.Object,
                 _configMock.Object,
                 validation,
-                _cloudinaryServiceMock.Object
-
+                _cloudinaryServiceMock.Object,
+                _achievementRepoMock.Object,
+                _levelServiceMock.Object,
+                _jwtServiceMock.Object
             );
         }
 
         [Test]
-        public async Task TC01_CreateAsync_ShouldReturnUserDto_WhenUserIsCreated()
+        public async Task TC001_CreateAsync_ShouldReturnToken_WhenUserCreatedSuccessfully()
         {
             // Arrange
-            var createDto = new UserCreateDto
+            var userDto = new UserCreateDto
             {
                 FullName = "John Doe",
-                Nickname = "johnd",
-                Email = "john@example.com",
-                Password = "Pass123!",
-                Gender = "m",
-                BirthDate = new DateTime(1990, 1, 1),
+                Email = "john.doe@example.com",
+                Password = "password123",
+                Photo = null, // Фото не додається
                 LastSeen = DateTime.UtcNow
             };
 
-            _userRepoMock.Setup(r => r.GetByEmailAsync(createDto.Email)).ReturnsAsync((UserEntity?)null);
-            _userRepoMock.Setup(r => r.GetByNicknameAsync(createDto.Nickname)).ReturnsAsync((UserEntity?)null);
-            _hasherMock.Setup(h => h.HashPassword(It.IsAny<UserEntity>(), createDto.Password))
-                       .Returns("hashedPassword");
-            _userRepoMock.Setup(r => r.CreateAsync(It.IsAny<UserEntity>())).Returns(Task.CompletedTask);
+            _userRepoMock.Setup(repo => repo.CreateAsync(It.IsAny<UserEntity>())).Returns(Task.CompletedTask);
+            _hasherMock.Setup(h => h.HashPassword(It.IsAny<UserEntity>(), It.IsAny<string>())).Returns("hashedPassword");
+
+            _jwtServiceMock.Setup(service => service.GenerateUserToken(It.IsAny<UserEntity>())).Returns("fake-jwt-token");
 
             // Act
-            var result = await _userService.CreateAsync(createDto);
+            var result = await _userService.CreateAsync(userDto);
 
             // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Nickname, Is.EqualTo(createDto.Nickname));
+            Assert.That(result, Is.EqualTo("fake-jwt-token"));
+            _userRepoMock.Verify(repo => repo.CreateAsync(It.IsAny<UserEntity>()), Times.Once);
         }
 
-
         [Test]
-        public async Task TC02_GetByIdAsync_ShouldReturnUserDto_WhenUserExists()
+        public async Task TC002_UpdateAsync_ShouldUpdateUser_WhenUserExists()
         {
             // Arrange
-            var entity = new UserEntity
+            var userId = "12345";
+            var userDto = new UserUpdateDto
             {
-                Id = "1",
-                Nickname = "jane",
-                Email = "jane@example.com",
+                FullName = "John Tre",
+                Points = 100,
                 LastSeen = DateTime.UtcNow
             };
 
-            _userRepoMock.Setup(r => r.GetByIdAsync("1")).ReturnsAsync(entity);
+            var existingUser = new UserEntity
+            {
+                Id = userId,
+                FullName = "John Doe",
+                Points = 50,
+                LevelInfo = new LevelProgressInfo { Level = 1 },
+                Achievements = new List<UserAchievementInfo>()
+            };
+
+            _userRepoMock.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync(existingUser);
+            _userRepoMock.Setup(repo => repo.UpdateAsync(It.IsAny<UserEntity>())).ReturnsAsync(true);
+            _levelServiceMock.Setup(service => service.CalculateLevelProgress(It.IsAny<int>())).Returns(new LevelProgressInfo { Level = 2 });
+            // Act
+            var result = await _userService.UpdateAsync(userId, userDto);
+
+            // Assert
+            Assert.That(result, Is.True);
+            _userRepoMock.Verify(repo => repo.UpdateAsync(It.IsAny<UserEntity>()), Times.Once);
+        }
+
+        [Test]
+        public async Task TC003_GetByIdAsync_ShouldReturnUser_WhenUserExists()
+        {
+            // Arrange
+            var userId = "12345";
+            var user = new UserEntity
+            {
+                Id = userId,
+                FullName = "John Doe",
+                Points = 50,
+                LevelInfo = new LevelProgressInfo { Level = 1 },
+                Achievements = new List<UserAchievementInfo>()
+            };
+
+            _userRepoMock.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync(user);
 
             // Act
-            var result = await _userService.GetByIdAsync("1");
+            var result = await _userService.GetByIdAsync(userId);
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Nickname, Is.EqualTo("jane"));
+            Assert.That(result?.Id, Is.EqualTo(userId));
+
         }
+
         [Test]
-        public async Task TC03_UpdateAsync_ShouldReturnTrue_WhenUpdateSucceeds()
+        public async Task TC004_GetByIdAsync_ShouldReturnNull_WhenUserDoesNotExist()
         {
             // Arrange
-            var updateDto = new UserUpdateDto
-            {
-                Nickname = "updated",
-                LastSeen = DateTime.Now.ToUniversalTime()
-            };
+            var userId = "12345";
 
-            _userRepoMock.Setup(r => r.UpdateAsync(It.IsAny<UserEntity>())).ReturnsAsync(true);
+            _userRepoMock.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync((UserEntity?)null);
 
             // Act
-            var result = await _userService.UpdateAsync("1", updateDto);
+            var result = await _userService.GetByIdAsync(userId);
+
+            // Assert
+            Assert.That(result, Is.Null);
+
+        }
+
+        [Test]
+        public async Task TC005_DeleteAsync_ShouldReturnTrue_WhenUserDeletedSuccessfully()
+        {
+            // Arrange
+            var userId = "12345";
+            _userRepoMock.Setup(repo => repo.DeleteAsync(userId)).ReturnsAsync(true);
+
+            // Act
+            var result = await _userService.DeleteAsync(userId);
 
             // Assert
             Assert.That(result, Is.True);
+
+            _userRepoMock.Verify(repo => repo.DeleteAsync(userId), Times.Once);
+        }
+
+        
+        [Test]
+        public async Task TC006_GiveAchievementAsync_ShouldReturnFalse_WhenAchievementAlreadyReceived()
+        {
+            // Arrange
+            var userId = "12345";
+            var achievementId = "achievement1";
+
+            var existingUser = new UserEntity
+            {
+                Id = userId,
+                Achievements = new List<UserAchievementInfo>
+            {
+                new UserAchievementInfo { AchievementId = achievementId, IsReceived = true }
+            }
+            };
+
+            _userRepoMock.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync(existingUser);
+
+            // Act
+            var result = await _userService.GiveAchievementAsync(userId, achievementId);
+
+            // Assert
+            Assert.That(result, Is.False);
+            _userRepoMock.Verify(repo => repo.UpdateAsync(It.IsAny<UserEntity>()), Times.Never);
         }
 
         [Test]
-        public async Task TC04_DeleteAsync_ShouldReturnTrue_WhenUserDeleted()
+        public async Task TC007_GiveAchievementAsync_ShouldReturnTrue_WhenAchievementNotReceivedAndUserExists()
         {
             // Arrange
-            _userRepoMock.Setup(r => r.DeleteAsync("1")).ReturnsAsync(true);
+            var userId = "12345";
+            var achievementId = "achievement1";
+            var achievementPoints = 50;
+
+            var existingUser = new UserEntity
+            {
+                Id = userId,
+                Achievements = new List<UserAchievementInfo>()
+            };
+
+            var achievement = new AchievementEntity
+            {
+                Id = achievementId,
+                Points = achievementPoints
+            };
+
+            _userRepoMock.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync(existingUser);
+            _achievementRepoMock.Setup(repo => repo.GetByIdAsync(achievementId)).ReturnsAsync(achievement);
+            _userRepoMock.Setup(repo => repo.UpdateAsync(It.IsAny<UserEntity>())).ReturnsAsync(true);
+            _levelServiceMock.Setup(service => service.CalculateLevelProgress(It.IsAny<int>())).Returns(new LevelProgressInfo { Level = 2 });
 
             // Act
-            var result = await _userService.DeleteAsync("1");
+            var result = await _userService.GiveAchievementAsync(userId, achievementId);
 
             // Assert
             Assert.That(result, Is.True);
+            _userRepoMock.Verify(repo => repo.UpdateAsync(It.IsAny<UserEntity>()), Times.Once);
         }
 
         [Test]
-        public async Task TC05_GetAllAsync_ShouldReturnListOfUserDtos()
+        public async Task TC008_GiveAchievementAsync_ShouldThrowNotFoundException_WhenUserDoesNotExist()
         {
             // Arrange
-            var users = new List<UserEntity>
+            var userId = "12345";
+            var achievementId = "achievement1";
+
+            _userRepoMock.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync((UserEntity)null);
+
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<NotFoundException>(async () =>
+                await _userService.GiveAchievementAsync(userId, achievementId));
+
+            Assert.That(ex.Message, Is.EqualTo($"User with ID {userId} not found"));
+        }
+
+        [Test]
+        public async Task TC009_GiveAchievementAsync_ShouldApplyPointsAndRecalculateLevel_WhenAchievementIsGiven()
+        {
+            // Arrange
+            var userId = "12345";
+            var achievementId = "achievement1";
+            var achievementPoints = 50;
+
+            var existingUser = new UserEntity
             {
-                new UserEntity { Id = "1", Nickname = "a", LastSeen = DateTime.UtcNow },
-                new UserEntity { Id = "2", Nickname = "b", LastSeen = DateTime.UtcNow }
+                Id = userId,
+                Points = 100,
+                Achievements = new List<UserAchievementInfo>()
             };
 
-            _userRepoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(users);
+            var achievement = new AchievementEntity
+            {
+                Id = achievementId,
+                Points = achievementPoints
+            };
+
+            _userRepoMock.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync(existingUser);
+            _achievementRepoMock.Setup(repo => repo.GetByIdAsync(achievementId)).ReturnsAsync(achievement);
+            _userRepoMock.Setup(repo => repo.UpdateAsync(It.IsAny<UserEntity>())).ReturnsAsync(true);
+            _levelServiceMock.Setup(service => service.CalculateLevelProgress(It.IsAny<int>())).Returns(new LevelProgressInfo { Level = 2 });
 
             // Act
-            var result = await _userService.GetAllAsync();
+            var result = await _userService.GiveAchievementAsync(userId, achievementId);
 
             // Assert
-            Assert.That(result.Count(), Is.EqualTo(2));
-            Assert.That(result.Any(u => u.Nickname == "a"), Is.True);
-            Assert.That(result.Any(u => u.Nickname == "b"), Is.True);
+            Assert.That(result, Is.True);
+            Assert.That(existingUser.Points, Is.EqualTo(150));  // 100 + 50 points
+            _levelServiceMock.Verify(service => service.CalculateLevelProgress(150), Times.Once);
+            _userRepoMock.Verify(repo => repo.UpdateAsync(It.IsAny<UserEntity>()), Times.Once);
         }
     }
 }
