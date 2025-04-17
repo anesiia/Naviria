@@ -9,6 +9,7 @@ using NaviriaAPI.DTOs;
 using NaviriaAPI.DTOs.FeaturesDTOs;
 using Microsoft.AspNetCore.Authorization;
 using NaviriaAPI.Services.CloudStorage;
+using Newtonsoft.Json.Linq;
 
 namespace NaviriaAPI.Controllers
 {
@@ -77,8 +78,10 @@ namespace NaviriaAPI.Controllers
 
             try
             {
-                var createdUser = await _userService.CreateAsync(UserDto);
-                return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
+                //var createdUser = await _userService.CreateAsync(UserDto);
+                //    return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
+                var token = await _userService.CreateAsync(UserDto);
+                return Ok(new { token });
             }
             catch (Exception ex)
             {
