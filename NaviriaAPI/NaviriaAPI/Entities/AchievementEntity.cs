@@ -14,5 +14,11 @@ namespace NaviriaAPI.Entities
 
         [BsonElement("description")]
         public string Description { get; set; } = string.Empty;
+
+        [BsonElement("points")]
+        public int Points { get; set; } = 0;
+
+        [BsonElement("is_recieved")]
+        public bool IsRecieved { get; set; } = false;
     }
 }

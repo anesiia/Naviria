@@ -1,5 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using NaviriaAPI.Entities.EmbeddedEntities;
+using System.ComponentModel.DataAnnotations;
 
 namespace NaviriaAPI.DTOs
 {
@@ -23,9 +25,10 @@ namespace NaviriaAPI.DTOs
 
         public int Points { get; set; } = 0;
 
+        public LevelProgressInfo LevelInfo { get; set; } = new();
         public string[] Friends { get; set; } = [];
 
-        public string[] Achievements { get; set; } = [];
+        public List<UserAchievementInfo> Achievements { get; set; } = new();
 
         public string FutureMessage { get; set; } = string.Empty;
 

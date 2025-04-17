@@ -9,9 +9,11 @@ namespace NaviriaAPI.IServices
     {
         Task<IEnumerable<UserDto>> GetAllAsync();
         Task<UserDto?> GetByIdAsync(string id);
-        Task<UserDto> CreateAsync(UserCreateDto userDto);
+        Task<string> CreateAsync(UserCreateDto userDto);
         Task<bool> UpdateAsync(string id, UserUpdateDto userDto);
         Task<bool> DeleteAsync(string id);
         Task<string> GetAiAnswerAsync(string question);
+        Task<bool> GiveAchievementAsync(string userId, string achievementId);
+
     }
 }

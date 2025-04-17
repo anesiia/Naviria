@@ -24,6 +24,7 @@ namespace NaviriaAPI.Mappings
                 FutureMessage = entity.FutureMessage,
                 Photo = entity.Photo,
                 Points = entity.Points,
+                LevelInfo = entity.LevelInfo ,
                 LastSeen = entity.LastSeen,
                 IsOnline = entity.IsOnline,
                 IsProUser = entity.IsProUser
@@ -45,6 +46,7 @@ namespace NaviriaAPI.Mappings
             FutureMessage = dto.FutureMessage,
             Photo = dto.Photo,
             Points = dto.Points,
+            LevelInfo = dto.LevelInfo,
             LastSeen = dto.LastSeen,
             IsOnline = dto.IsOnline,
             IsProUser = dto.IsProUser
@@ -63,8 +65,9 @@ namespace NaviriaAPI.Mappings
                 Password = dto.Password,
                 Friends = dto.Friends,
                 FutureMessage = dto.FutureMessage,
-                Photo = dto.Photo,
+                //Photo = dto.Photo, мапінг вручну, через те що фото це файл, а у ентіті буде юрл
                 Points = dto.Points,
+                LevelInfo = dto.LevelInfo,
                 LastSeen = dto.LastSeen,
                 IsOnline = dto.IsOnline,
                 IsProUser = dto.IsProUser
@@ -84,6 +87,7 @@ namespace NaviriaAPI.Mappings
                 FutureMessage = dto.FutureMessage,
                 Photo = dto.Photo,
                 Points = dto.Points,
+                LevelInfo = dto.LevelInfo,
                 LastSeen = dto.LastSeen,
                 IsOnline = dto.IsOnline,
                 IsProUser = dto.IsProUser

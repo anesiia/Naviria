@@ -31,7 +31,7 @@ namespace NaviriaAPI.Controllers
             _cloudinaryService = cloudinaryService;
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -47,6 +47,7 @@ namespace NaviriaAPI.Controllers
             }            
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -86,6 +87,7 @@ namespace NaviriaAPI.Controllers
             }    
         }
 
+        [AllowAnonymous]
         [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] UserUpdateDto UserDto)
         {

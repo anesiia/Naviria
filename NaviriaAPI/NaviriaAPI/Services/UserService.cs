@@ -9,6 +9,10 @@ using NaviriaAPI.Entities;
 using OpenAI.Chat;
 using NaviriaAPI.Services.Validation;
 using NaviriaAPI.IServices.ICloudStorage;
+using NaviriaAPI.Entities.EmbeddedEntities;
+using NaviriaAPI.IServices.IGamificationLogic;
+using NaviriaAPI.Exceptions;
+using NaviriaAPI.IServices.IJwtService;
 
 namespace NaviriaAPI.Services
 {
@@ -18,13 +22,20 @@ namespace NaviriaAPI.Services
         private readonly IPasswordHasher<UserEntity> _passwordHasher;
         private readonly UserValidationService _validation;
         private readonly string _openAIKey;
-        public readonly ICloudinaryService _cloudinaryService;
+        private readonly ICloudinaryService _cloudinaryService;
+        private readonly IAchievementRepository _achievementRepository;
+        private readonly ILevelService _levelService;
+        private readonly IJwtService _jwtService;
+
         public UserService(
-            IUserRepository userRepository, 
+            IUserRepository userRepository,
             IPasswordHasher<UserEntity> passwordHasher,
             IConfiguration config,
             UserValidationService validation,
-            ICloudinaryService cloudinaryService)
+            ICloudinaryService cloudinaryService,
+            IAchievementRepository achievementRepository,
+            ILevelService levelService,
+            IJwtService jwtService)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -32,57 +43,109 @@ namespace NaviriaAPI.Services
             _openAIKey = config["OpenAIKey"]
                 ?? throw new InvalidOperationException("OpenAIKey is missing in configuration.");
             _cloudinaryService = cloudinaryService;
+            _achievementRepository = achievementRepository;
+            _levelService = levelService;
+            _jwtService = jwtService;
         }
-        public async Task<UserDto> CreateAsync(UserCreateDto userDto)
+
+        public async Task<string> CreateAsync(UserCreateDto userDto)
         {
             await _validation.ValidateAsync(userDto);
-
             userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
+
             var entity = UserMapper.ToEntity(userDto);
             entity.Password = _passwordHasher.HashPassword(entity, userDto.Password);
+
             await _userRepository.CreateAsync(entity);
 
-            return UserMapper.ToDto(entity);
+            if (userDto.Photo != null)
+                await _cloudinaryService.UploadImageAsync(entity.Id, userDto.Photo);
+
+            //return UserMapper.ToDto(entity);
+
+            return _jwtService.GenerateUserToken(entity);
         }
+
         public async Task<bool> UpdateAsync(string id, UserUpdateDto userDto)
         {
             UserValidationService.ValidateAsync(userDto);
 
-            var existing = await _userRepository.GetByIdAsync(id);
-            if (existing == null)
-                return false;
-
+            var existing = await GetUserOrThrowAsync(id);
             userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
+
             var entity = UserMapper.ToEntity(id, userDto);
+
+            if (existing.Points != entity.Points)
+                entity.LevelInfo = _levelService.CalculateLevelProgress(entity.Points);
+            else
+                entity.LevelInfo = existing.LevelInfo;
+
             return await _userRepository.UpdateAsync(entity);
         }
+
         public async Task<UserDto?> GetByIdAsync(string id)
         {
             var entity = await _userRepository.GetByIdAsync(id);
-            if (entity == null)
-                return null;
+            if (entity == null) return null;
 
             entity.LastSeen = entity.LastSeen.ToLocalTime();
             return UserMapper.ToDto(entity);
         }
 
-        public async Task<bool> DeleteAsync(string id) =>
-            await _userRepository.DeleteAsync(id);
-
         public async Task<IEnumerable<UserDto>> GetAllAsync()
         {
             var users = await _userRepository.GetAllAsync();
-            users.ForEach(user => user.LastSeen = user.LastSeen.ToLocalTime());
+            users.ForEach(u => u.LastSeen = u.LastSeen.ToLocalTime());
             return users.Select(UserMapper.ToDto).ToList();
         }
+
+        public async Task<bool> DeleteAsync(string id)
+        {
+            return await _userRepository.DeleteAsync(id);
+        }
+
         public async Task<string> GetAiAnswerAsync(string question)
         {
             var modelName = "gpt-4o-mini";
             var client = new ChatClient(modelName, _openAIKey);
+            var response = await client.CompleteChatAsync(question);
+            return response.Value.Content[0].Text;
+        }
 
-            var responce = await client.CompleteChatAsync(question);
+        public async Task<bool> GiveAchievementAsync(string userId, string achievementId)
+        {
+            var user = await GetUserOrThrowAsync(userId);
 
-            return responce.Value.Content[0].Text;
+            if (user.Achievements.Any(a => a.AchievementId == achievementId && a.IsReceived))
+                return false;
+
+            user.Achievements.Add(new UserAchievementInfo
+            {
+                AchievementId = achievementId,
+                IsReceived = true,
+                ReceivedAt = DateTime.UtcNow
+            });
+
+            var achievement = await _achievementRepository.GetByIdAsync(achievementId);
+            if (achievement != null)
+                ApplyPointsAndRecalculateLevel(user, achievement.Points);
+
+            return await _userRepository.UpdateAsync(user);
+        }
+
+        private void ApplyPointsAndRecalculateLevel(UserEntity user, int additionalPoints)
+        {
+            user.Points += additionalPoints;
+            user.LevelInfo = _levelService.CalculateLevelProgress(user.Points);
+        }
+
+        private async Task<UserEntity> GetUserOrThrowAsync(string id)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+                throw new NotFoundException($"User with ID {id} not found");
+
+            return user;
         }
     }
 }

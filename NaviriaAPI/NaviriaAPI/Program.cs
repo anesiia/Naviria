@@ -8,6 +8,8 @@ using NaviriaAPI.Services.CloudStorage;
 using NaviriaAPI.Services.JwtTokenService;
 using NaviriaAPI.Services.SignalRHub;
 using NaviriaAPI.Services.Validation;
+using NaviriaAPI.IServices.IGamificationLogic;
+using NaviriaAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,7 @@ builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<UserValidationService>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+builder.Services.AddScoped<ILevelService, LevelService>();
 
 
 builder.Services.AddSingleton(sp =>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NaviriaAPI.Entities.EmbeddedEntities;
+using System.ComponentModel.DataAnnotations;
 
 namespace NaviriaAPI.DTOs.UpdateDTOs
 {
@@ -28,12 +29,16 @@ namespace NaviriaAPI.DTOs.UpdateDTOs
         [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, and one digit.")]
         public string Password { get; set; } = string.Empty;
 
+        [Required]
         [Range(0, int.MaxValue)]
         public int Points { get; set; } = 0;
 
+        [Required]
+        public LevelProgressInfo LevelInfo { get; set; } = new();
+
         public string[] Friends { get; set; } = [];
 
-        public string[] Achievements { get; set; } = [];
+        public List<UserAchievementInfo> Achievements { get; set; } = new();
 
         [MaxLength(150)]
         [RegularExpression("^[a-zA-Zа-яА-ЯёЁіІїЇєЄ0-9.,!\\s]{0,150}$")]
