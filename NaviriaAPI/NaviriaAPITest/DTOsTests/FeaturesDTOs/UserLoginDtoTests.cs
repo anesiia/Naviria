@@ -3,7 +3,7 @@ using NaviriaAPI.DTOs.FeaturesDTOs;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace NaviriaAPITest.DTOsTests
+namespace NaviriaAPITest.DTOsTests.FeaturesDTOs
 {
     [TestFixture]
     public class UserLoginDtoTests
