@@ -54,29 +54,27 @@ namespace NaviriaAPITest.Repository
             }
         }
 
-
         [Test]
-        public async Task TC001_CreateUser_ShouldInsertUser()
+        public async Task TC001_CreateAsync_And_GetByIdAsync_ShouldWorkCorrectly()
         {
             // Arrange
             var user = new UserEntity
             {
                 Id = ObjectId.GenerateNewId().ToString(),
                 Email = "test@example.com",
-                Nickname = "testuser",
+                Nickname = "TestUser",
                 LastSeen = DateTime.UtcNow,
-                IsOnline = true,
-                Photo = "https://res.cloudinary.com/dyvnoao0d/image/upload/v1744484518/users_photos/b4eeee78-b746-4a7c-828c-fd3a64317f2d.jpg"
+                IsOnline = true
             };
 
             // Act
             await _userRepository.CreateAsync(user);
+            var fetchedUser = await _userRepository.GetByIdAsync(user.Id);
 
             // Assert
-            var insertedUser = await _userRepository.GetByIdAsync(user.Id);
-            Assert.That(insertedUser, Is.Not.Null);
-            Assert.That(insertedUser.Email, Is.EqualTo("test@example.com"));
-            Assert.That(insertedUser.Nickname, Is.EqualTo("testuser"));
+            Assert.That(fetchedUser, Is.Not.Null); 
+            Assert.That(fetchedUser.Email, Is.EqualTo(user.Email));
+            Assert.That(fetchedUser.Nickname, Is.EqualTo(user.Nickname));
         }
 
         [Test]

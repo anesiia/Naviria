@@ -18,6 +18,12 @@ namespace NaviriaAPITest.GamificationLogic
             _levelService = new LevelService();
         }
 
+        private int GetXpForLevel(int level)
+        {
+            double rawXp = 50 * Math.Pow(level, 2.2);
+            return (int)Math.Ceiling(rawXp / 10.0) * 10;
+        }
+
         [Test]
         public void TC001_CalculateLevelProgress_ShouldReturnCorrectLevel_WhenXpIsZero()
         {
@@ -66,23 +72,24 @@ namespace NaviriaAPITest.GamificationLogic
             Assert.That(result.Progress, Is.GreaterThan(0.0).And.LessThan(1.0));  // Some progress into level 2
         }
 
-        //[Test]
-        //public void TC004_CalculateLevelProgress_ShouldReturnCorrectProgress_WhenXpIsMaxForLevel()
-        //{
-        //    // Arrange
-        //    int xp = 240;  // This XP is between the XP required for level 2 (210) and level 3 (570).
+        [Test]
+        public void CalculateLevelProgress_ShouldReturnCorrectProgress_WhenXpIsMaxForLevel()
+        {
+            // Arrange
+            int xpForLevel2 = GetXpForLevel(2); // припустимо, що рівень 2 починається з цього XP
+            int xpForLevel3 = GetXpForLevel(3); // а рівень 3 — з цього XP
 
-        //    // Act
-        //    var result = _levelService.CalculateLevelProgress(xp);
+            int xp = xpForLevel3 - 1; // максимум для рівня 2
 
-        //    // Assert
-        //    Assert.That(result.Level, Is.EqualTo(2));  // Expected level is 2, since 240 is between 210 and 570
-        //    Assert.That(result.TotalXp, Is.EqualTo(xp));
-        //    Assert.That(result.XpForNextLevel, Is.EqualTo(570));  // The XP required for level 3
-        //    Assert.That(result.Progress, Is.EqualTo(Math.Round(0.3)));  // Round to 2 decimal places
-        //}
+            // Act
+            var result = _levelService.CalculateLevelProgress(xp);
 
-
+            // Assert
+            Assert.That(result.Level, Is.EqualTo(2));
+            Assert.That(result.TotalXp, Is.EqualTo(xp));
+            Assert.That(result.XpForNextLevel, Is.EqualTo(xpForLevel3));
+            Assert.That(result.Progress, Is.EqualTo(1.00).Within(0.01));
+        }
 
         [Test]
         public void TC005_CalculateLevelProgress_ShouldHandleLargeXpValues()
