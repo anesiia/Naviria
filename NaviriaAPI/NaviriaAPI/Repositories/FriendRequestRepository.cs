@@ -35,6 +35,11 @@ public class FriendRequestRepository : IFriendRequestRepository
         return result.DeletedCount > 0;
     }
 
+    public async Task<IEnumerable<FriendRequestEntity>> GetByReceiverIdAsync(string toUserId)
+    {
+        var filter = Builders<FriendRequestEntity>.Filter.Eq(r => r.ToUserId, toUserId);
+        return await _friendsRequests.Find(filter).ToListAsync();
+    }
 
 }
 

@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace NaviriaAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
@@ -167,5 +167,22 @@ namespace NaviriaAPI.Controllers
             }
         }
 
+        [HttpGet("{id}/friends")]
+        public async Task<IActionResult> GetFriends(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("User ID is required.");
+
+            try
+            {
+                var friends = await _userService.GetFriendsAsync(id);
+                return Ok(friends);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get friends for user {id}", id);
+                return StatusCode(500, $"Failed to get friends for user {id}");
+            }
+        }
     }
 }

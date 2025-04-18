@@ -14,5 +14,7 @@ namespace NaviriaAPI.IRepositories
         Task<bool> DeleteAsync(string id);
         Task<bool> UpdatePresenceAsync(string id, DateTime dateTime, bool isOnline);
         Task<bool> UpdateProfileImageAsync(string userId, string imageUrl);
+        Task<List<UserEntity>> GetManyByIdsAsync(IEnumerable<string> ids);
+
     }
 }

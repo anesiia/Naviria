@@ -42,7 +42,7 @@ namespace NaviriaAPI.DTOs.CreateDTOs
         [Range(0, int.MaxValue)]
         public int Points { get; set; } = 0;
         public LevelProgressInfo LevelInfo { get; set; } = new();
-        public string[] Friends { get; set; } = [];
+        public List<UserFriendInfo> Friends { get; set; } = new();
         public List<UserAchievementInfo> Achievements { get; set; } = new();
 
         [MaxLength(150)]

@@ -53,11 +53,11 @@ export function Registration() {
               <p>Стать</p>
               <div className="selection">
                 <label className="radiobutton">
-                  <input type="radio" name="gender" value="female" checked />
+                  <input type="radio" name="gender" value="f" checked />
                   Жінка
                 </label>
                 <label className="radiobutton">
-                  <input type="radio" name="gender" value="male" />
+                  <input type="radio" name="gender" value="m" />
                   Чоловік
                 </label>
               </div>

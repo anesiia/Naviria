@@ -1,0 +1,41 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2vh 5vw;
+  background: linear-gradient(90deg, #ffd900 0%, #ff8f00 70.11%);
+  .logo {
+    height: 2rem;
+  }
+  .links {
+    display: flex;
+    flex-direction: row;
+    gap: 5vw;
+    flex-shrink: 0;
+    margin-right: 2rem;
+    margin-left: 2rem;
+    a {
+      text-decoration: none;
+      color: white;
+      transition: 0.2s ease;
+
+      &:hover {
+        scale: 1.1;
+        font-weight: 500;
+      }
+    }
+  }
+  .actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    .notifications {
+      background: none;
+      border: none;
+    }
+  }
+}

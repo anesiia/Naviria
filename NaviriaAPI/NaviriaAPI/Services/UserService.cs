@@ -133,13 +133,22 @@ namespace NaviriaAPI.Services
             return await _userRepository.UpdateAsync(user);
         }
 
+        public async Task<IEnumerable<UserDto>> GetFriendsAsync(string userId)
+        {
+            var user = await GetUserOrThrowAsync(userId);
+            var friendIds = user.Friends.Select(f => f.UserId).ToList();
+            var friends = await _userRepository.GetManyByIdsAsync(friendIds);
+
+            return friends.Select(UserMapper.ToDto);
+        }
+
         private void ApplyPointsAndRecalculateLevel(UserEntity user, int additionalPoints)
         {
             user.Points += additionalPoints;
             user.LevelInfo = _levelService.CalculateLevelProgress(user.Points);
         }
 
-        private async Task<UserEntity> GetUserOrThrowAsync(string id)
+        public async Task<UserEntity> GetUserOrThrowAsync(string id)
         {
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null)

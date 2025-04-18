@@ -1,0 +1,181 @@
+@import "const.less";
+
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem;
+  .profile-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 60%;
+    box-sizing: border-box;
+    .info-box {
+      display: flex;
+      flex-direction: row;
+      gap: 3rem;
+      margin-bottom: 2rem;
+      img {
+        width: 12rem;
+      }
+      .personal-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        gap: 1rem;
+        .name {
+          color: @orange;
+          font-size: 1.5rem;
+          font-weight: 600;
+        }
+        .level-info {
+          display: flex;
+          flex-direction: row;
+          justify-content: start;
+          align-items: center;
+          gap: 1rem;
+          .bold {
+            font-weight: 600;
+          }
+          .scale {
+            width: 18rem;
+            height: 1.2rem;
+            background-color: #d9d9d9;
+            border-radius: 999px;
+            overflow: hidden;
+            .color-scale {
+              height: 100%;
+              border-radius: 999px;
+              background: linear-gradient(90deg, #053a51 0%, #219dbb 100%);
+              transition: width 0.3s ease;
+            }
+          }
+        }
+        .description {
+          opacity: 0.6;
+        }
+      }
+    }
+    .progress-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      margin-bottom: 2rem;
+      .naming {
+        font-weight: 600;
+        font-size: @big_text;
+        margin-bottom: 1.8rem;
+      }
+      .scales {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        .scale-naming {
+          font-size: @def_text;
+          font-weight: 500;
+          margin-bottom: 1rem;
+        }
+        .scale-info {
+          display: flex;
+          flex-direction: row;
+          gap: 1.5rem;
+          .scale {
+            width: 12rem;
+            height: 1rem;
+            background-color: #fff;
+            border: 1px solid @yellow;
+            border-radius: 999px;
+            overflow: hidden;
+            .color-scale {
+              height: 100%;
+              border-radius: 999px;
+              background: linear-gradient(90deg, #ff9101 0%, #ffd701 100%);
+              transition: width 0.3s ease;
+            }
+          }
+          .points {
+            font-size: @small_text;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+    .achievements {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      margin-bottom: 2rem;
+
+      .naming {
+        font-weight: 600;
+        font-size: @big_text;
+        margin-bottom: 1.8rem;
+      }
+      .ach-list {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        flex-wrap: wrap;
+        .achievement {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          padding: 0.5rem 1rem;
+          width: 15rem;
+          gap: 0.5rem;
+          border-radius: 10px;
+          background: #fff;
+          box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+          .ach-info {
+            display: flex;
+            flex-direction: column;
+            .ach-name {
+              font-weight: 600;
+            }
+            .ach-desc {
+              font-size: @small_text;
+              font-weight: 400;
+              opacity: 0.6;
+            }
+          }
+        }
+      }
+    }
+    .friends {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      margin-bottom: 2rem;
+      .naming {
+        font-weight: 600;
+        font-size: @big_text;
+        margin-bottom: 1.8rem;
+      }
+      .friends-list {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        flex-wrap: wrap;
+
+        .friend {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          padding: 0.5rem 1rem;
+          width: 10.5rem;
+          gap: 0.5rem;
+          border-radius: 10px;
+          background: #fff;
+          box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+
+          .friend-name {
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}
