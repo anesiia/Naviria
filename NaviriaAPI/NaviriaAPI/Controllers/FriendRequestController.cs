@@ -102,6 +102,24 @@ namespace NaviriaAPI.Controllers
             }
         }
 
+        [HttpGet("incoming/{userId}")]
+        public async Task<IActionResult> GetIncomingRequests(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest("User ID is required.");
+
+            try
+            {
+                var requests = await _friendRequestService.GetIncomingRequestsAsync(userId);
+                return Ok(requests);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get incoming friend requests for user {userId}", userId);
+                return StatusCode(500, $"Failed to get incoming friend requests for user {userId}");
+            }
+        }
+
 
     }
 }

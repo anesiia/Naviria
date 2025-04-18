@@ -105,7 +105,6 @@ namespace NaviriaAPI.Services
             }
         }
 
-
         public async Task<FriendRequestDto?> GetByIdAsync(string id)
         {
             var entity = await _friendRequestRepository.GetByIdAsync(id);
@@ -120,5 +119,12 @@ namespace NaviriaAPI.Services
             var categories = await _friendRequestRepository.GetAllAsync();
             return categories.Select(FriendRequestMapper.ToDto).ToList();
         }
+
+        public async Task<IEnumerable<FriendRequestDto>> GetIncomingRequestsAsync(string toUserId)
+        {
+            var requests = await _friendRequestRepository.GetByReceiverIdAsync(toUserId);
+            return requests.Select(FriendRequestMapper.ToDto);
+        }
+
     }
 }
