@@ -133,6 +133,15 @@ namespace NaviriaAPI.Services
             return await _userRepository.UpdateAsync(user);
         }
 
+        public async Task<IEnumerable<UserDto>> GetFriendsAsync(string userId)
+        {
+            var user = await GetUserOrThrowAsync(userId);
+            var friendIds = user.Friends.Select(f => f.UserId).ToList();
+            var friends = await _userRepository.GetManyByIdsAsync(friendIds);
+
+            return friends.Select(UserMapper.ToDto);
+        }
+
         private void ApplyPointsAndRecalculateLevel(UserEntity user, int additionalPoints)
         {
             user.Points += additionalPoints;

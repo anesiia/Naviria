@@ -16,6 +16,7 @@ namespace NaviriaAPI.IServices
         Task<string> GetAiAnswerAsync(string question);
         Task<bool> GiveAchievementAsync(string userId, string achievementId);
         Task<UserEntity> GetUserOrThrowAsync(string id);
+        Task<IEnumerable<UserDto>> GetFriendsAsync(string userId);
 
     }
 }

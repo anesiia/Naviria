@@ -60,5 +60,12 @@ namespace NaviriaAPI.Repositories
 
             return result.ModifiedCount > 0;
         }
+
+        public async Task<List<UserEntity>> GetManyByIdsAsync(IEnumerable<string> ids)
+        {
+            var filter = Builders<UserEntity>.Filter.In(u => u.Id, ids);
+            return await _users.Find(filter).ToListAsync();
+        }
+
     }
 }
