@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace NaviriaAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase

@@ -139,7 +139,7 @@ namespace NaviriaAPI.Services
             user.LevelInfo = _levelService.CalculateLevelProgress(user.Points);
         }
 
-        private async Task<UserEntity> GetUserOrThrowAsync(string id)
+        public async Task<UserEntity> GetUserOrThrowAsync(string id)
         {
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null)

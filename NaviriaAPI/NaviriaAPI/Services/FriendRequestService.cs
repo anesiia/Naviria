@@ -3,15 +3,29 @@ using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Mappings;
+using NaviriaAPI.Entities.EmbeddedEntities;
+using NaviriaAPI.IServices;
+using NaviriaAPI.Exceptions;
 
 namespace NaviriaAPI.Services
 {
     public class FriendRequestService : IFriendRequestService
     {
         private readonly IFriendRequestRepository _friendRequestRepository;
-        public FriendRequestService(IFriendRequestRepository FriendRequestRepository)
+        private readonly IUserService _userService;
+        private readonly ILogger<FriendRequestService> _logger;
+        private readonly IUserRepository _userRepository;
+
+        public FriendRequestService(
+            IFriendRequestRepository friendRequestRepository,
+            IUserService userService,
+            ILogger<FriendRequestService> logger,
+            IUserRepository userRepository)
         {
-            _friendRequestRepository = FriendRequestRepository;
+            _friendRequestRepository = friendRequestRepository;
+            _userService = userService;
+            _logger = logger;
+            _userRepository = userRepository;
         }
         public async Task<FriendRequestDto> CreateAsync(FriendRequestCreateDto friendRequestDto)
         {
@@ -19,11 +33,79 @@ namespace NaviriaAPI.Services
             await _friendRequestRepository.CreateAsync(entity);
             return FriendRequestMapper.ToDto(entity);
         }
-        public async Task<bool> UpdateAsync(string id, FriendRequestUpdateDto friendRequestDto)
+        public async Task<bool> UpdateAsync(string requestId, FriendRequestUpdateDto friendRequestDto)
         {
-            var entity = FriendRequestMapper.ToEntity(id, friendRequestDto);
-            return await _friendRequestRepository.UpdateAsync(entity);
+            
+            var entity = await _friendRequestRepository.GetByIdAsync(requestId);
+            if (entity == null)
+                throw new NotFoundException("friend request is not found");
+
+            entity.Status = friendRequestDto.Status;
+
+            var updated = await _friendRequestRepository.UpdateAsync(entity);
+            if (!updated)
+                throw new FailedToUpdateExeption("Failed to update friend request");
+
+            try
+            {
+                if (friendRequestDto.Status == "accepted")
+                {
+                    await AddToFriendsAsync(entity.FromUserId, entity.ToUserId);
+                    await DeleteAsync(requestId);
+                }
+                else if (friendRequestDto.Status == "rejected")
+                {
+                    await DeleteAsync(requestId);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while processing friend request updating");
+                return false;
+            }
         }
+
+
+        public async Task<bool> AddToFriendsAsync(string fromUserId, string toUserId)
+        {
+            var fromUser = await _userService.GetUserOrThrowAsync(fromUserId);
+            var toUser = await _userService.GetUserOrThrowAsync(toUserId);
+
+            if (fromUser.Friends.Any(f => f.UserId == toUserId) ||
+                toUser.Friends.Any(f => f.UserId == fromUserId))
+            {
+                throw new AlreadyExistExeption("Failed to add friends. These users are already friends");
+            }
+
+            fromUser.Friends.Add(new UserFriendInfo
+            {
+                UserId = toUser.Id,
+                Nickname = toUser.Nickname,
+            });
+
+            toUser.Friends.Add(new UserFriendInfo
+            {
+                UserId = fromUser.Id,
+                Nickname = fromUser.Nickname,
+            });
+
+            try
+            {
+                var firstUser = await _userRepository.UpdateAsync(fromUser);
+                var secondUser = await _userRepository.UpdateAsync(toUser);
+
+                return firstUser && secondUser;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while adding users {From} and {To} to friends", fromUserId, toUserId);
+                return false;
+            }
+        }
+
+
         public async Task<FriendRequestDto?> GetByIdAsync(string id)
         {
             var entity = await _friendRequestRepository.GetByIdAsync(id);
