@@ -11,7 +11,7 @@ using NaviriaAPI.IRepositories;
 using MongoDB.Bson;
 using Microsoft.Extensions.Configuration;
 
-namespace NaviriaAPITest.Repository
+namespace NaviriaAPITest.RepositoriesTests
 {
     [TestFixture]
     public class UserRepositoryTests
