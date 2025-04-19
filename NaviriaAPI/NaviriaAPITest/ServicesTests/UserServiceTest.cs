@@ -335,6 +335,50 @@ namespace NaviriaAPITest.ServicesTests
             Assert.That(ex!.Message, Does.Contain("User with ID nonexistent not found"));
         }
 
+        [Test]
+        public async Task TC013_GetFriendsAsync_ShouldReturnListOfFriends_WhenUserExists()
+        {
+            // Arrange
+            var userId = "123";
+            var friend1 = new UserEntity { Id = "f1", FullName = "Alice", LastSeen = DateTime.UtcNow };
+            var friend2 = new UserEntity { Id = "f2", FullName = "Bob", LastSeen = DateTime.UtcNow };
+
+            var userEntity = new UserEntity
+            {
+                Id = userId,
+                Friends = new List<UserFriendInfo>
+        {
+            new UserFriendInfo { UserId = "f1", Nickname = "Ally" },
+            new UserFriendInfo { UserId = "f2", Nickname = "Bobby" }
+        }
+            };
+
+            _userRepoMock.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync(userEntity);
+            _userRepoMock.Setup(repo => repo.GetManyByIdsAsync(It.Is<List<string>>(ids =>
+                ids.Contains("f1") && ids.Contains("f2")))).ReturnsAsync(new List<UserEntity> { friend1, friend2 });
+
+            // Act
+            var result = await _userService.GetFriendsAsync(userId);
+
+            // Assert
+            Assert.That(result.Count(), Is.EqualTo(2));
+            Assert.That(result.Any(f => f.FullName == "Alice"), Is.True);
+            Assert.That(result.Any(f => f.FullName == "Bob"), Is.True);
+        }
+
+        [Test]
+        public void TC014_GetFriendsAsync_ShouldThrowNotFoundException_WhenUserDoesNotExist()
+        {
+            // Arrange
+            var userId = "nonexistent-id";
+
+            _userRepoMock.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync((UserEntity?)null);
+
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<NotFoundException>(() => _userService.GetFriendsAsync(userId));
+            Assert.That(ex.Message, Is.EqualTo($"User with ID {userId} not found"));
+        }
+
 
     }
 }
