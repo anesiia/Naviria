@@ -2,7 +2,6 @@
 using NaviriaAPI.Entities; 
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NUnit.Framework;
-using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
@@ -17,7 +16,6 @@ using NaviriaAPI.Services.Validation;
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.IRepositories;
 using OpenAI.Chat;
 
@@ -288,5 +286,55 @@ namespace NaviriaAPITest.ServicesTests
             _levelServiceMock.Verify(service => service.CalculateLevelProgress(150), Times.Once);
             _userRepoMock.Verify(repo => repo.UpdateAsync(It.IsAny<UserEntity>()), Times.Once);
         }
+
+
+        [Test]
+        public async Task TC010_GetAllAsync_ShouldReturnAllUsers()
+        {
+            // Arrange
+            var users = new List<UserEntity>
+            {
+                new UserEntity { Id = "1", FullName = "User One", LastSeen = DateTime.UtcNow },
+                new UserEntity { Id = "2", FullName = "User Two", LastSeen = DateTime.UtcNow }
+            };
+
+            _userRepoMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(users);
+
+            // Act
+            var result = await _userService.GetAllAsync();
+
+            // Assert
+            Assert.That(result.Count(), Is.EqualTo(2));
+        }
+
+        [Test]
+        public async Task TC011_GetUserOrThrowAsync_ShouldReturnUser_WhenExists()
+        {
+            // Arrange
+            var userId = "user123";
+            var user = new UserEntity { Id = userId };
+            _userRepoMock.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
+
+            // Act
+            var result = await _userService.GetUserOrThrowAsync(userId);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(userId));
+        }
+
+        [Test]
+        public void TC012_GetUserOrThrowAsync_ShouldThrowNotFoundException_WhenUserNotExists()
+        {
+            // Arrange
+            var userId = "nonexistent";
+            _userRepoMock.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync((UserEntity?)null);
+
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<NaviriaAPI.Exceptions.NotFoundException>(() => _userService.GetUserOrThrowAsync(userId));
+            Assert.That(ex!.Message, Does.Contain("User with ID nonexistent not found"));
+        }
+
+
     }
 }

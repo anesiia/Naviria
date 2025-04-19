@@ -25,17 +25,24 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
                 Points = 100,
                 FutureMessage = "Keep pushing!",
                 LevelInfo = new LevelProgressInfo { Level = 2, TotalXp = 250 },
-                Friends = new[] { "id1", "id2" },
+                
+                Friends = new List<UserFriendInfo>
+                {
+                        new UserFriendInfo { UserId = "id1", Nickname = "Alice" },
+                        new UserFriendInfo { UserId = "id2", Nickname = "Bob" }
+                },
+
+
                 Photo = FileHelper.CreateTestFormFile(),
                 Achievements = new List<UserAchievementInfo>
-        {
-            new UserAchievementInfo
-            {
-                AchievementId = "660fd0eccc56d52abc1ef08b",
-                IsReceived = true,
-                ReceivedAt = DateTime.UtcNow
-            }
-        },
+                 {
+                        new UserAchievementInfo
+                        {
+                            AchievementId = "660fd0eccc56d52abc1ef08b",
+                            IsReceived = true,
+                            ReceivedAt = DateTime.UtcNow
+                        }
+                 },
                 IsOnline = true,
                 IsProUser = true,
                 LastSeen = DateTime.UtcNow

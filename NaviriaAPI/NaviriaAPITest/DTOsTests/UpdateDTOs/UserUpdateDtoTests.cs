@@ -1,4 +1,5 @@
 ﻿using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.Entities.EmbeddedEntities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -30,8 +31,22 @@ namespace NaviriaAPITest.DTOsTests.UpdateDTOs
                 FutureMessage = "See you in the future.",
                 Photo = "https://example.com/photo.jpg",
                 Points = 100,
-                Friends = new[] { "friend1", "friend2" },
-               // Achievements = new[] { "ach1" },
+                Friends = new List<UserFriendInfo>
+                {
+                        new UserFriendInfo { UserId = "id1", Nickname = "Kate" },
+                        new UserFriendInfo { UserId = "id2", Nickname = "Bob" }
+                },
+
+                Achievements = new List<UserAchievementInfo>
+                 {
+                        new UserAchievementInfo
+                        {
+                            AchievementId = "660fd0eccc57685bc1ef08b",
+                            IsReceived = true,
+                            ReceivedAt = DateTime.UtcNow
+                        }
+                 },
+
                 LastSeen = DateTime.Now,
                 IsOnline = true,
                 IsProUser = true
@@ -158,7 +173,8 @@ namespace NaviriaAPITest.DTOsTests.UpdateDTOs
         public void TC012_Should_BeValid_WhenFriendsArrayIsEmpty()
         {
             var dto = GetValidDto();
-            dto.Friends = Array.Empty<string>();
+            dto.Friends = new List<UserFriendInfo>();
+            //dto.Friends = Array.Empty<string>();
 
             var isValid = ValidateDto(dto, out var results);
             Assert.That(isValid, Is.True);
@@ -168,7 +184,7 @@ namespace NaviriaAPITest.DTOsTests.UpdateDTOs
         public void TC013_Should_BeValid_WhenAchievementsArrayIsEmpty()
         {
             var dto = GetValidDto();
-           // dto.Achievements = Array.Empty<string>();
+           dto.Achievements = new List<UserAchievementInfo>();
 
             var isValid = ValidateDto(dto, out var results);
             Assert.That(isValid, Is.True);
@@ -183,8 +199,6 @@ namespace NaviriaAPITest.DTOsTests.UpdateDTOs
             var isValid = ValidateDto(dto, out var results);
             Assert.That(isValid, Is.True);
         }
-
-
 
         private UserUpdateDto GetValidDto()
         {
