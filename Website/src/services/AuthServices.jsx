@@ -19,6 +19,12 @@ export async function login(email, password) {
 
   // сохраняем токен, чтобы использовать в других запросах
   localStorage.setItem("token", data.token);
+
+  const payload = parseJwt(data.token);
+  if (payload?.sub) {
+    localStorage.setItem("id", payload.sub); // сохраняем id из токена
+  }
+
   return data;
 }
 
@@ -65,4 +71,14 @@ export function logout() {
 export function authHeaders() {
   const token = localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+function parseJwt(token) {
+  try {
+    const base64Payload = token.split(".")[1];
+    const decoded = atob(base64Payload);
+    return JSON.parse(decoded);
+  } catch {
+    return null;
+  }
 }
