@@ -38,12 +38,11 @@ namespace NaviriaAPI.DTOs.CreateDTOs
         [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, and one digit.")]
         public string Password { get; set; } = string.Empty;
 
-        [Required]
         [Range(0, int.MaxValue)]
         public int Points { get; set; } = 0;
-        public LevelProgressInfo LevelInfo { get; set; } = new();
-        public List<UserFriendInfo> Friends { get; set; } = new();
-        public List<UserAchievementInfo> Achievements { get; set; } = new();
+        public LevelProgressInfo? LevelInfo { get; set; } = new();
+        public List<UserFriendInfo>? Friends { get; set; } = new();
+        public List<UserAchievementInfo>? Achievements { get; set; } = new();
 
         [MaxLength(150)]
         [RegularExpression("^[a-zA-Zа-яА-ЯёЁіІїЇєЄ0-9.,!\\s]{0,150}$", ErrorMessage = "FutureMessage contains invalid characters.")]
