@@ -3,6 +3,7 @@ using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.Entities;
 using SharpCompress.Common;
+using NaviriaAPI.Entities.EmbeddedEntities;
 
 namespace NaviriaAPI.Mappings
 {
@@ -54,24 +55,28 @@ namespace NaviriaAPI.Mappings
 
         // CreateDto → Entity (для створення)
         public static UserEntity ToEntity(UserCreateDto dto) =>
-            new UserEntity {
+            new UserEntity
+            {
                 FullName = dto.FullName,
                 Gender = dto.Gender,
                 Nickname = dto.Nickname,
-                BirthDate = dto.BirthDate,
-                Description = dto.Description,
-                Achievements = dto.Achievements,
+                BirthDate = dto.BirthDate.Date,
+
+                Description = dto.Description ?? string.Empty,
+                Achievements = dto.Achievements ?? new List<UserAchievementInfo>(),
                 Email = dto.Email,
                 Password = dto.Password,
-                Friends = dto.Friends,
-                FutureMessage = dto.FutureMessage,
-                //Photo = dto.Photo, мапінг вручну, через те що фото це файл, а у ентіті буде юрл
+                Friends = dto.Friends ?? new List<UserFriendInfo>(),
+                FutureMessage = dto.FutureMessage ?? string.Empty,
+
                 Points = dto.Points,
-                LevelInfo = dto.LevelInfo,
+                LevelInfo = dto.LevelInfo ?? new LevelProgressInfo(),
+
                 LastSeen = dto.LastSeen,
                 IsOnline = dto.IsOnline,
                 IsProUser = dto.IsProUser
             };
+
 
         // UpdateDto → Entity (для оновлення)
         public static UserEntity ToEntity(string id, UserUpdateDto dto) =>

@@ -26,9 +26,9 @@ namespace NaviriaAPI.Services.JwtTokenService
         {
             var claims = new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.IsProUser? "ProUser" : "FreeUser")
+                new Claim("sub", user.Id),
+                new Claim("email", user.Email),
+                new Claim("role", user.IsProUser ? "ProUser" : "FreeUser")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
