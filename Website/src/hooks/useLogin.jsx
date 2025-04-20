@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { login } from "../services/LoginServices";
+import { login } from "../services/AuthServices";
 
 export function useLogin() {
   const navigate = useNavigate();

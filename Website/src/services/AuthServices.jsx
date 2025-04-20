@@ -22,6 +22,36 @@ export async function login(email, password) {
   return data;
 }
 
+export async function registration(
+  fullName,
+  nickname,
+  gender,
+  birthDate,
+  email,
+  password
+) {
+  const res = await fetch(`${API_URL}/api/User/add`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      fullName,
+      nickname,
+      gender,
+      birthDate,
+      email,
+      password,
+    }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.message || "Сталася помилка при спробі реєстрації");
+  }
+  localStorage.setItem("token", data.token);
+  return data;
+}
 /**
  * Удаляет токен и "выходит" из системы.
  */
