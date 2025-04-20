@@ -36,7 +36,7 @@ namespace NaviriaAPI.DTOs.UpdateDTOs
         [Required]
         public LevelProgressInfo LevelInfo { get; set; } = new();
 
-        public string[] Friends { get; set; } = [];
+        public List<UserFriendInfo> Friends { get; set; } = new();
 
         public List<UserAchievementInfo> Achievements { get; set; } = new();
 

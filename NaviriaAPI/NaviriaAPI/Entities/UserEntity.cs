@@ -39,11 +39,10 @@ namespace NaviriaAPI.Entities
         public LevelProgressInfo LevelInfo { get; set; } = new();
 
         [BsonElement("friends")]
-        public string[] Friends { get; set; } = [];
+        public List<UserFriendInfo> Friends { get; set; } = new();
 
         [BsonElement("achievements")]
         public List<UserAchievementInfo> Achievements { get; set; } = new();
-
 
         [BsonElement("future_message"), BsonRepresentation(BsonType.String)]
         public string FutureMessage { get; set; } = string.Empty;

@@ -22,6 +22,6 @@ namespace NaviriaAPI.Mappings
 
         // UpdateDto → Entity (для оновлення)
         public static FriendRequestEntity ToEntity(string id, FriendRequestUpdateDto dto) =>
-            new FriendRequestEntity { Id = id, FromUserId = dto.FromUserId, ToUserId = dto.ToUserId, Status = dto.Status};
+            new FriendRequestEntity { Id = id, Status = dto.Status};
     }
 }

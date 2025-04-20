@@ -26,7 +26,7 @@ namespace NaviriaAPI.DTOs
         public int Points { get; set; } = 0;
 
         public LevelProgressInfo LevelInfo { get; set; } = new();
-        public string[] Friends { get; set; } = [];
+        public List<UserFriendInfo> Friends { get; set; } = new();
 
         public List<UserAchievementInfo> Achievements { get; set; } = new();
 

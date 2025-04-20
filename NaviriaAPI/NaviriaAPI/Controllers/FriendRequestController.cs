@@ -39,9 +39,9 @@ namespace NaviriaAPI.Controllers
         {
             try
             {
-                var FriendRequest = await _friendRequestService.GetByIdAsync(id);
-                if (FriendRequest == null) return NotFound();
-                return Ok(FriendRequest);
+                var friendRequest = await _friendRequestService.GetByIdAsync(id);
+                if (friendRequest == null) return NotFound();
+                return Ok(friendRequest);
             }
             catch (Exception ex)
             {
@@ -51,11 +51,15 @@ namespace NaviriaAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] FriendRequestCreateDto FriendRequestDto)
+        public async Task<IActionResult> Create([FromBody] FriendRequestCreateDto friendRequestDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+
             try
             {
-                var createdFriendRequest = await _friendRequestService.CreateAsync(FriendRequestDto);
+                var createdFriendRequest = await _friendRequestService.CreateAsync(friendRequestDto);
                 return CreatedAtAction(nameof(GetById), new { id = createdFriendRequest.Id }, createdFriendRequest);
             }
             catch (Exception ex)
@@ -66,11 +70,14 @@ namespace NaviriaAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody] FriendRequestUpdateDto FriendRequestDto)
+        public async Task<IActionResult> Update(string id, [FromBody] FriendRequestUpdateDto friendRequestDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
-                var updated = await _friendRequestService.UpdateAsync(id, FriendRequestDto);
+                var updated = await _friendRequestService.UpdateAsync(id, friendRequestDto);
                 return updated ? NoContent() : NotFound();
             }
             catch (Exception ex)
@@ -94,5 +101,25 @@ namespace NaviriaAPI.Controllers
                 return StatusCode(500, $"Failed to delete friend request with ID {id}");
             }
         }
+
+        [HttpGet("incoming/{userId}")]
+        public async Task<IActionResult> GetIncomingRequests(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest("User ID is required.");
+
+            try
+            {
+                var requests = await _friendRequestService.GetIncomingRequestsAsync(userId);
+                return Ok(requests);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get incoming friend requests for user {userId}", userId);
+                return StatusCode(500, $"Failed to get incoming friend requests for user {userId}");
+            }
+        }
+
+
     }
 }
