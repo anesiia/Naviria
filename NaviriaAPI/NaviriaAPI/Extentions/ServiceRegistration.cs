@@ -4,6 +4,7 @@ using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Repositories;
 using NaviriaAPI.Services;
+using NaviriaAPI.Services.User;
 
 namespace NaviriaAPI.Extentions
 {

@@ -14,7 +14,7 @@ using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.IJwtService;
 
-namespace NaviriaAPI.Services
+namespace NaviriaAPI.Services.User
 {
     public class UserService : IUserService
     {
@@ -131,15 +131,6 @@ namespace NaviriaAPI.Services
                 ApplyPointsAndRecalculateLevel(user, achievement.Points);
 
             return await _userRepository.UpdateAsync(user);
-        }
-
-        public async Task<IEnumerable<UserDto>> GetFriendsAsync(string userId)
-        {
-            var user = await GetUserOrThrowAsync(userId);
-            var friendIds = user.Friends.Select(f => f.UserId).ToList();
-            var friends = await _userRepository.GetManyByIdsAsync(friendIds);
-
-            return friends.Select(UserMapper.ToDto);
         }
 
         private void ApplyPointsAndRecalculateLevel(UserEntity user, int additionalPoints)

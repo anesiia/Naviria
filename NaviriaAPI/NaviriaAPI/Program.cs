@@ -3,6 +3,7 @@ using NaviriaAPI.Extentions;
 using NaviriaAPI.IServices.IAuthServices;
 using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.IServices.ICloudStorage;
+using NaviriaAPI.IServices;
 using NaviriaAPI.Services.AuthServices;
 using NaviriaAPI.Services.CloudStorage;
 using NaviriaAPI.Services.JwtTokenService;
@@ -10,6 +11,7 @@ using NaviriaAPI.Services.SignalRHub;
 using NaviriaAPI.Services.Validation;
 using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.Services;
+using NaviriaAPI.Services.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<UserValidationService>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<ILevelService, LevelService>();
+builder.Services.AddScoped<IFriendService, FriendService>();
 
 
 builder.Services.AddSingleton(sp =>
