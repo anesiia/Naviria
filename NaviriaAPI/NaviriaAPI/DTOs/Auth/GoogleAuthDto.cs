@@ -1,7 +1,10 @@
-﻿namespace NaviriaAPI.DTOs.Auth
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace NaviriaAPI.DTOs.Auth
 {
     public class GoogleAuthDto
     {
-        public string Token { get; set; }
+        [Required(ErrorMessage = "Token is required.")]
+        public required string Token { get; set; }
     }
 }

@@ -115,7 +115,7 @@ namespace NaviriaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to get incoming friend requests for user {userId}", userId);
+                _logger.LogError(ex, "Failed to get incoming friend requests for user {UserId}", userId);
                 return StatusCode(500, $"Failed to get incoming friend requests for user {userId}");
             }
         }

@@ -6,7 +6,6 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ICloudStorage;
 using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.FeaturesDTOs;
 using Microsoft.AspNetCore.Authorization;
 using NaviriaAPI.Services.CloudStorage;
 using Newtonsoft.Json.Linq;
@@ -73,7 +72,7 @@ namespace NaviriaAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] UserCreateDto UserDto)
         {
             if (!ModelState.IsValid)
@@ -81,8 +80,6 @@ namespace NaviriaAPI.Controllers
 
             try
             {
-                //var createdUser = await _userService.CreateAsync(UserDto);
-                //    return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
                 var token = await _userService.CreateAsync(UserDto);
                 return Ok(new { token });
             }
@@ -94,7 +91,7 @@ namespace NaviriaAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] UserUpdateDto UserDto)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -183,7 +180,7 @@ namespace NaviriaAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to get friends for user {id}", id);
+                _logger.LogError(ex, "Failed to get friends for user {Id}", id);
                 return StatusCode(500, $"Failed to get friends for user {id}");
             }
         }

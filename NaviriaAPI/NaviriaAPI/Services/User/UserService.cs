@@ -61,8 +61,6 @@ namespace NaviriaAPI.Services.User
             if (userDto.Photo != null)
                 await _cloudinaryService.UploadImageAsync(entity.Id, userDto.Photo);
 
-            //return UserMapper.ToDto(entity);
-
             return _jwtService.GenerateUserToken(entity);
         }
 

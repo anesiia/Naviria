@@ -1,4 +1,4 @@
-﻿namespace NaviriaAPI.Extentions
+﻿namespace NaviriaAPI.Configurations
 {
     public static class CorsConfiguration
     {

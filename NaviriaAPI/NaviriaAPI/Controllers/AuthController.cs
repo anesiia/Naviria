@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using NaviriaAPI.DTOs.Auth;
-using NaviriaAPI.DTOs.FeaturesDTOs;
 using NaviriaAPI.IServices.IAuthServices;
 
 namespace NaviriaAPI.Controllers
@@ -29,6 +27,9 @@ namespace NaviriaAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
                 var token = await _authService.AuthenticateAsync(dto.Email, dto.Password);
@@ -45,6 +46,9 @@ namespace NaviriaAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GoogleLogin([FromBody] GoogleAuthDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
                 var token = await _googleAuthService.AuthenticateAsync(dto.Token);

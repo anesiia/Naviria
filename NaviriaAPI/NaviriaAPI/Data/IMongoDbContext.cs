@@ -13,5 +13,4 @@ namespace NaviriaAPI.Data
         IMongoCollection<UserEntity> Users { get; }
 
     }
-
 }
