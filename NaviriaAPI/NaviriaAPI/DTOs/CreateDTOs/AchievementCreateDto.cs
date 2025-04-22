@@ -18,7 +18,5 @@ namespace NaviriaAPI.DTOs.CreateDTOs
         [Required]
         [Range(0, int.MaxValue)]
         public int Points { get; set; } = 0;
-        [Required]
-        public bool IsRecieved { get; set; } = false;
     }
 }

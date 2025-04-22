@@ -114,13 +114,12 @@ namespace NaviriaAPI.Services.User
         {
             var user = await GetUserOrThrowAsync(userId);
 
-            if (user.Achievements.Any(a => a.AchievementId == achievementId && a.IsReceived))
+            if (user.Achievements.Any(a => a.AchievementId == achievementId))
                 return false;
 
             user.Achievements.Add(new UserAchievementInfo
             {
                 AchievementId = achievementId,
-                IsReceived = true,
                 ReceivedAt = DateTime.UtcNow
             });
 

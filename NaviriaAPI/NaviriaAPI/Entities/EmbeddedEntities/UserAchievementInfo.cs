@@ -9,10 +9,6 @@ namespace NaviriaAPI.Entities.EmbeddedEntities
         [BsonRepresentation(BsonType.ObjectId)]
         public string AchievementId { get; set; } = string.Empty;
 
-        [BsonElement("is_received")]
-        [BsonRepresentation(BsonType.Boolean)]
-        public bool IsReceived { get; set; } = false;
-
         [BsonElement("received_at")]
         [BsonRepresentation(BsonType.DateTime)]
         public DateTime? ReceivedAt { get; set; }
