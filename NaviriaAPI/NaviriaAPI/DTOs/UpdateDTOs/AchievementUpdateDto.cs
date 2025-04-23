@@ -18,5 +18,8 @@ namespace NaviriaAPI.DTOs.UpdateDTOs
         [Required]
         [Range(0, int.MaxValue)]
         public int Points { get; set; } = 0;
+
+        [Required]
+        public bool IsRare { get; set; }
     }
 }
