@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 
-namespace NaviriaAPI.Extentions
+namespace NaviriaAPI.Configurations
 {
     public static class SwaggerConfiguration
     {

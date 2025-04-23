@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using NaviriaAPI.Entities;
+using NaviriaAPI.Options;
 
 namespace NaviriaAPI.Data
 {
@@ -8,7 +9,7 @@ namespace NaviriaAPI.Data
     {
         private readonly IMongoDatabase _database;
 
-        public MongoDbContext(IOptions<MongoDbSettings> settings)
+        public MongoDbContext(IOptions<MongoDbOptions> settings)
         {
             var client = new MongoClient(settings.Value.ConnectionString);
             _database = client.GetDatabase(settings.Value.DatabaseName);
@@ -22,5 +23,4 @@ namespace NaviriaAPI.Data
         public IMongoCollection<UserEntity> Users => _database.GetCollection<UserEntity>("users");
 
     }
-
 }

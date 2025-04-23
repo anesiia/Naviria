@@ -6,7 +6,6 @@ namespace NaviriaAPI.Mappings
 {
     public class AchievementMapper
     {
-        // Entity → DTO (для відправки в API)
         public static AchievementDto ToDto(AchievementEntity entity) =>
             new AchievementDto { 
                 Id = entity.Id, 
@@ -15,7 +14,6 @@ namespace NaviriaAPI.Mappings
                 Points = entity.Points, 
             };
 
-        // DTO → Entity (для збереження в БД)
         public static AchievementEntity ToEntity(AchievementDto dto) =>
             new AchievementEntity { 
                 Id = dto.Id, 
@@ -24,7 +22,6 @@ namespace NaviriaAPI.Mappings
                 Points = dto.Points,
             };
 
-        // CreateDto → Entity (для створення)
         public static AchievementEntity ToEntity(AchievementCreateDto dto) =>
             new AchievementEntity
             {
@@ -33,7 +30,6 @@ namespace NaviriaAPI.Mappings
                 Points = dto.Points,
             };
 
-        // UpdateDto → Entity (для оновлення)
         public static AchievementEntity ToEntity(string id, AchievementUpdateDto dto) =>
             new AchievementEntity
             {

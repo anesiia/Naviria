@@ -7,11 +7,11 @@ namespace NaviriaAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class QuotesController : ControllerBase
+    public class QuoteController : ControllerBase
     {
         private readonly IQuoteService _quoteService;
 
-        public QuotesController(IQuoteService quoteService)
+        public QuoteController(IQuoteService quoteService)
         {
             _quoteService = quoteService;
         }
@@ -31,21 +31,21 @@ namespace NaviriaAPI.Controllers
             return Ok(quote);
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] QuoteCreateDto quoteDto)
         {
             var createdQuote = await _quoteService.CreateAsync(quoteDto);
             return CreatedAtAction(nameof(GetById), new { id = createdQuote.Id }, createdQuote);
         }
 
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] QuoteUpdateDto quoteDto)
         {
             var updated = await _quoteService.UpdateAsync(id, quoteDto);
             return updated ? NoContent() : NotFound();
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             var deleted = await _quoteService.DeleteAsync(id);

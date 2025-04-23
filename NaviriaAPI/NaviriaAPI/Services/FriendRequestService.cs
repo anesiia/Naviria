@@ -33,10 +33,10 @@ namespace NaviriaAPI.Services
             await _friendRequestRepository.CreateAsync(entity);
             return FriendRequestMapper.ToDto(entity);
         }
-        public async Task<bool> UpdateAsync(string requestId, FriendRequestUpdateDto friendRequestDto)
+        public async Task<bool> UpdateAsync(string id, FriendRequestUpdateDto friendRequestDto)
         {
             
-            var entity = await _friendRequestRepository.GetByIdAsync(requestId);
+            var entity = await _friendRequestRepository.GetByIdAsync(id);
             if (entity == null)
                 throw new NotFoundException("friend request is not found");
 
@@ -44,18 +44,18 @@ namespace NaviriaAPI.Services
 
             var updated = await _friendRequestRepository.UpdateAsync(entity);
             if (!updated)
-                throw new FailedToUpdateExeption("Failed to update friend request");
+                throw new FailedToUpdateException("Failed to update friend request");
 
             try
             {
                 if (friendRequestDto.Status == "accepted")
                 {
                     await AddToFriendsAsync(entity.FromUserId, entity.ToUserId);
-                    await DeleteAsync(requestId);
+                    await DeleteAsync(id);
                 }
                 else if (friendRequestDto.Status == "rejected")
                 {
-                    await DeleteAsync(requestId);
+                    await DeleteAsync(id);
                 }
 
                 return true;
@@ -76,7 +76,7 @@ namespace NaviriaAPI.Services
             if (fromUser.Friends.Any(f => f.UserId == toUserId) ||
                 toUser.Friends.Any(f => f.UserId == fromUserId))
             {
-                throw new AlreadyExistExeption("Failed to add friends. These users are already friends");
+                throw new AlreadyExistException("Failed to add friends. These users are already friends");
             }
 
             fromUser.Friends.Add(new UserFriendInfo

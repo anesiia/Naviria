@@ -87,7 +87,7 @@ namespace NaviriaAPI.Controllers
             try
             {
                 var deleted = await _categoryService.DeleteAsync(id);
-                return deleted ? NoContent() : NotFound(); ;
+                return deleted ? NoContent() : NotFound();
             }
             catch (Exception ex)
             {
