@@ -10,7 +10,5 @@ namespace NaviriaAPI.DTOs.CreateDTOs
         public required string Text { get; set; }
 
         public DateTime RecievedAt { get; set; }
-
-        public bool IsNew {  get; set; }
     }
 }

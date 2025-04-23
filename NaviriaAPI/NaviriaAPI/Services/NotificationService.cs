@@ -109,8 +109,26 @@ namespace NaviriaAPI.Services
                 _logger.LogInformation("No notifications found for user: {UserId}", userId);
             }
 
+            _logger.LogInformation("Marked all notifications as read (IsNew = false) for user: {UserId}", userId);
+
             return entities.Select(NotificationMapper.ToDto);
         }
+
+        public async Task MarkAllUserNotificationsAsReadAsync(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                _logger.LogWarning("MarkAllUserNotificationsAsReadAsync was called with a null or empty userId.");
+                throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+            }
+
+            _logger.LogInformation("Marking all notifications as read for user: {UserId}", userId);
+
+            await _notificationRepository.MarkAllAsReadByUserAsync(userId);
+
+            _logger.LogInformation("All notifications marked as read for user: {UserId}", userId);
+        }
+
 
         public async Task<bool> UpdateStatusAsync(string id, NotificationUpdateDto updateNotificationDto)
         {

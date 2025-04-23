@@ -33,7 +33,7 @@ namespace NaviriaAPI.Mappings
                 UserId = dto.UserId,
                 Text = dto.Text,
                 RecievedAt = dto.RecievedAt,
-                IsNew = dto.IsNew
+                IsNew = true
             };
 
         public static NotificationEntity ToEntity(string id, NotificationUpdateDto dto) =>

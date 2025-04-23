@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NaviriaAPI.DTOs;
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
@@ -53,26 +54,24 @@ namespace NaviriaAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStatus(string id, [FromBody] NotificationUpdateDto notificationDto)
+        [HttpPut("user/{userId}/mark-all-read")]
+        public async Task<IActionResult> MarkAllAsRead(string userId)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                return BadRequest("Notification ID is required.");
-
-            if (notificationDto == null)
-                return BadRequest("Update data is required.");
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest("User ID is required.");
 
             try
             {
-                var updated = await _notificationService.UpdateStatusAsync(id, notificationDto);
-                return updated ? NoContent() : NotFound();
+                await _notificationService.MarkAllUserNotificationsAsReadAsync(userId);
+                return NoContent();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to update notification with ID: {NotificationId}", id);
-                return StatusCode(500, "Failed to update notification.");
+                _logger.LogError(ex, "Failed to update user notifications with ID: {NotificationId}", userId);
+                return StatusCode(500, "Failed to update user notifications .");
             }
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)

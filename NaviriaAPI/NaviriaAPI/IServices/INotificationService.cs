@@ -13,5 +13,6 @@ namespace NaviriaAPI.IServices
         Task<bool> DeleteAsync(string id);
         Task<IEnumerable<NotificationDto>> GetAllUserNotificationsAsync(string userId);
         Task<bool> UpdateStatusAsync(string id, NotificationUpdateDto updateNotificationDto);
+        Task MarkAllUserNotificationsAsReadAsync(string userId);
     }
 }

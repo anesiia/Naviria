@@ -36,5 +36,18 @@ namespace NaviriaAPI.Repositories
             var result = await _notifications.ReplaceOneAsync(c => c.Id == notificationEntity.Id, notificationEntity);
             return result.ModifiedCount > 0;
         }
+
+        public async Task MarkAllAsReadByUserAsync(string userId)
+        {
+            var filter = Builders<NotificationEntity>.Filter.And(
+                Builders<NotificationEntity>.Filter.Eq(n => n.UserId, userId),
+                Builders<NotificationEntity>.Filter.Eq(n => n.IsNew, true)
+            );
+
+            var update = Builders<NotificationEntity>.Update.Set(n => n.IsNew, false);
+
+            await _notifications.UpdateManyAsync(filter, update);
+        }
+
     }
 }

@@ -10,6 +10,7 @@ namespace NaviriaAPI.IRepositories
         Task<bool> DeleteAsync(string id);
         Task<bool> UpdateStatusAsync(NotificationEntity notificationEntity);
         Task<List<NotificationEntity>> GetAllByUserAsync(string userId);
-        
+        Task MarkAllAsReadByUserAsync(string userId);
+
     }
 }
