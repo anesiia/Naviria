@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NaviriaAPI", "NaviriaAPI\NaviriaAPI.csproj", "{828EFF72-A260-4815-9150-3C624D31BB09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NaviriaAPITest", "NaviriaAPITest\NaviriaAPITest.csproj", "{CDB707D8-15A8-43B3-AEA9-28BB627E14C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NaviriaAPI.Tests", "NaviriaAPITest\NaviriaAPI.Tests.csproj", "{CDB707D8-15A8-43B3-AEA9-28BB627E14C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
