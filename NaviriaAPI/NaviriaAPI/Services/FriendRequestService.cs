@@ -29,16 +29,19 @@ namespace NaviriaAPI.Services
         }
         public async Task<FriendRequestDto> CreateAsync(FriendRequestCreateDto friendRequestDto)
         {
+            if(friendRequestDto.ToUserId == friendRequestDto.FromUserId)
+                throw new FailedToCreateException("Failed to create friend request. You can`t be a friend to yourself.");
+
             var entity = FriendRequestMapper.ToEntity(friendRequestDto);
             await _friendRequestRepository.CreateAsync(entity);
             return FriendRequestMapper.ToDto(entity);
         }
         public async Task<bool> UpdateAsync(string id, FriendRequestUpdateDto friendRequestDto)
         {
-            
+
             var entity = await _friendRequestRepository.GetByIdAsync(id);
             if (entity == null)
-                throw new NotFoundException("friend request is not found");
+                throw new NotFoundException("Friend request is not found");
 
             entity.Status = friendRequestDto.Status;
 
