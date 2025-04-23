@@ -61,20 +61,18 @@ namespace NaviriaAPI.Mappings
                 Gender = dto.Gender,
                 Nickname = dto.Nickname,
                 BirthDate = dto.BirthDate.Date,
-
-                Description = dto.Description ?? string.Empty,
-                Achievements = dto.Achievements ?? new List<UserAchievementInfo>(),
                 Email = dto.Email,
                 Password = dto.Password,
-                Friends = dto.Friends ?? new List<UserFriendInfo>(),
+
+                Description = string.Empty,
+                Achievements = new List<UserAchievementInfo>(),
+                Friends = new List<UserFriendInfo>(),
                 FutureMessage = dto.FutureMessage ?? string.Empty,
-
-                Points = dto.Points,
-                LevelInfo = dto.LevelInfo ?? new LevelProgressInfo(),
-
-                LastSeen = dto.LastSeen,
-                IsOnline = dto.IsOnline,
-                IsProUser = dto.IsProUser
+                Points = 0,
+                LevelInfo = new LevelProgressInfo(),
+                LastSeen = DateTime.UtcNow,
+                IsOnline = true,
+                IsProUser = false
             };
 
 
