@@ -18,6 +18,10 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryService, CategoryService>();
 
+            services.AddScoped<IAssistantChatService, AssistantChatService>();
+            services.AddScoped<IAssistantChatRepository, AssistantChatRepository>();
+
+
             services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
             services.AddScoped<IFriendRequestService, FriendRequestService>();
 
