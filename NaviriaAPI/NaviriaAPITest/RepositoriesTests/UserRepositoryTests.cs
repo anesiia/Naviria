@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using NaviriaAPI.IRepositories;
 using MongoDB.Bson;
 using Microsoft.Extensions.Configuration;
+using NaviriaAPI.Options;
 
 namespace NaviriaAPITest.RepositoriesTests
 {
@@ -29,11 +30,12 @@ namespace NaviriaAPITest.RepositoriesTests
                 .AddJsonFile("MongoDbSettings.json")
                 .Build();
 
-            var mongoDbSettings = configuration.Get<MongoDbSettings>(); // Отримуємо налаштування
+            var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
+
 
             // Створюємо IOptions для передачі в MongoDbContext
-            var mockOptions = new Mock<IOptions<MongoDbSettings>>();
-            mockOptions.Setup(o => o.Value).Returns(mongoDbSettings);
+            var mockOptions = new Mock<IOptions<MongoDbOptions>>();
+            mockOptions.Setup(o => o.Value).Returns(mongoDbOptions); 
 
             // Створення контексту та репозиторію з моком
             _dbContext = new MongoDbContext(mockOptions.Object);

@@ -1,160 +1,199 @@
-﻿using MongoDB.Driver;
-using NaviriaAPI.Data;
-using NaviriaAPI.Entities;
-using NaviriaAPI.IRepositories;
+﻿using NaviriaAPI.Data;
 using NaviriaAPI.Repositories;
-using Microsoft.Extensions.Options;
-using NUnit.Framework;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using NaviriaAPI.IRepositories;
+using NaviriaAPI.Entities;
+using MongoDB.Driver;
 using Moq;
+using NUnit.Framework;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using Microsoft.Extensions.Configuration;
+using NaviriaAPI.Options;
+using System.IO;
 
 namespace NaviriaAPITest.RepositoriesTests
 {
     [TestFixture]
     public class FriendRequestRepositoryTests
     {
-        private IMongoDbContext _dbContext;
         private IFriendRequestRepository _friendRequestRepository;
         private IMongoCollection<FriendRequestEntity> _friendRequestCollection;
+        private Mock<IOptions<MongoDbOptions>> _mockMongoDbOptions;
+        private IMongoDbContext _dbContext;
 
         [SetUp]
         public void SetUp()
         {
+            // Load configuration directly from MongoDbSettings.json file
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("MongoDbSettings.json")
                 .Build();
 
-            var mongoDbSettings = configuration.Get<MongoDbSettings>();
+            var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
 
-            var mockOptions = new Mock<IOptions<MongoDbSettings>>();
-            mockOptions.Setup(o => o.Value).Returns(mongoDbSettings);
+            // Mock the IOptions<MongoDbOptions> object
+            _mockMongoDbOptions = new Mock<IOptions<MongoDbOptions>>();
+            _mockMongoDbOptions.Setup(o => o.Value).Returns(mongoDbOptions);
 
-            _dbContext = new MongoDbContext(mockOptions.Object);
+            // Mock MongoDbContext
+            _dbContext = new MongoDbContext(_mockMongoDbOptions.Object);
+
             _friendRequestRepository = new FriendRequestRepository(_dbContext);
             _friendRequestCollection = _dbContext.FriendsRequests;
-            _friendRequestCollection.DeleteMany(Builders<FriendRequestEntity>.Filter.Empty);
+
+            // Clean up the collection before each test to ensure isolated tests
+            _friendRequestCollection.DeleteMany(FilterDefinition<FriendRequestEntity>.Empty);
         }
 
-        //[Test]
-        //public async Task TC001_CreateAsync_And_GetByIdAsync_ShouldWorkCorrectly()
-        //{
-        //    var friendRequest = new FriendRequestEntity
-        //    {
-        //        Id = ObjectId.GenerateNewId().ToString(),  // Generate a valid ObjectId
-        //        FromUserId = "user1",  // Keep this as a string
-        //        ToUserId = "user2",    // Keep this as a string
-        //        Status = "pending"
-        //    };
+        [TearDown]
+        public void TearDown()
+        {
+            // Clean up the repository after each test
+            _friendRequestRepository = null;
+        }
 
-        //    await _friendRequestRepository.CreateAsync(friendRequest);
-        //    var result = await _friendRequestRepository.GetByIdAsync(friendRequest.Id);
+        [Test]
+        public async Task TC001_CreateAsync_ShouldAddFriendRequest()
+        {
+            // Arrange
+            var fromUserId = ObjectId.GenerateNewId().ToString();
+            var toUserId = ObjectId.GenerateNewId().ToString();
 
-        //    Assert.That(result, Is.Not.Null);
-        //    Assert.That(result!.FromUserId, Is.EqualTo(friendRequest.FromUserId));
-        //}
+            var friendRequest = new FriendRequestEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                FromUserId = fromUserId,
+                ToUserId = toUserId,
+                Status = "Pending"
+            };
 
+            // Act
+            await _friendRequestRepository.CreateAsync(friendRequest);
 
+            // Assert
+            var retrievedRequest = await _friendRequestRepository.GetByIdAsync(friendRequest.Id);
+            Assert.That(retrievedRequest, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(retrievedRequest.FromUserId, Is.EqualTo(friendRequest.FromUserId));
+                Assert.That(retrievedRequest.ToUserId, Is.EqualTo(friendRequest.ToUserId));
+                Assert.That(retrievedRequest.Status, Is.EqualTo(friendRequest.Status));
+            });
+        }
 
-        //[Test]
-        //public async Task TC002_GetAllAsync_ShouldReturnAllRequests()
-        //{
-        //    var friendRequest1 = new FriendRequestEntity
-        //    {
-        //        Id = "someRandomStringId1",
-        //        FromUserId = "user1",
-        //        ToUserId = "user2",
-        //        Status = "pending"
-        //    };
+        [Test]
+        public async Task TC002_GetByIdAsync_ShouldReturnCorrectFriendRequest()
+        {
+            // Arrange
+            var fromUserId = ObjectId.GenerateNewId().ToString();
+            var toUserId = ObjectId.GenerateNewId().ToString();
 
-        //    var friendRequest2 = new FriendRequestEntity
-        //    {
-        //        Id = ObjectId.GenerateNewId().ToString(),
-        //        FromUserId = "user3",
-        //        ToUserId = "user4",
-        //        Status = "accepted"
-        //    };
+            var friendRequest = new FriendRequestEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                FromUserId = fromUserId,
+                ToUserId = toUserId,
+                Status = "Pending"
+            };
 
-        //    await _friendRequestRepository.CreateAsync(friendRequest1);
-        //    await _friendRequestRepository.CreateAsync(friendRequest2);
+            await _friendRequestRepository.CreateAsync(friendRequest);
 
-        //    var all = await _friendRequestRepository.GetAllAsync();
+            // Act
+            var retrievedRequest = await _friendRequestRepository.GetByIdAsync(friendRequest.Id);
 
-        //    Assert.That(all.Count, Is.GreaterThanOrEqualTo(2));
-        //}
+            // Assert
+            Assert.That(retrievedRequest, Is.Not.Null);
+            Assert.That(retrievedRequest.Id, Is.EqualTo(friendRequest.Id));
+        }
 
-        //[Test]
-        //public async Task TC003_UpdateAsync_ShouldModifyDocument()
-        //{
-        //    var friendRequest = new FriendRequestEntity
-        //    {
-        //        Id = ObjectId.GenerateNewId().ToString(),
-        //        FromUserId = "user1",
-        //        ToUserId = "user2",
-        //        Status = "pending"
-        //    };
+        [Test]
+        public async Task TC003_UpdateAsync_ShouldModifyFriendRequest()
+        {
+            // Arrange
+            var fromUserId = ObjectId.GenerateNewId().ToString();
+            var toUserId = ObjectId.GenerateNewId().ToString();
 
-        //    await _friendRequestRepository.CreateAsync(friendRequest);
+            var friendRequest = new FriendRequestEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                FromUserId = fromUserId,
+                ToUserId = toUserId,
+                Status = "Pending"
+            };
 
-        //    friendRequest.Status = "accepted";
-        //    var updated = await _friendRequestRepository.UpdateAsync(friendRequest);
-        //    var result = await _friendRequestRepository.GetByIdAsync(friendRequest.Id);
+            await _friendRequestRepository.CreateAsync(friendRequest);
 
-        //    Assert.That(updated, Is.True);
-        //    Assert.That(result!.Status, Is.EqualTo("accepted"));
-        //}
+            // Modify the friend request
+            friendRequest.Status = "Accepted";
 
-        //[Test]
-        //public async Task TC004_DeleteAsync_ShouldRemoveDocument()
-        //{
-        //    var friendRequest = new FriendRequestEntity
-        //    {
-        //        Id = ObjectId.GenerateNewId().ToString(),
-        //        FromUserId = "userX",
-        //        ToUserId = "userY",
-        //        Status = "pending"
-        //    };
+            // Act
+            var updateResult = await _friendRequestRepository.UpdateAsync(friendRequest);
+            var updatedRequest = await _friendRequestRepository.GetByIdAsync(friendRequest.Id);
 
-        //    await _friendRequestRepository.CreateAsync(friendRequest);
+            // Assert
+            Assert.That(updateResult, Is.True);
+            Assert.That(updatedRequest.Status, Is.EqualTo("Accepted"));
+        }
 
-        //    var deleted = await _friendRequestRepository.DeleteAsync(friendRequest.Id);
-        //    var result = await _friendRequestRepository.GetByIdAsync(friendRequest.Id);
+        [Test]
+        public async Task TC004_DeleteAsync_ShouldRemoveFriendRequest()
+        {
+            // Arrange
+            var fromUserId = ObjectId.GenerateNewId().ToString();
+            var toUserId = ObjectId.GenerateNewId().ToString();
 
-        //    Assert.That(deleted, Is.True);
-        //    Assert.That(result, Is.Null);
-        //}
+            var friendRequest = new FriendRequestEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                FromUserId = fromUserId,
+                ToUserId = toUserId,
+                Status = "Pending"
+            };
 
-        //[Test]
-        //public async Task TC005_GetByReceiverIdAsync_ShouldReturnCorrectResults()
-        //{
-        //    var receiverId = "receiver123";
-        //    var request1 = new FriendRequestEntity
-        //    {
-        //        Id = Guid.NewGuid().ToString(),
-        //        FromUserId = "sender1",
-        //        ToUserId = receiverId,
-        //        Status = "pending"
-        //    };
+            await _friendRequestRepository.CreateAsync(friendRequest);
 
-        //    var request2 = new FriendRequestEntity
-        //    {
-        //        Id = ObjectId.GenerateNewId().ToString(),
-        //        FromUserId = "sender2",
-        //        ToUserId = receiverId,
-        //        Status = "pending"
-        //    };
+            // Act
+            var deleteResult = await _friendRequestRepository.DeleteAsync(friendRequest.Id);
+            var deletedRequest = await _friendRequestRepository.GetByIdAsync(friendRequest.Id);
 
-        //    await _friendRequestRepository.CreateAsync(request1);
-        //    await _friendRequestRepository.CreateAsync(request2);
+            // Assert
+            Assert.That(deleteResult, Is.True);
+            Assert.That(deletedRequest, Is.Null);
+        }
 
-        //    var results = await _friendRequestRepository.GetByReceiverIdAsync(receiverId);
+        [Test]
+        public async Task TC005_GetByReceiverIdAsync_ShouldReturnCorrectRequests()
+        {
+            // Arrange
+            var fromUserId1 = ObjectId.GenerateNewId().ToString();
+            var toUserId1 = ObjectId.GenerateNewId().ToString();
+            var fromUserId2 = ObjectId.GenerateNewId().ToString();
+            var toUserId2 = ObjectId.GenerateNewId().ToString();
 
-        //    Assert.That(results, Is.Not.Null);
-        //    Assert.That(results.Count(), Is.EqualTo(2));
-        //}
+            var friendRequest1 = new FriendRequestEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                FromUserId = fromUserId1,
+                ToUserId = toUserId1,
+                Status = "Pending"
+            };
+            var friendRequest2 = new FriendRequestEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                FromUserId = fromUserId2,
+                ToUserId = toUserId2,
+                Status = "Pending"
+            };
+
+            await _friendRequestRepository.CreateAsync(friendRequest1);
+            await _friendRequestRepository.CreateAsync(friendRequest2);
+
+            // Act
+            var requests = await _friendRequestRepository.GetByReceiverIdAsync(toUserId1);
+
+            // Assert
+            Assert.That(requests, Has.All.Matches<FriendRequestEntity>(r => r.ToUserId == toUserId1));
+        }
     }
 }

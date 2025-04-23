@@ -5,13 +5,13 @@ using NaviriaAPI.Repositories;
 using NUnit.Framework;
 using Microsoft.Extensions.Options;
 using Moq;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using NaviriaAPI.IRepositories;
 using MongoDB.Bson;
 using Microsoft.Extensions.Configuration;
+using NaviriaAPI.Options;
 
 namespace NaviriaAPITest.RepositoriesTests
 {
@@ -25,20 +25,26 @@ namespace NaviriaAPITest.RepositoriesTests
         [SetUp]
         public void SetUp()
         {
+            // Load configuration directly from MongoDbSettings.json file
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("MongoDbSettings.json")
                 .Build();
 
-            var mongoDbSettings = configuration.Get<MongoDbSettings>();
+            // Fetch MongoDB settings from configuration using MongoDbOptions
+            var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
 
-            var mockOptions = new Mock<IOptions<MongoDbSettings>>();
-            mockOptions.Setup(o => o.Value).Returns(mongoDbSettings);
+            // Mock the IOptions<MongoDbOptions> object
+            var mockOptions = new Mock<IOptions<MongoDbOptions>>();
+            mockOptions.Setup(o => o.Value).Returns(mongoDbOptions);
 
+            // Create MongoDbContext using the mock settings
             _dbContext = new MongoDbContext(mockOptions.Object);
             _achievementRepository = new AchievementRepository(_dbContext);
 
             _achievementCollection = _dbContext.Achievements;
+
+            // Ensure the collection is empty before each test to keep tests isolated
             _achievementCollection.DeleteMany(FilterDefinition<AchievementEntity>.Empty);
         }
 
@@ -56,8 +62,7 @@ namespace NaviriaAPITest.RepositoriesTests
                 Id = ObjectId.GenerateNewId().ToString(),
                 Name = "First Win",
                 Description = "Awarded for the first win",
-                Points = 100,
-                IsRecieved = true
+                Points = 100
             };
 
             await _achievementRepository.CreateAsync(achievement);
@@ -69,7 +74,7 @@ namespace NaviriaAPITest.RepositoriesTests
                 Assert.That(fetched.Name, Is.EqualTo(achievement.Name));
                 Assert.That(fetched.Description, Is.EqualTo(achievement.Description));
                 Assert.That(fetched.Points, Is.EqualTo(100));
-                Assert.That(fetched.IsRecieved, Is.True);
+                
             });
         }
 
@@ -81,8 +86,8 @@ namespace NaviriaAPITest.RepositoriesTests
                 Id = ObjectId.GenerateNewId().ToString(),
                 Name = "Test A",
                 Description = "A",
-                Points = 50,
-                IsRecieved = false
+                Points = 50
+                
             };
 
             var achievement2 = new AchievementEntity
@@ -90,8 +95,7 @@ namespace NaviriaAPITest.RepositoriesTests
                 Id = ObjectId.GenerateNewId().ToString(),
                 Name = "Test B",
                 Description = "B",
-                Points = 150,
-                IsRecieved = true
+                Points = 150
             };
 
             await _achievementRepository.CreateAsync(achievement1);
@@ -110,15 +114,14 @@ namespace NaviriaAPITest.RepositoriesTests
                 Id = ObjectId.GenerateNewId().ToString(),
                 Name = "Starter",
                 Description = "Beginner Level",
-                Points = 10,
-                IsRecieved = false
+                Points = 10
             };
 
             await _achievementRepository.CreateAsync(achievement);
 
             achievement.Description = "Updated Description";
             achievement.Points = 20;
-            achievement.IsRecieved = true;
+           
 
             var updated = await _achievementRepository.UpdateAsync(achievement);
             var fetched = await _achievementRepository.GetByIdAsync(achievement.Id);
@@ -128,7 +131,7 @@ namespace NaviriaAPITest.RepositoriesTests
             {
                 Assert.That(fetched.Description, Is.EqualTo("Updated Description"));
                 Assert.That(fetched.Points, Is.EqualTo(20));
-                Assert.That(fetched.IsRecieved, Is.True);
+        
             });
         }
 
@@ -140,8 +143,7 @@ namespace NaviriaAPITest.RepositoriesTests
                 Id = ObjectId.GenerateNewId().ToString(),
                 Name = "To Delete",
                 Description = "Delete Me",
-                Points = 0,
-                IsRecieved = false
+                Points = 0
             };
 
             await _achievementRepository.CreateAsync(achievement);

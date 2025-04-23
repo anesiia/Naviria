@@ -1,12 +1,12 @@
 ﻿using NUnit.Framework;
 using NaviriaAPI.Services.JwtTokenService;
 using NaviriaAPI.Entities;
-using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using System;
+using Microsoft.Extensions.Options;
+using NaviriaAPI.Options;
 
 namespace NaviriaAPITest.ServicesTests
 {
@@ -14,25 +14,20 @@ namespace NaviriaAPITest.ServicesTests
     public class JwtServiceTests
     {
         private JwtService _jwtService;
-        private string _secret;
+        private JwtOptions _jwtOptions;
 
         [SetUp]
         public void SetUp()
         {
-            _secret = "supersecretkey1234567890_SUPERSTRONGKEY";
-
-            var configValues = new Dictionary<string, string>
+            _jwtOptions = new JwtOptions
             {
-                {"Jwt:Secret", _secret},
-                {"Jwt:Issuer", "TestIssuer"},
-                {"Jwt:Audience", "TestAudience"}
+                Secret = "supersecretkey1234567890_SUPERSTRONGKEY",
+                Issuer = "TestIssuer",
+                Audience = "TestAudience"
             };
 
-            var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(configValues!)
-                .Build();
-
-            _jwtService = new JwtService(configuration);
+            var options = Options.Create(_jwtOptions);
+            _jwtService = new JwtService(options);
         }
 
         [Test]
@@ -48,10 +43,19 @@ namespace NaviriaAPITest.ServicesTests
             var token = _jwtService.GenerateUserToken(user);
             var principal = _jwtService.ValidateToken(token);
 
-            Assert.That(token, Is.Not.Empty);
-            Assert.That(principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value, Is.EqualTo("123"));
-            Assert.That(principal?.FindFirst(ClaimTypes.Email)?.Value, Is.EqualTo("pro@example.com"));
-            Assert.That(principal?.FindFirst(ClaimTypes.Role)?.Value, Is.EqualTo("ProUser"));
+            Assert.That(token, Is.Not.Empty, "Token should not be empty.");
+            Assert.That(principal, Is.Not.Null, "Token validation failed; ClaimsPrincipal is null.");
+
+            var claims = principal.Claims.ToList();
+            TestContext.WriteLine("Claims:");
+            foreach (var claim in claims)
+            {
+                TestContext.WriteLine($"{claim.Type} = {claim.Value}");
+            }
+
+            Assert.That(principal.FindFirst(ClaimTypes.NameIdentifier)?.Value, Is.EqualTo("123"));
+            Assert.That(principal.FindFirst(ClaimTypes.Email)?.Value, Is.EqualTo("pro@example.com"));
+            Assert.That(principal.FindFirst(ClaimTypes.Role)?.Value, Is.EqualTo("ProUser"));
         }
 
         [Test]
@@ -67,9 +71,19 @@ namespace NaviriaAPITest.ServicesTests
             var token = _jwtService.GenerateUserToken(user);
             var principal = _jwtService.ValidateToken(token);
 
-            Assert.That(token, Is.Not.Empty);
-            Assert.That(principal?.FindFirst(ClaimTypes.Role)?.Value, Is.EqualTo("FreeUser"));
+            Assert.That(token, Is.Not.Empty, "Token should not be empty.");
+            Assert.That(principal, Is.Not.Null, "Token validation failed; ClaimsPrincipal is null.");
+
+            var claims = principal.Claims.ToList();
+            TestContext.WriteLine("Claims:");
+            foreach (var claim in claims)
+            {
+                TestContext.WriteLine($"{claim.Type} = {claim.Value}");
+            }
+
+            Assert.That(principal.FindFirst(ClaimTypes.Role)?.Value, Is.EqualTo("FreeUser"));
         }
+
 
         [Test]
         public void TC03_ValidateToken_InvalidToken_ShouldReturnNull()
@@ -80,11 +94,10 @@ namespace NaviriaAPITest.ServicesTests
             var token = new JwtSecurityToken(
                 issuer: "TestIssuer",
                 audience: "TestAudience",
-                claims: new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, "1"),
-                    new Claim(ClaimTypes.Email, "wrong@example.com"),
-                    new Claim(ClaimTypes.Role, "FreeUser")
+                claims: new[] {
+                    new Claim("sub", "1"),
+                    new Claim("email", "wrong@example.com"),
+                    new Claim("role", "FreeUser")
                 },
                 expires: DateTime.UtcNow.AddMinutes(10),
                 signingCredentials: creds
@@ -99,17 +112,16 @@ namespace NaviriaAPITest.ServicesTests
         [Test]
         public void TC04_ValidateToken_ExpiredToken_ShouldReturnNull()
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var expiredToken = new JwtSecurityToken(
-                issuer: "TestIssuer",
-                audience: "TestAudience",
-                claims: new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, "999"),
-                    new Claim(ClaimTypes.Email, "expired@example.com"),
-                    new Claim(ClaimTypes.Role, "FreeUser")
+                issuer: _jwtOptions.Issuer,
+                audience: _jwtOptions.Audience,
+                claims: new[] {
+                    new Claim("sub", "999"),
+                    new Claim("email", "expired@example.com"),
+                    new Claim("role", "FreeUser")
                 },
                 expires: DateTime.UtcNow.AddMinutes(-10),
                 signingCredentials: creds
@@ -144,17 +156,16 @@ namespace NaviriaAPITest.ServicesTests
         [Test]
         public void TC06_ValidateToken_TokenWithWrongAudience_ShouldReturnNull()
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: "TestIssuer",
+                issuer: _jwtOptions.Issuer,
                 audience: "WrongAudience",
-                claims: new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, "101"),
-                    new Claim(ClaimTypes.Email, "wrongaud@example.com"),
-                    new Claim(ClaimTypes.Role, "FreeUser")
+                claims: new[] {
+                    new Claim("sub", "101"),
+                    new Claim("email", "wrongaud@example.com"),
+                    new Claim("role", "FreeUser")
                 },
                 expires: DateTime.UtcNow.AddMinutes(10),
                 signingCredentials: creds
@@ -169,17 +180,16 @@ namespace NaviriaAPITest.ServicesTests
         [Test]
         public void TC07_ValidateToken_TokenWithWrongIssuer_ShouldReturnNull()
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: "WrongIssuer",
-                audience: "TestAudience",
-                claims: new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, "202"),
-                    new Claim(ClaimTypes.Email, "wrongiss@example.com"),
-                    new Claim(ClaimTypes.Role, "ProUser")
+                audience: _jwtOptions.Audience,
+                claims: new[] {
+                    new Claim("sub", "202"),
+                    new Claim("email", "wrongiss@example.com"),
+                    new Claim("role", "ProUser")
                 },
                 expires: DateTime.UtcNow.AddMinutes(10),
                 signingCredentials: creds

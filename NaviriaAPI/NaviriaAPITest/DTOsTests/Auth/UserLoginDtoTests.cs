@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
-using NaviriaAPI.DTOs.FeaturesDTOs;
+using NaviriaAPI.DTOs.Auth;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace NaviriaAPITest.DTOsTests.FeaturesDTOs
+namespace NaviriaAPITest.DTOsTests.Auth
 {
     [TestFixture]
     public class UserLoginDtoTests

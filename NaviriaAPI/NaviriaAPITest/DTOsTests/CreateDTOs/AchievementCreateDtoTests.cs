@@ -17,8 +17,7 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
             {
                 Name = "Досягнення 1",
                 Description = "Опис досягнення",
-                Points = 100,
-                IsRecieved = true
+                Points = 100
             };
 
             var isValid = ValidationHelper.ValidateModel(dto);
@@ -33,8 +32,7 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
             {
                 Name = "",
                 Description = "Опис",
-                Points = 10,
-                IsRecieved = false
+                Points = 10
             };
 
             var isValid = ValidationHelper.ValidateModel(dto);
@@ -49,8 +47,7 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
             {
                 Name = "A",
                 Description = "Опис",
-                Points = 10,
-                IsRecieved = true
+                Points = 10
             };
 
             var isValid = ValidationHelper.ValidateModel(dto);
@@ -65,8 +62,7 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
             {
                 Name = new string('A', 51), // 51 characters
                 Description = "Опис",
-                Points = 10,
-                IsRecieved = false
+                Points = 10
             };
 
             var isValid = ValidationHelper.ValidateModel(dto);
@@ -81,8 +77,7 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
             {
                 Name = "Achiev@ment!", // contains invalid characters
                 Description = "Valid",
-                Points = 10,
-                IsRecieved = false
+                Points = 10
             };
 
             var isValid = ValidationHelper.ValidateModel(dto);
@@ -97,8 +92,7 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
             {
                 Name = "Valid Name",
                 Description = new string('D', 151), // 151 characters
-                Points = 10,
-                IsRecieved = false
+                Points = 10
             };
 
             var isValid = ValidationHelper.ValidateModel(dto);
@@ -113,8 +107,7 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
             {
                 Name = "Valid Name",
                 Description = "Invalid 💥 Description",
-                Points = 10,
-                IsRecieved = true
+                Points = 10
             };
 
             var isValid = ValidationHelper.ValidateModel(dto);
@@ -129,8 +122,7 @@ namespace NaviriaAPITest.DTOsTests.CreateDTOs
             {
                 Name = "Valid Name",
                 Description = "Valid",
-                Points = -5,
-                IsRecieved = false
+                Points = -5
             };
 
             var isValid = ValidationHelper.ValidateModel(dto);

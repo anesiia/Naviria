@@ -151,7 +151,7 @@ namespace NaviriaAPITest.ServicesTests
         }
 
         [Test]
-        public void TC006_AddToFriendsAsync_ShouldThrowAlreadyExistException_WhenUsersAreAlreadyFriends()
+        public async Task TC006_AddToFriendsAsync_ShouldThrowAlreadyExistException_WhenUsersAreAlreadyFriends()
         {
             // Arrange
             var fromUser = new UserEntity
@@ -159,9 +159,9 @@ namespace NaviriaAPITest.ServicesTests
                 Id = "1",
                 Nickname = "Alice",
                 Friends = new List<UserFriendInfo>
-            {
-                new UserFriendInfo { UserId = "2", Nickname = "Bob" }
-            }
+        {
+            new UserFriendInfo { UserId = "2", Nickname = "Bob" }
+        }
             };
 
             var toUser = new UserEntity
@@ -169,18 +169,22 @@ namespace NaviriaAPITest.ServicesTests
                 Id = "2",
                 Nickname = "Bob",
                 Friends = new List<UserFriendInfo>
-            {
-                new UserFriendInfo { UserId = "1", Nickname = "Alice" }
-            }
+        {
+            new UserFriendInfo { UserId = "1", Nickname = "Alice" }
+        }
             };
 
             _userService.Setup(x => x.GetUserOrThrowAsync("1")).ReturnsAsync(fromUser);
             _userService.Setup(x => x.GetUserOrThrowAsync("2")).ReturnsAsync(toUser);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<AlreadyExistExeption>(() => _service.AddToFriendsAsync("1", "2"));
+            var ex = Assert.ThrowsAsync<AlreadyExistException>(async () =>
+                await _service.AddToFriendsAsync("1", "2"));
+
             Assert.That(ex.Message, Is.EqualTo("Failed to add friends. These users are already friends"));
         }
+
+
 
         [Test]
         public async Task TC007_AddToFriendsAsync_ShouldReturnFalse_WhenRepositoryFailsToUpdate()

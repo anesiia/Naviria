@@ -41,8 +41,7 @@ namespace NaviriaAPITest.DTOsTests.UpdateDTOs
                  {
                         new UserAchievementInfo
                         {
-                            AchievementId = "660fd0eccc57685bc1ef08b",
-                            IsReceived = true,
+                            AchievementId = "660fd0eccc57685bc1ef08b",                       
                             ReceivedAt = DateTime.UtcNow
                         }
                  },
