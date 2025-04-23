@@ -10,7 +10,7 @@ using NaviriaAPI.Services.User;
 using NUnit.Framework;
 using NaviriaAPI.Entities.EmbeddedEntities;
 
-namespace NaviriaAPITest.ServicesTests.User
+namespace NaviriaAPI.Tests.Services.User
 {
     [TestFixture]
     public class FriendServiceTests

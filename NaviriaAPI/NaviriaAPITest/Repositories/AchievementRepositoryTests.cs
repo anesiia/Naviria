@@ -13,7 +13,7 @@ using MongoDB.Bson;
 using Microsoft.Extensions.Configuration;
 using NaviriaAPI.Options;
 
-namespace NaviriaAPITest.RepositoriesTests
+namespace NaviriaAPI.Tests.Repositories
 {
     [TestFixture]
     public class AchievementRepositoryTests

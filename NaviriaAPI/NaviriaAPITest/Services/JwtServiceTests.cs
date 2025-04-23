@@ -8,7 +8,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using NaviriaAPI.Options;
 
-namespace NaviriaAPITest.ServicesTests
+namespace NaviriaAPI.Tests.Services
 {
     [TestFixture]
     public class JwtServiceTests
@@ -26,7 +26,7 @@ namespace NaviriaAPITest.ServicesTests
                 Audience = "TestAudience"
             };
 
-            var options = Options.Create(_jwtOptions);
+            var options = Microsoft.Extensions.Options.Options.Create(_jwtOptions);
             _jwtService = new JwtService(options);
         }
 

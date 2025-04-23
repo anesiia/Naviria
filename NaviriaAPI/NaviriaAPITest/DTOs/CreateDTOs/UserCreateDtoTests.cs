@@ -3,7 +3,7 @@ using NaviriaAPI.DTOs.CreateDTOs;
 using System.ComponentModel.DataAnnotations;
 using NaviriaAPI.Entities.EmbeddedEntities;
 
-namespace NaviriaAPITest.DTOsTests.CreateDTOs
+namespace NaviriaAPI.Tests.DTOs.CreateDTOs
 {
     [TestFixture]
     public class UserCreateDtoTests

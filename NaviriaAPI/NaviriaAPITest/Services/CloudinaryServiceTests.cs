@@ -12,7 +12,7 @@ using System;
 using System.Threading.Tasks;
 using NaviriaAPI.Tests;
 
-namespace NaviriaAPITest.ServicesTests
+namespace NaviriaAPI.Tests.Services
 {
     public class CloudinaryServiceTests
     {

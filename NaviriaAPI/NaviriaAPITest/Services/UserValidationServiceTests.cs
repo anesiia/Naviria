@@ -7,7 +7,7 @@ using System;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace NaviriaAPITest.ServicesTests
+namespace NaviriaAPI.Tests.Services
 {
     [TestFixture]
     public class UserValidationServiceTests

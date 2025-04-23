@@ -5,7 +5,7 @@ using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities;
 
-namespace NaviriaAPITest.Mappings
+namespace NaviriaAPI.Tests.Mappings
 {
     //public class CategoryMapperTests
     //{

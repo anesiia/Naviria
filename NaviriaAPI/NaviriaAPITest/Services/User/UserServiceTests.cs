@@ -20,7 +20,7 @@ using NaviriaAPI.IRepositories;
 using OpenAI.Chat;
 using NaviriaAPI.Services.User;
 
-namespace NaviriaAPITest.ServicesTests.User
+namespace NaviriaAPI.Tests.Services.User
 {
     [TestFixture]
     public class UserServiceTests

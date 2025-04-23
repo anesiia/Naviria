@@ -9,7 +9,7 @@ using NaviriaAPI.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace NaviriaAPITest.ServicesTests
+namespace NaviriaAPI.Tests.Services
 {
     [TestFixture]
     public class QuoteServiceTest

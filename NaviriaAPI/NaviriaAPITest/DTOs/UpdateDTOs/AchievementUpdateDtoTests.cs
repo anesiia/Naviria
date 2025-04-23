@@ -2,13 +2,13 @@
 using NUnit.Framework;
 using System.ComponentModel.DataAnnotations;
 
-namespace NaviriaAPITest.DTOsTests.UpdateDTOs
+namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
 {
     [TestFixture]
     public class AchievementUpdateDtoTests
     {
         [Test]
-        public void Name_ShouldBeValid_WhenValidInput()
+        public void TC001_Name_ShouldBeValid_WhenValidInput()
         {
             // Arrange
             var dto = new AchievementUpdateDto
@@ -26,7 +26,7 @@ namespace NaviriaAPITest.DTOsTests.UpdateDTOs
         }
 
         [Test]
-        public void Name_ShouldFailValidation_WhenTooShort()
+        public void TC002_Name_ShouldFailValidation_WhenTooShort()
         {
             // Arrange
             var dto = new AchievementUpdateDto
@@ -45,7 +45,7 @@ namespace NaviriaAPITest.DTOsTests.UpdateDTOs
         }
 
         [Test]
-        public void Name_ShouldFailValidation_WhenInvalidCharacters()
+        public void TC003_Name_ShouldFailValidation_WhenInvalidCharacters()
         {
             // Arrange
             var dto = new AchievementUpdateDto
@@ -64,7 +64,7 @@ namespace NaviriaAPITest.DTOsTests.UpdateDTOs
         }
 
         [Test]
-        public void Description_ShouldBeValid_WhenValidInput()
+        public void TC004_Description_ShouldBeValid_WhenValidInput()
         {
             // Arrange
             var dto = new AchievementUpdateDto
@@ -82,7 +82,7 @@ namespace NaviriaAPITest.DTOsTests.UpdateDTOs
         }
 
         [Test]
-        public void Description_ShouldFailValidation_WhenInvalidCharacters()
+        public void TC005_Description_ShouldFailValidation_WhenInvalidCharacters()
         {
             // Arrange
             var dto = new AchievementUpdateDto
@@ -101,7 +101,7 @@ namespace NaviriaAPITest.DTOsTests.UpdateDTOs
         }
 
         [Test]
-        public void Points_ShouldBeValid_WhenInRange()
+        public void TC006_Points_ShouldBeValid_WhenInRange()
         {
             // Arrange
             var dto = new AchievementUpdateDto
@@ -119,7 +119,7 @@ namespace NaviriaAPITest.DTOsTests.UpdateDTOs
         }
 
         [Test]
-        public void Points_ShouldFailValidation_WhenOutOfRange()
+        public void TC007_Points_ShouldFailValidation_WhenOutOfRange()
         {
             // Arrange
             var dto = new AchievementUpdateDto

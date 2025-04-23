@@ -5,7 +5,7 @@ using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities;
 using NaviriaAPI.Mappings;
 
-namespace NaviriaAPITest.Mappings
+namespace NaviriaAPI.Tests.Mappings
 {
     //[TestFixture]
     //public class FriendRequestMapperTests

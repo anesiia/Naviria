@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using NaviriaAPI.Entities;
 
-namespace NaviriaAPITest.ServicesTests
+namespace NaviriaAPI.Tests.Services
 {
     //internal class FriendRequestServiceTest
     //{

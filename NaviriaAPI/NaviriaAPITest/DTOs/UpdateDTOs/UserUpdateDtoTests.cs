@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NaviriaAPITest.DTOsTests.UpdateDTOs
+namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
 {
     public class UserUpdateDtoTests
     {

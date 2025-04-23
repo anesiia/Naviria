@@ -9,7 +9,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 
-namespace NaviriaAPITest.ServicesTests
+namespace NaviriaAPI.Tests.Services
 {
     //[TestFixture]
     //public class GoogleAuthServiceTests

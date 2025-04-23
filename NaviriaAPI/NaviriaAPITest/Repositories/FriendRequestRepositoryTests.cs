@@ -11,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using NaviriaAPI.Options;
 using System.IO;
 
-namespace NaviriaAPITest.RepositoriesTests
+namespace NaviriaAPI.Tests.Repositories
 {
     [TestFixture]
     public class FriendRequestRepositoryTests

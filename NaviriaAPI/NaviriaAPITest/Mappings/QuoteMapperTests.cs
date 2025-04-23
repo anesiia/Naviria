@@ -6,7 +6,7 @@ using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using System;
 
-namespace NaviriaAPITest.Mappings
+namespace NaviriaAPI.Tests.Mappings
 {
     //public class QuoteMapperTests
     //{

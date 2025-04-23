@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NaviriaAPITest.ServicesTests.GamificationLogic
+namespace NaviriaAPI.Tests.Services.GamificationLogic
 {
     [TestFixture]
     public class LevelServiceTests

@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using CloudinaryDotNet.Actions;
 
-namespace NaviriaAPITest.ServicesTests
+namespace NaviriaAPI.Tests.Services
 {
     [TestFixture]
     public class FriendRequestServiceTests
