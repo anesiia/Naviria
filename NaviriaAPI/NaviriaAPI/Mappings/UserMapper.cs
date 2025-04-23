@@ -25,7 +25,8 @@ namespace NaviriaAPI.Mappings
                 FutureMessage = entity.FutureMessage,
                 Photo = entity.Photo,
                 Points = entity.Points,
-                LevelInfo = entity.LevelInfo ,
+                LevelInfo = entity.LevelInfo,
+                RegitseredAt = entity.RegitseredAt,
                 LastSeen = entity.LastSeen,
                 IsOnline = entity.IsOnline,
                 IsProUser = entity.IsProUser
@@ -48,6 +49,7 @@ namespace NaviriaAPI.Mappings
             Photo = dto.Photo,
             Points = dto.Points,
             LevelInfo = dto.LevelInfo,
+            RegitseredAt = dto.RegitseredAt,
             LastSeen = dto.LastSeen,
             IsOnline = dto.IsOnline,
             IsProUser = dto.IsProUser
@@ -70,6 +72,7 @@ namespace NaviriaAPI.Mappings
                 FutureMessage = dto.FutureMessage ?? string.Empty,
                 Points = 0,
                 LevelInfo = new LevelProgressInfo(),
+                RegitseredAt = DateTime.UtcNow,
                 LastSeen = DateTime.UtcNow,
                 IsOnline = true,
                 IsProUser = false

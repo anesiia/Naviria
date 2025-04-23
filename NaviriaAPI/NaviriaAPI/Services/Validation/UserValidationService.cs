@@ -30,9 +30,6 @@ namespace NaviriaAPI.Services.Validation
                 throw new ValidationException("User must be at least 18 years old");
             if (age > 120)
                 throw new ValidationException("User cannot be older than 120 years");
-
-            if (dto.LastSeen > now)
-                throw new ValidationException("LastSeen cannot be in the future");
         }
 
         public static void ValidateAsync(UserUpdateDto dto)

@@ -22,7 +22,6 @@ namespace NaviriaAPI.Services.User
         private readonly IPasswordHasher<UserEntity> _passwordHasher;
         private readonly UserValidationService _validation;
         private readonly string _openAIKey;
-        private readonly ICloudinaryService _cloudinaryService;
         private readonly IAchievementRepository _achievementRepository;
         private readonly ILevelService _levelService;
         private readonly IJwtService _jwtService;
@@ -32,7 +31,6 @@ namespace NaviriaAPI.Services.User
             IPasswordHasher<UserEntity> passwordHasher,
             IConfiguration config,
             UserValidationService validation,
-            ICloudinaryService cloudinaryService,
             IAchievementRepository achievementRepository,
             ILevelService levelService,
             IJwtService jwtService)
@@ -42,7 +40,6 @@ namespace NaviriaAPI.Services.User
             _validation = validation;
             _openAIKey = config["OpenAIKey"]
                 ?? throw new InvalidOperationException("OpenAIKey is missing in configuration.");
-            _cloudinaryService = cloudinaryService;
             _achievementRepository = achievementRepository;
             _levelService = levelService;
             _jwtService = jwtService;
@@ -51,15 +48,11 @@ namespace NaviriaAPI.Services.User
         public async Task<string> CreateAsync(UserCreateDto userDto)
         {
             await _validation.ValidateAsync(userDto);
-            userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
 
             var entity = UserMapper.ToEntity(userDto);
             entity.Password = _passwordHasher.HashPassword(entity, userDto.Password);
 
             await _userRepository.CreateAsync(entity);
-
-            if (userDto.Photo != null)
-                await _cloudinaryService.UploadImageAsync(entity.Id, userDto.Photo);
 
             return _jwtService.GenerateUserToken(entity);
         }
