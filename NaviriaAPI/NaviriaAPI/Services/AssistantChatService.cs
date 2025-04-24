@@ -3,7 +3,7 @@ using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
-using NaviriaAPI.Repositories;
+using NaviriaAPI.Exceptions;
 using OpenAI.Chat;
 
 namespace NaviriaAPI.Services
@@ -13,17 +13,20 @@ namespace NaviriaAPI.Services
         private const int MaxMessagesPerUser = 20; // 10 пар
 
         private readonly IAssistantChatRepository _chatRepository;
+        private readonly IUserService _userService;
         private readonly ILogger<AssistantChatService> _logger;
         private readonly string _openAiKey;
 
         public AssistantChatService(
             IAssistantChatRepository chatRepository,
             IConfiguration config,
-            ILogger<AssistantChatService> logger)
+            ILogger<AssistantChatService> logger,
+            IUserService userService)
         {
             _chatRepository = chatRepository;
             _openAiKey = config["OpenAIKey"];
             _logger = logger;
+            _userService = userService;
         }
         public async Task<IEnumerable<AssistantChatMessageDto>> GetUserChatAsync(string userId)
         {
@@ -31,6 +34,12 @@ namespace NaviriaAPI.Services
             {
                 _logger.LogWarning("GetUserchatAsync was called with an empty or null userId.");
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+            }
+
+            if (!await _userService.UserExistsAsync(userId))
+            {
+                _logger.LogWarning("User with ID {UserId} not found.", userId);
+                throw new NotFoundException($"User with ID {userId} does not exist.");
             }
 
             _logger.LogInformation("Retrieving assistant chat messages for user: {UserId}", userId);

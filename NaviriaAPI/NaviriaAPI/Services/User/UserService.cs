@@ -80,6 +80,15 @@ namespace NaviriaAPI.Services.User
             return UserMapper.ToDto(entity);
         }
 
+        public async Task<bool> UserExistsAsync(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return false;
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            return user != null;
+        }
+
         public async Task<IEnumerable<UserDto>> GetAllAsync()
         {
             var users = await _userRepository.GetAllAsync();
