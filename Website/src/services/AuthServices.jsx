@@ -36,7 +36,7 @@ export async function registration(
   email,
   password
 ) {
-  const res = await fetch(`${API_URL}/api/User/add`, {
+  const res = await fetch(`${API_URL}/api/User`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
