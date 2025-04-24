@@ -8,7 +8,7 @@
             {
                 options.AddPolicy("AllowSpecificOrigin", policy =>
                 {
-                    policy.WithOrigins("https://localhost:7172")
+                    policy.WithOrigins("https://localhost:5173")
                           .AllowAnyMethod()
                           .AllowAnyHeader()
                           .SetIsOriginAllowed(_ => true)
