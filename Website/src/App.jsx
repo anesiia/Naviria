@@ -5,6 +5,7 @@ import { HideHeader } from "./hooks/HideHeader";
 import { Login } from "./views/Login";
 import { Profile } from "./views/Profile";
 import { Registration } from "./views/Registration";
+import { Friends } from "./views/Friends";
 
 function App() {
   const hideHeader = HideHeader();
@@ -14,6 +15,7 @@ function App() {
       <div className="page-content">
         <Routes>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/friends" element={<Friends />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registration" element={<Registration />} />
         </Routes>

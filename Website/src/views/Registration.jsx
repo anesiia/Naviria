@@ -13,10 +13,45 @@ export function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
+  const [errors, setErrors] = useState({});
   const registration = useRegistration();
+
+  const isAtLeast18 = (dateString) => {
+    const birth = new Date(dateString);
+    const today = new Date();
+    const age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    return age > 18 || (age === 18 && m >= 0);
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!name.match(/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s'-]{1,50}$/))
+      newErrors.name = "Ім'я введено некоректно*";
+    if (!surname.match(/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s'-]{1,50}$/))
+      newErrors.surname = "Прізвище введено некоректно*";
+    if (!email.match(/^\S+@\S+\.\S+$/))
+      newErrors.email = "Невірний формат пошти*";
+    if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/))
+      newErrors.password = "Пароль має містити великі та малі літери та цифру*";
+    if (password !== passwordCheck)
+      newErrors.passwordCheck = "Паролі не збігаються*";
+    if (!nickname.match(/^[a-zA-Z0-9]{3,50}$/))
+      newErrors.nickname =
+        "Нікнейм має містити лише латинські літери та цифри (3-50 символів)*";
+    if (!gender) newErrors.gender = "Оберіть стать*";
+    if (!birthDate) {
+      newErrors.birthDate = "Вкажіть дату народження*";
+    } else if (!isAtLeast18(birthDate)) {
+      newErrors.birthDate = "Потрібно бути старше 18 років*";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
     try {
       await registration(
         name + " " + surname,
@@ -47,6 +82,7 @@ export function Registration() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
+              {errors.name && <span className="error-text">{errors.name}</span>}
             </label>
             <label>
               Прізвище
@@ -58,6 +94,9 @@ export function Registration() {
                 value={surname}
                 onChange={(e) => setSurname(e.target.value)}
               />
+              {errors.surname && (
+                <span className="error-text">{errors.surname}</span>
+              )}
             </label>
             <label>
               Пошта
@@ -68,6 +107,9 @@ export function Registration() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+              {errors.email && (
+                <span className="error-text">{errors.email}</span>
+              )}
             </label>
             <div className="password">
               <label>
@@ -85,6 +127,9 @@ export function Registration() {
                 <img src="fi-rr-eye-crossed.svg" />
               </button>
             </div>
+            {errors.password && (
+              <span className="error-text">{errors.password}</span>
+            )}
             <div className="password">
               <label>
                 Підтвердіть пароль
@@ -100,10 +145,14 @@ export function Registration() {
                 <img src="fi-rr-eye-crossed.svg" />
               </button>
             </div>
+            {errors.passwordCheck && (
+              <span className="error-text">{errors.passwordCheck}</span>
+            )}
           </div>
           <div className="column2">
             <div className="gender-select">
               <p>Стать</p>
+
               <div className="selection">
                 <label className="radiobutton">
                   <input
@@ -126,6 +175,9 @@ export function Registration() {
                   Чоловік
                 </label>
               </div>
+              {errors.gender && (
+                <span className="error-text">{errors.gender}</span>
+              )}
             </div>
 
             <label>
@@ -136,6 +188,9 @@ export function Registration() {
                 onChange={(e) => setBirthDate(e.target.value)}
                 value={birthDate}
               />
+              {errors.birthDate && (
+                <span className="error-text">{errors.birthDate}</span>
+              )}
             </label>
 
             <label>
@@ -151,6 +206,9 @@ export function Registration() {
                 onChange={(e) => setNickname(e.target.value)}
                 value={nickname}
               />
+              {errors.nickname && (
+                <span className="error-text">{errors.nickname}</span>
+              )}
             </label>
             <div className="registration-submit">
               <input

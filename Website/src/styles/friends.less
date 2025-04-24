@@ -1,0 +1,228 @@
+@import "const.less";
+
+.friends-page {
+  display: flex;
+  justify-content: flex-start;
+  height: 100vh;
+
+  .side-bar {
+    display: flex;
+    flex-direction: column;
+    width: 30vw;
+    background: rgba(5, 117, 173, 0.05);
+    padding-top: 2rem;
+    .title {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      margin-left: 2rem;
+      margin-bottom: 2rem;
+      img {
+        width: 1.5rem;
+      }
+    }
+    .search-box {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      background-color: #fff;
+      border-radius: 10px;
+      margin: 0 1rem 2.5rem;
+      box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+      input {
+        width: 20vw;
+
+        border: none;
+        &:focus {
+          outline: none;
+        }
+      }
+      button {
+        border: none;
+        background-color: transparent;
+      }
+    }
+    .friend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      .friend {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #fff;
+        box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+        border-radius: 10px;
+        padding: 0.5rem 1rem;
+        margin-right: 1rem;
+        .info {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .actions {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 0.5rem;
+          .remove {
+            border-radius: 5px;
+            background: rgba(2, 48, 71, 0.1);
+            padding: 0.5rem;
+            color: @dark-blue;
+            border: none;
+          }
+          .support {
+            border: none;
+            border-radius: 5px;
+            background: @orange;
+            padding: 0.5rem;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    width: 55vw;
+    padding-top: 2rem;
+    padding-left: 5rem;
+    .tabs {
+      display: flex;
+      flex-direction: row;
+      gap: 1.2rem;
+      margin-bottom: 3rem;
+      button {
+        padding: 1rem 1.5rem;
+        border: none;
+        border-radius: 7px;
+        background: rgba(32, 153, 183, 0.08);
+        box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+      }
+    }
+    .search {
+      display: flex;
+      flex-direction: row;
+      justify-content: start;
+      align-items: center;
+      margin-bottom: 3rem;
+      .search-box {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+        input {
+          width: 28vw;
+          border: none;
+          &:focus {
+            outline: none;
+          }
+        }
+        button {
+          border: none;
+          background-color: transparent;
+        }
+      }
+      select {
+        margin-left: 2rem;
+        text-decoration: underline;
+        color: @orange;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+    .discover-list {
+      display: flex;
+      flex-direction: column;
+      .item {
+        display: flex;
+        flex-direction: row;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        gap: 1.5rem;
+        border: none;
+        border-bottom: 1px solid rgba(2, 48, 71, 0.5);
+        .info {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          .name-lvl {
+            display: flex;
+            flex-direction: row;
+            align-items: end;
+            gap: 1rem;
+            .name {
+              font-size: @big_text;
+              font-weight: 600;
+            }
+            .level {
+              font-size: @big_text;
+              color: @orange;
+              font-weight: 600;
+            }
+          }
+          .desc {
+            font-weight: 400;
+            color: #757575;
+            line-height: 140%;
+          }
+          .actions {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+            .add-friend {
+              border-radius: 5px;
+              background: @orange;
+              padding: 0.6rem;
+              color: #fff;
+              border: none;
+              width: 8rem;
+            }
+            .reject {
+              border-radius: 5px;
+              background: red;
+              padding: 0.6rem;
+              color: #fff;
+              border: none;
+              width: 8rem;
+            }
+            .accept {
+              border-radius: 5px;
+              background: @dark-blue;
+              padding: 0.6rem;
+              color: #fff;
+              border: none;
+              width: 8rem;
+            }
+            .remove {
+              border-radius: 5px;
+              background: red;
+              padding: 0.6rem;
+              color: #fff;
+              border: none;
+              width: 8rem;
+            }
+            .support {
+              border-radius: 5px;
+              background: @orange;
+              padding: 0.6rem;
+              color: #fff;
+              border: none;
+              width: 8rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}

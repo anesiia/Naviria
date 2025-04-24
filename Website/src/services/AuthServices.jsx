@@ -56,6 +56,11 @@ export async function registration(
     throw new Error(data.message || "Сталася помилка при спробі реєстрації");
   }
   localStorage.setItem("token", data.token);
+  const payload = parseJwt(data.token);
+  if (payload?.sub) {
+    localStorage.setItem("id", payload.sub); // сохраняем id из токена
+  }
+
   return data;
 }
 /**
