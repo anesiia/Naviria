@@ -7,6 +7,7 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.Entities;
 using Microsoft.Extensions.Logging;
+using NaviriaAPI.Services.User;
 
 namespace NaviriaAPI.Services
 {
@@ -14,13 +15,16 @@ namespace NaviriaAPI.Services
     {
         private readonly ILogger<NotificationService> _logger;
         private readonly INotificationRepository _notificationRepository;
+        private readonly IUserService _userService;
 
         public NotificationService(
             ILogger<NotificationService> logger,
-            INotificationRepository notificationRepository)
+            INotificationRepository notificationRepository,
+            IUserService userService)
         {
             _logger = logger;
             _notificationRepository = notificationRepository;
+            _userService = userService;
         }
 
         public async Task<NotificationDto> CreateAsync(NotificationCreateDto notificationDto)
@@ -99,6 +103,12 @@ namespace NaviriaAPI.Services
             {
                 _logger.LogWarning("GetAllUserNotificationsAsync was called with an empty or null userId.");
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+            }
+
+            if (!await _userService.UserExistsAsync(userId))
+            {
+                _logger.LogWarning("User with ID {UserId} not found.", userId);
+                throw new NotFoundException($"User with ID {userId} does not exist.");
             }
 
             _logger.LogInformation("Retrieving notifications for user: {UserId}", userId);
