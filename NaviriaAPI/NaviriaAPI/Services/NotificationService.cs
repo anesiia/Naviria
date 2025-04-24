@@ -35,19 +35,14 @@ namespace NaviriaAPI.Services
                 throw new ArgumentNullException(nameof(notificationDto), "Notification DTO cannot be null.");
             }
 
-            _logger.LogInformation("Creating a new notification for user: {UserId}", notificationDto.UserId);
-
             var entity = NotificationMapper.ToEntity(notificationDto);
             await _notificationRepository.CreateAsync(entity);
-
-            _logger.LogInformation("Notification created successfully with ID: {NotificationId}", entity.Id);
 
             return NotificationMapper.ToDto(entity);
         }
 
         public async Task<IEnumerable<NotificationDto>> GetAllAsync()
         {
-            _logger.LogInformation("Retrieving all notifications...");
 
             var notifications = await _notificationRepository.GetAllAsync();
             if (!notifications.Any())
@@ -66,8 +61,6 @@ namespace NaviriaAPI.Services
                 throw new ArgumentException("Notification ID cannot be null or empty.", nameof(id));
             }
 
-            _logger.LogInformation("Retrieving notification by ID: {NotificationId}", id);
-
             var entity = await _notificationRepository.GetByIdAsync(id);
             if (entity == null)
             {
@@ -85,8 +78,6 @@ namespace NaviriaAPI.Services
                 _logger.LogWarning("DeleteAsync was called with an empty or null ID.");
                 throw new ArgumentException("Notification ID cannot be null or empty.", nameof(id));
             }
-
-            _logger.LogInformation("Attempting to delete notification with ID: {NotificationId}", id);
 
             var result = await _notificationRepository.DeleteAsync(id);
             if (result)
@@ -111,15 +102,12 @@ namespace NaviriaAPI.Services
                 throw new NotFoundException($"User with ID {userId} does not exist.");
             }
 
-            _logger.LogInformation("Retrieving notifications for user: {UserId}", userId);
 
             var entities = await _notificationRepository.GetAllByUserAsync(userId);
             if (!entities.Any())
             {
                 _logger.LogInformation("No notifications found for user: {UserId}", userId);
             }
-
-            _logger.LogInformation("Marked all notifications as read (IsNew = false) for user: {UserId}", userId);
 
             return entities.Select(NotificationMapper.ToDto);
         }
@@ -132,11 +120,7 @@ namespace NaviriaAPI.Services
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
             }
 
-            _logger.LogInformation("Marking all notifications as read for user: {UserId}", userId);
-
             await _notificationRepository.MarkAllAsReadByUserAsync(userId);
-
-            _logger.LogInformation("All notifications marked as read for user: {UserId}", userId);
         }
 
 
@@ -154,8 +138,6 @@ namespace NaviriaAPI.Services
                 throw new ArgumentNullException(nameof(updateNotificationDto), "Update DTO cannot be null.");
             }
 
-            _logger.LogInformation("Updating status for notification with ID: {NotificationId}", id);
-
             var entity = await _notificationRepository.GetByIdAsync(id);
             if (entity == null)
             {
@@ -172,7 +154,6 @@ namespace NaviriaAPI.Services
                 throw new FailedToUpdateException("Failed to update notification status.");
             }
 
-            _logger.LogInformation("Notification status updated successfully for ID: {NotificationId}", id);
             return true;
         }
     }
