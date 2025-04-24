@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NaviriaAPI.DTOs.FeaturesDTOs
+namespace NaviriaAPI.DTOs.Auth
 {
     public class UserLoginDto
     {
@@ -14,6 +14,6 @@ namespace NaviriaAPI.DTOs.FeaturesDTOs
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$",
         ErrorMessage = "Password must contain upper, lower letters and digits")]
-        public string? Password { get; set; }
+        public required string Password { get; set; }
     }
 }

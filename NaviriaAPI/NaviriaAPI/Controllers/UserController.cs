@@ -6,7 +6,6 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ICloudStorage;
 using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.FeaturesDTOs;
 using Microsoft.AspNetCore.Authorization;
 using NaviriaAPI.Services.CloudStorage;
 using Newtonsoft.Json.Linq;
@@ -19,17 +18,20 @@ namespace NaviriaAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IFriendService _friendService;
         private readonly ILogger<UserController> _logger;
         public readonly ICloudinaryService _cloudinaryService;
 
         public UserController(
             IUserService userService,
             ILogger<UserController> logger,
-            ICloudinaryService cloudinaryService)
+            ICloudinaryService cloudinaryService,
+            IFriendService friendService)
         {
             _userService = userService;
             _logger = logger;
             _cloudinaryService = cloudinaryService;
+            _friendService = friendService;
         }
 
         [AllowAnonymous]
@@ -70,7 +72,7 @@ namespace NaviriaAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] UserCreateDto UserDto)
         {
             if (!ModelState.IsValid)
@@ -78,8 +80,6 @@ namespace NaviriaAPI.Controllers
 
             try
             {
-                //var createdUser = await _userService.CreateAsync(UserDto);
-                //    return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
                 var token = await _userService.CreateAsync(UserDto);
                 return Ok(new { token });
             }
@@ -91,7 +91,7 @@ namespace NaviriaAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] UserUpdateDto UserDto)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -112,7 +112,7 @@ namespace NaviriaAPI.Controllers
             }
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -126,44 +126,7 @@ namespace NaviriaAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to delete user with ID {0}", id);
-                return StatusCode(500, $"Failed to delete create user with ID {id}");
-            }
-        }
-
-        [HttpGet("ask-chat-gpt")]
-        public async Task<IActionResult> AskChatGPT(string question)
-        {
-            if (string.IsNullOrWhiteSpace(question))
-                return BadRequest("Question is required.");
-
-            try
-            {
-                var answer = await _userService.GetAiAnswerAsync(question);
-                return Ok(answer);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to ask chat gpt question: {0}", question);
-                return StatusCode(500, $"Failed to ask chat gpt question: {question}");
-            }
-        }
-
-        [AllowAnonymous]
-        [HttpPost("upload-profile-photo")]
-        public async Task<IActionResult> UploadProfilePhoto([FromForm] string userId, [FromForm] IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded");
-
-            try
-            {
-                var answer = await _cloudinaryService.UploadImageAsync(userId, file);
-                return Ok(answer);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to upload user photo");
-                return StatusCode(500, $"Failed to upload user photo");
+                return StatusCode(500, $"Failed to delete user with ID {id}");
             }
         }
 
@@ -175,13 +138,33 @@ namespace NaviriaAPI.Controllers
 
             try
             {
-                var friends = await _userService.GetFriendsAsync(id);
+                var friends = await _friendService.GetUserFriendsAsync(id);
                 return Ok(friends);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to get friends for user {id}", id);
+                _logger.LogError(ex, "Failed to get friends for user {Id}", id);
                 return StatusCode(500, $"Failed to get friends for user {id}");
+            }
+        }
+
+        [HttpDelete("{fromUserId}/friends/{friendId}")]
+        public async Task<IActionResult> DeleteFriend(string fromUserId, string friendId)
+        {
+            if (string.IsNullOrWhiteSpace(fromUserId))
+                return BadRequest("User ID is required.");
+            if (string.IsNullOrWhiteSpace(friendId))
+                return BadRequest("Friend ID is required.");
+
+            try
+            {
+                var deleted = await _friendService.DeleteFriendAsync(fromUserId, friendId);
+                return deleted ? NoContent() : NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to delete friend of user with ID {0}", fromUserId);
+                return StatusCode(500, $"Failed to delete friend of user with ID {fromUserId}");
             }
         }
     }

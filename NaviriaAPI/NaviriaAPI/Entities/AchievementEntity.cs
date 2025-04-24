@@ -18,7 +18,7 @@ namespace NaviriaAPI.Entities
         [BsonElement("points")]
         public int Points { get; set; } = 0;
 
-        [BsonElement("is_recieved")]
-        public bool IsRecieved { get; set; } = false;
+        [BsonElement("is_rare")]
+        public bool IsRare {  get; set; }
     }
 }

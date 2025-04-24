@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Configuration;
-using NaviriaAPI.Data;
 using System.Diagnostics;
 
 namespace NaviriaAPI.Controllers
@@ -43,21 +38,6 @@ namespace NaviriaAPI.Controllers
             process.Start();
             await process.WaitForExitAsync();
         }
-
-        /*
-        [HttpGet("collections")]
-        public IActionResult GetCollections()
-        {
-            try
-            {
-                var collectionNames = _database.ListCollectionNames().ToList();
-                return Ok(collectionNames);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Failed to get collections: {ex.Message}");
-            }
-        }*/
 
         private string GetBackupFileName()
         {
@@ -151,103 +131,6 @@ namespace NaviriaAPI.Controllers
                 return StatusCode(500, $"Failed to restore database: {ex.Message}");
             }
         }
-
-        /*
-        [HttpGet("collections")]
-        public IActionResult GetCollections()
-        {
-            try
-            {
-                var collections = new MongoClient(_connectionString).GetDatabase("NaviriaDB").ListCollectionNames().ToList();
-                //var collections = _database.ListCollectionNames().ToList();
-                return Ok(collections);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Failed to retrieve collections: {ex.Message}");
-            }
-        }*/
-
-
-        /*
-        [HttpPost("export-collection")]
-        public async Task<IActionResult> CreateBackup([FromQuery] string collectionName)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(collectionName))
-                {
-                    return BadRequest("Collection name is required");
-                }
-                var backupFolder = Path.Combine(_backupFolderPath, collectionName, DateTime.Now.ToString("yyyyMMddHHmmss"));
-                Directory.CreateDirectory(backupFolder);
-
-                var processArgs = $"--uri=\"{_connectionString}\" --db=NaviriaDB --collection={collectionName} --out=\"{backupFolder}\"";
-                await RunProcessAsync("mongodump", processArgs);
-
-                return Ok($"Backup created successfully: {backupFolder}");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Failed to create backup: {ex.Message}");
-            }
-        }*/
-
-        /*
-        [HttpPost("export-collection")]
-        public async Task<IActionResult> CreateBackup([FromQuery] string collectionName)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(collectionName))
-                {
-                    return BadRequest("Collection name is required");
-                }
-
-                var collectionBackupFolder = Path.Combine(_backupFolderPath, collectionName);
-                Directory.CreateDirectory(collectionBackupFolder);
-                var timestampedBackupFolder = Path.Combine(collectionBackupFolder, DateTime.Now.ToString("yyyyMMddHHmmss"));
-                Directory.CreateDirectory(timestampedBackupFolder);
-
-                var processArgs = $"--uri=\"{_connectionString}\" --db NaviriaDB --archive=\"" +
-                    $"{Path.Combine(backupFolder, "backup.gz")}\" --gzip";
-
-
-                var processArgs = $"--uri=\"{_connectionString}\" --db=NaviriaDB --collection={collectionName}" +
-                    $" --out=\"{timestampedBackupFolder}\"";
-                await RunProcessAsync("mongodump", processArgs);
-
-                return Ok($"Backup created successfully: {timestampedBackupFolder}");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Failed to create backup: {ex.Message}");
-            }
-        }
-        */
-
-
-        /*
-
-        [HttpPost("import-collection")]
-        public async Task<IActionResult> RestoreBackup([FromQuery] string collectionName, [FromQuery] string backupFolderPath)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(collectionName) || string.IsNullOrEmpty(backupFolderPath))
-                {
-                    return BadRequest("Collection name and backup folder path are required");
-                }
-                var processArgs = $"--uri=\"{_connectionString}\" --db=NaviriaDB --collection={collectionName} --drop \"{backupFolderPath}\"";
-                await RunProcessAsync("mongorestore", processArgs);
-
-                return Ok("Collection restored successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Failed to restore collection: {ex.Message}");
-            }
-        }*/
 
         [HttpPost("import-collection")]
         public async Task<IActionResult> RestoreBackup([FromQuery] string collectionName)

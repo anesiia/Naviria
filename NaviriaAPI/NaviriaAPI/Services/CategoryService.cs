@@ -14,15 +14,15 @@ namespace NaviriaAPI.Services
         {
             _categoryRepository = categoryRepository;
         }
-        public async Task<CategoryDto> CreateAsync(CategoryCreateDto createDto)
+        public async Task<CategoryDto> CreateAsync(CategoryCreateDto categoryDto)
         {
-            var entity = CategoryMapper.ToEntity(createDto);
+            var entity = CategoryMapper.ToEntity(categoryDto);
             await _categoryRepository.CreateAsync(entity);
             return CategoryMapper.ToDto(entity);
         }
-        public async Task<bool> UpdateAsync(string id, CategoryUpdateDto updateDto)
+        public async Task<bool> UpdateAsync(string id, CategoryUpdateDto categoryDto)
         {
-            var entity = CategoryMapper.ToEntity(id, updateDto);
+            var entity = CategoryMapper.ToEntity(id, categoryDto);
             return await _categoryRepository.UpdateAsync(entity);
         }
         public async Task<CategoryDto?> GetByIdAsync(string id)

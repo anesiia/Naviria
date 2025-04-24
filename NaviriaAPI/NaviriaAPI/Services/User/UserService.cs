@@ -14,15 +14,13 @@ using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.IJwtService;
 
-namespace NaviriaAPI.Services
+namespace NaviriaAPI.Services.User
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher<UserEntity> _passwordHasher;
         private readonly UserValidationService _validation;
-        private readonly string _openAIKey;
-        private readonly ICloudinaryService _cloudinaryService;
         private readonly IAchievementRepository _achievementRepository;
         private readonly ILevelService _levelService;
         private readonly IJwtService _jwtService;
@@ -32,7 +30,6 @@ namespace NaviriaAPI.Services
             IPasswordHasher<UserEntity> passwordHasher,
             IConfiguration config,
             UserValidationService validation,
-            ICloudinaryService cloudinaryService,
             IAchievementRepository achievementRepository,
             ILevelService levelService,
             IJwtService jwtService)
@@ -40,9 +37,6 @@ namespace NaviriaAPI.Services
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _validation = validation;
-            _openAIKey = config["OpenAIKey"]
-                ?? throw new InvalidOperationException("OpenAIKey is missing in configuration.");
-            _cloudinaryService = cloudinaryService;
             _achievementRepository = achievementRepository;
             _levelService = levelService;
             _jwtService = jwtService;
@@ -51,17 +45,11 @@ namespace NaviriaAPI.Services
         public async Task<string> CreateAsync(UserCreateDto userDto)
         {
             await _validation.ValidateAsync(userDto);
-            userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
 
             var entity = UserMapper.ToEntity(userDto);
             entity.Password = _passwordHasher.HashPassword(entity, userDto.Password);
 
             await _userRepository.CreateAsync(entity);
-
-            if (userDto.Photo != null)
-                await _cloudinaryService.UploadImageAsync(entity.Id, userDto.Photo);
-
-            //return UserMapper.ToDto(entity);
 
             return _jwtService.GenerateUserToken(entity);
         }
@@ -104,25 +92,16 @@ namespace NaviriaAPI.Services
             return await _userRepository.DeleteAsync(id);
         }
 
-        public async Task<string> GetAiAnswerAsync(string question)
-        {
-            var modelName = "gpt-4o-mini";
-            var client = new ChatClient(modelName, _openAIKey);
-            var response = await client.CompleteChatAsync(question);
-            return response.Value.Content[0].Text;
-        }
-
         public async Task<bool> GiveAchievementAsync(string userId, string achievementId)
         {
             var user = await GetUserOrThrowAsync(userId);
 
-            if (user.Achievements.Any(a => a.AchievementId == achievementId && a.IsReceived))
+            if (user.Achievements.Any(a => a.AchievementId == achievementId))
                 return false;
 
             user.Achievements.Add(new UserAchievementInfo
             {
                 AchievementId = achievementId,
-                IsReceived = true,
                 ReceivedAt = DateTime.UtcNow
             });
 
@@ -131,15 +110,6 @@ namespace NaviriaAPI.Services
                 ApplyPointsAndRecalculateLevel(user, achievement.Points);
 
             return await _userRepository.UpdateAsync(user);
-        }
-
-        public async Task<IEnumerable<UserDto>> GetFriendsAsync(string userId)
-        {
-            var user = await GetUserOrThrowAsync(userId);
-            var friendIds = user.Friends.Select(f => f.UserId).ToList();
-            var friends = await _userRepository.GetManyByIdsAsync(friendIds);
-
-            return friends.Select(UserMapper.ToDto);
         }
 
         private void ApplyPointsAndRecalculateLevel(UserEntity user, int additionalPoints)

@@ -2,7 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace NaviriaAPI.Extentions
+namespace NaviriaAPI.Configurations
 {
     public static class JwtConfiguration
     {

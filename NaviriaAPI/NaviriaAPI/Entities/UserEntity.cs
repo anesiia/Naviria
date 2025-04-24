@@ -21,7 +21,7 @@ namespace NaviriaAPI.Entities
         public string Gender { get; set; } = string.Empty;
 
         [BsonElement("birth_date"), BsonRepresentation(BsonType.DateTime)]
-        public DateTime BirthDate { get; set; } = new DateTime(2000, 1, 1); // local or universal time
+        public DateTime BirthDate { get; set; } = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         [BsonElement("description"), BsonRepresentation(BsonType.String)]
         public string Description { get; set; } = string.Empty;
@@ -50,7 +50,10 @@ namespace NaviriaAPI.Entities
         [BsonElement("photo"), BsonRepresentation(BsonType.String)]
         public string Photo { get; set; } = string.Empty; //link to photo in Google Disk
 
-        [BsonElement("LastSeen"), BsonRepresentation(BsonType.DateTime)]
+        [BsonElement("registered_at"), BsonRepresentation(BsonType.DateTime)]
+        public DateTime RegitseredAt { get; set; }
+
+        [BsonElement("last_seen"), BsonRepresentation(BsonType.DateTime)]
         public DateTime LastSeen { get; set; } = DateTime.Now; // local or universal time
 
         [BsonElement("is_online"), BsonRepresentation(BsonType.Boolean)]
