@@ -21,7 +21,6 @@ namespace NaviriaAPI.Services.User
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher<UserEntity> _passwordHasher;
         private readonly UserValidationService _validation;
-        private readonly string _openAIKey;
         private readonly IAchievementRepository _achievementRepository;
         private readonly ILevelService _levelService;
         private readonly IJwtService _jwtService;
@@ -38,8 +37,6 @@ namespace NaviriaAPI.Services.User
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _validation = validation;
-            _openAIKey = config["OpenAIKey"]
-                ?? throw new InvalidOperationException("OpenAIKey is missing in configuration.");
             _achievementRepository = achievementRepository;
             _levelService = levelService;
             _jwtService = jwtService;
