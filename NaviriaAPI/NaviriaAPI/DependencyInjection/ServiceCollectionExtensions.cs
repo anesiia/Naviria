@@ -13,6 +13,8 @@ using NaviriaAPI.Services.User;
 using NaviriaAPI.Services.Validation;
 using NaviriaAPI.Configurations;
 using NaviriaAPI.DependencyInjection;
+using NaviriaAPI.IServices.ISecurityService;
+using NaviriaAPI.Services.SecurityServices;
 
 namespace NaviriaAPI.Extentions
 {
@@ -29,6 +31,7 @@ namespace NaviriaAPI.Extentions
             services.AddScoped<IGoogleAuthService, GoogleAuthService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.AddScoped<IMessageSecurityService, MessageSecurityService>();
             services.AddScoped<ILevelService, LevelService>();
             services.AddScoped<IFriendService, FriendService>();
             services.AddScoped<UserValidationService>();

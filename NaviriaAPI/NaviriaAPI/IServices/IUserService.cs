@@ -14,5 +14,7 @@ namespace NaviriaAPI.IServices
         Task<bool> DeleteAsync(string id);
         Task<bool> GiveAchievementAsync(string userId, string achievementId);
         Task<UserEntity> GetUserOrThrowAsync(string id);
+        Task<bool> UserExistsAsync(string userId);
+
     }
 }
