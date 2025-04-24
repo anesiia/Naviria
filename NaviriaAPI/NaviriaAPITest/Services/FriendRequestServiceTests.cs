@@ -40,7 +40,7 @@ namespace NaviriaAPI.Tests.Services
         [Test]
         public async Task TC001_CreateAsync_ShouldCreateRequest()
         {
-            var dto = new FriendRequestCreateDto { FromUserId = "1", ToUserId = "2", Status = "pending" };
+            var dto = new FriendRequestCreateDto { FromUserId = "1", ToUserId = "2" };
 
             FriendRequestEntity capturedEntity = null;
             _friendRequestRepository.Setup(r => r.CreateAsync(It.IsAny<FriendRequestEntity>()))

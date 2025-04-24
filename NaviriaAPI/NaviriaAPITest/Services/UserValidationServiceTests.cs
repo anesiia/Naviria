@@ -30,8 +30,7 @@ namespace NaviriaAPI.Tests.Services
             {
                 Email = "existing@example.com",
                 Nickname = "newUser",
-                BirthDate = new DateTime(2000, 1, 1),
-                LastSeen = DateTime.UtcNow
+                BirthDate = new DateTime(2000, 1, 1)
             };
 
             _mockUserRepository.Setup(repo => repo.GetByEmailAsync(dto.Email))
@@ -50,8 +49,7 @@ namespace NaviriaAPI.Tests.Services
             {
                 Email = "newUser@example.com",
                 Nickname = "existingNickname",
-                BirthDate = new DateTime(2000, 1, 1),
-                LastSeen = DateTime.UtcNow
+                BirthDate = new DateTime(2000, 1, 1)
             };
 
             _mockUserRepository.Setup(repo => repo.GetByNicknameAsync(dto.Nickname))
@@ -72,7 +70,6 @@ namespace NaviriaAPI.Tests.Services
                 Email = "newUser@example.com",
                 Nickname = "newUser",
                 BirthDate = DateTime.UtcNow.AddDays(1),  // Future date
-                LastSeen = DateTime.UtcNow
             };
 
             // Act & Assert
@@ -89,7 +86,6 @@ namespace NaviriaAPI.Tests.Services
                 Email = "newUser@example.com",
                 Nickname = "newUser",
                 BirthDate = DateTime.UtcNow.AddYears(-17),  // 17 years old
-                LastSeen = DateTime.UtcNow
             };
 
             // Act & Assert
@@ -105,8 +101,7 @@ namespace NaviriaAPI.Tests.Services
             {
                 Email = "newUser@example.com",
                 Nickname = "newUser",
-                BirthDate = DateTime.UtcNow.AddYears(-121),  // 121 years old
-                LastSeen = DateTime.UtcNow
+                BirthDate = DateTime.UtcNow.AddYears(-121)  // 121 years old
             };
 
 
@@ -115,33 +110,17 @@ namespace NaviriaAPI.Tests.Services
             Assert.That(exception.Message, Is.EqualTo("User cannot be older than 120 years"));
         }
 
+        
+
         [Test]
-        public async Task TC06_ValidateAsync_ShouldThrowValidationException_WhenLastSeenIsInTheFuture()
+        public async Task TC06_ValidateAsync_ShouldNotThrowAnyException_WhenUserIsValid()
         {
             // Arrange
             var dto = new UserCreateDto
             {
                 Email = "newUser@example.com",
                 Nickname = "newUser",
-                BirthDate = new DateTime(2000, 1, 1),
-                LastSeen = DateTime.UtcNow.AddDays(1)  // Future date
-            };
-
-            // Act & Assert
-            var exception = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateAsync(dto));
-            Assert.That(exception.Message, Is.EqualTo("LastSeen cannot be in the future"));
-        }
-
-        [Test]
-        public async Task TC07_ValidateAsync_ShouldNotThrowAnyException_WhenUserIsValid()
-        {
-            // Arrange
-            var dto = new UserCreateDto
-            {
-                Email = "newUser@example.com",
-                Nickname = "newUser",
-                BirthDate = DateTime.UtcNow.AddYears(-25),  // Valid birth date (25 years old)
-                LastSeen = DateTime.UtcNow
+                BirthDate = DateTime.UtcNow.AddYears(-25)  // Valid birth date (25 years old)
             };
 
             _mockUserRepository.Setup(repo => repo.GetByEmailAsync(dto.Email))

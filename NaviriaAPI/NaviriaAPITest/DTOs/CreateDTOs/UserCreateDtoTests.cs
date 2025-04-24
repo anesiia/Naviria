@@ -19,32 +19,10 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
                 Nickname = "Anna2025",
                 Gender = "f",
                 BirthDate = new DateTime(2002, 5, 15),
-                Description = "Motivated student",
                 Email = "anna.kozlova@example.com",
                 Password = "Secure123",
-                Points = 100,
                 FutureMessage = "Keep pushing!",
-                LevelInfo = new LevelProgressInfo { Level = 2, TotalXp = 250 },
                 
-                Friends = new List<UserFriendInfo>
-                {
-                        new UserFriendInfo { UserId = "id1", Nickname = "Alice" },
-                        new UserFriendInfo { UserId = "id2", Nickname = "Bob" }
-                },
-
-
-                Photo = FileHelper.CreateTestFormFile(),
-                Achievements = new List<UserAchievementInfo>
-                 {
-                        new UserAchievementInfo
-                        {
-                            AchievementId = "660fd0eccc56d52abc1ef08b",
-                            ReceivedAt = DateTime.UtcNow
-                        }
-                 },
-                IsOnline = true,
-                IsProUser = true,
-                LastSeen = DateTime.UtcNow
             };
 
             // Act
@@ -118,7 +96,6 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
                 Nickname = "ab",
                 Gender = "m",
                 BirthDate = new DateTime(1990, 1, 1),
-                Photo = FileHelper.CreateTestFormFile(),
                 Password = "Passw0rd123"
             };
 
@@ -143,7 +120,6 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
                 Gender = "m",
                 BirthDate = new DateTime(1990, 1, 1),
                 Email = "john.doe@example.com",
-                Photo = FileHelper.CreateTestFormFile(),
                 Password = "Passw0rd123"
             };
 
@@ -267,13 +243,9 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
                 Nickname = "john123",
                 Gender = "m",
                 BirthDate = new DateTime(1990, 1, 1),
-                Description = "Some description",
                 Email = "john.doe@example.com",
                 Password = "Passw0rd123",
-                FutureMessage = "Future message",
-                LastSeen = DateTime.Now,
-                IsOnline = true,
-                IsProUser = false
+                FutureMessage = "Future message"
             };
 
             // Act
@@ -308,53 +280,9 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
             Assert.That(isValid, Is.False);
         }
 
-        //Invalid Description with special character
+      
         [Test]
-        public void TC012_InvalidDescription_ShouldBeInvalid_WhenContainsInvalidCharacters()
-        {
-            var userDto = new UserCreateDto
-            {
-                FullName = "John Doe",
-                Nickname = "john123",
-                Gender = "m",
-                BirthDate = new DateTime(1990, 1, 1),
-                Email = "john.doe@example.com",
-                Password = "Password1",
-                Description = "Awesome user #1"
-            };
-
-            var results = new List<ValidationResult>();
-            var context = new ValidationContext(userDto);
-            var isValid = Validator.TryValidateObject(userDto, context, results, true);
-
-            Assert.That(isValid, Is.False);
-            Assert.That(results.Any(r => r.ErrorMessage.Contains("Description contains invalid characters.")), Is.True);
-        }
-
-        [Test]
-        public void TC013_InvalidPoints_ShouldBeInvalid_WhenNegative()
-        {
-            var userDto = new UserCreateDto
-            {
-                FullName = "John Doe",
-                Nickname = "john123",
-                Gender = "m",
-                BirthDate = new DateTime(1990, 1, 1),
-                Email = "john.doe@example.com",
-                Password = "Password1",
-                Points = -10
-            };
-
-            var results = new List<ValidationResult>();
-            var context = new ValidationContext(userDto);
-            var isValid = Validator.TryValidateObject(userDto, context, results, true);
-
-            Assert.That(isValid, Is.False);
-            Assert.That(results.Any(r => r.MemberNames.Contains("Points")), Is.True);
-        }
-
-        [Test]
-        public void TC014_UserCreateDto_ShouldBeValid_WithEmptyOptionalFields()
+        public void TC012_UserCreateDto_ShouldBeValid_WithEmptyOptionalFields()
         {
             var userDto = new UserCreateDto
             {
@@ -364,13 +292,9 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
                 BirthDate = new DateTime(1995, 6, 20),
                 Email = "jane.smith@example.com",
                 Password = "ValidPass123",
-                Points = 0,
-                Description = "",
                 FutureMessage = "",
-                Achievements = [],
-                Friends = [],
-                LevelInfo = new LevelProgressInfo(),
-                Photo = null
+             
+               
             };
 
             var results = new List<ValidationResult>();

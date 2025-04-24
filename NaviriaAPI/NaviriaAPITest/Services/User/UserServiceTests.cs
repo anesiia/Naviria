@@ -54,13 +54,14 @@ namespace NaviriaAPI.Tests.Services.User
                 _hasherMock.Object,
                 _configMock.Object,
                 validation,
-                _cloudinaryServiceMock.Object,
+                //_cloudinaryServiceMock.Object,
                 _achievementRepoMock.Object,
                 _levelServiceMock.Object,
                 _jwtServiceMock.Object
             );
         }
 
+       
         [Test]
         public async Task TC001_CreateAsync_ShouldReturnToken_WhenUserCreatedSuccessfully()
         {
@@ -70,8 +71,7 @@ namespace NaviriaAPI.Tests.Services.User
                 FullName = "John Doe",
                 Email = "john.doe@example.com",
                 Password = "password123",
-                Photo = null, // Фото не додається
-                LastSeen = DateTime.UtcNow
+                BirthDate = DateTime.UtcNow.AddYears(-25)
             };
 
             _userRepoMock.Setup(repo => repo.CreateAsync(It.IsAny<UserEntity>())).Returns(Task.CompletedTask);
