@@ -17,9 +17,9 @@ export function Friends() {
           const data = await getUserFriends();
           setFriends(data);
         } else if (activeTab === "requests") {
-          setRequests([1, 2]); // Тут має бути getFriendRequests()
+          setRequests([]); // Тут має бути getFriendRequests()
         } else if (activeTab === "discover") {
-          setDiscover([1, 2, 3]); // Тут має бути getDiscoverUsers()
+          setDiscover([]); // Тут має бути getDiscoverUsers()
         }
       } catch (e) {
         console.error("Помилка при завантаженні:", e.message);
@@ -27,6 +27,7 @@ export function Friends() {
     };
     fetchData();
   }, [activeTab]);
+
   useEffect(() => {
     const fetchFriends = async () => {
       try {
