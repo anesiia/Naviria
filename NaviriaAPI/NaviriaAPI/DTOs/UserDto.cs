@@ -15,7 +15,7 @@ namespace NaviriaAPI.DTOs
 
         public string Gender { get; set; } = string.Empty;
 
-        public DateTime BirthDate { get; set; } = new DateTime(2000, 1, 1);
+        public DateTime BirthDate { get; set; } = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public string Description { get; set; } = string.Empty;
 
@@ -33,7 +33,7 @@ namespace NaviriaAPI.DTOs
         public string FutureMessage { get; set; } = string.Empty;
 
         public string Photo { get; set; } = string.Empty;
-
+        public DateTime RegitseredAt { get; set; }
         public DateTime LastSeen { get; set; } = DateTime.Now;
         public bool IsOnline { get; set; } = false;
         public bool IsProUser { get; set; } = false;

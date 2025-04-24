@@ -12,6 +12,7 @@ namespace NaviriaAPI.Mappings
                 Name = entity.Name, 
                 Description = entity.Description, 
                 Points = entity.Points, 
+                IsRare = entity.IsRare,
             };
 
         public static AchievementEntity ToEntity(AchievementDto dto) =>
@@ -20,6 +21,7 @@ namespace NaviriaAPI.Mappings
                 Name = dto.Name, 
                 Description = dto.Description,
                 Points = dto.Points,
+                IsRare = dto.IsRare,
             };
 
         public static AchievementEntity ToEntity(AchievementCreateDto dto) =>
@@ -28,6 +30,7 @@ namespace NaviriaAPI.Mappings
                 Name = dto.Name,
                 Description = dto.Description,
                 Points = dto.Points,
+                IsRare = dto.IsRare,
             };
 
         public static AchievementEntity ToEntity(string id, AchievementUpdateDto dto) =>
@@ -37,6 +40,7 @@ namespace NaviriaAPI.Mappings
                 Name = dto.Name,
                 Description = dto.Description,
                 Points = dto.Points,
+                IsRare = dto.IsRare,
             };
     }
 }

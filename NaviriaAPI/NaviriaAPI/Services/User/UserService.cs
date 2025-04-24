@@ -21,8 +21,6 @@ namespace NaviriaAPI.Services.User
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher<UserEntity> _passwordHasher;
         private readonly UserValidationService _validation;
-        private readonly string _openAIKey;
-        private readonly ICloudinaryService _cloudinaryService;
         private readonly IAchievementRepository _achievementRepository;
         private readonly ILevelService _levelService;
         private readonly IJwtService _jwtService;
@@ -32,7 +30,6 @@ namespace NaviriaAPI.Services.User
             IPasswordHasher<UserEntity> passwordHasher,
             IConfiguration config,
             UserValidationService validation,
-            ICloudinaryService cloudinaryService,
             IAchievementRepository achievementRepository,
             ILevelService levelService,
             IJwtService jwtService)
@@ -40,9 +37,6 @@ namespace NaviriaAPI.Services.User
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _validation = validation;
-            _openAIKey = config["OpenAIKey"]
-                ?? throw new InvalidOperationException("OpenAIKey is missing in configuration.");
-            _cloudinaryService = cloudinaryService;
             _achievementRepository = achievementRepository;
             _levelService = levelService;
             _jwtService = jwtService;
@@ -51,15 +45,11 @@ namespace NaviriaAPI.Services.User
         public async Task<string> CreateAsync(UserCreateDto userDto)
         {
             await _validation.ValidateAsync(userDto);
-            userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
 
             var entity = UserMapper.ToEntity(userDto);
             entity.Password = _passwordHasher.HashPassword(entity, userDto.Password);
 
             await _userRepository.CreateAsync(entity);
-
-            if (userDto.Photo != null)
-                await _cloudinaryService.UploadImageAsync(entity.Id, userDto.Photo);
 
             return _jwtService.GenerateUserToken(entity);
         }
@@ -100,14 +90,6 @@ namespace NaviriaAPI.Services.User
         public async Task<bool> DeleteAsync(string id)
         {
             return await _userRepository.DeleteAsync(id);
-        }
-
-        public async Task<string> GetAiAnswerAsync(string question)
-        {
-            var modelName = "gpt-4o-mini";
-            var client = new ChatClient(modelName, _openAIKey);
-            var response = await client.CompleteChatAsync(question);
-            return response.Value.Content[0].Text;
         }
 
         public async Task<bool> GiveAchievementAsync(string userId, string achievementId)

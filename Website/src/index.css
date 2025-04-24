@@ -4,3 +4,8 @@
   box-sizing: border-box;
   font-family: "Montserrat Alternates", sans-serif;
 }
+.error-text {
+  display: block;
+  font-size: 0.7rem;
+  color: rgb(211, 47, 47);
+}

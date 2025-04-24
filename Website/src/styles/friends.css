@@ -1,0 +1,224 @@
+.friends-page {
+  display: flex;
+  justify-content: flex-start;
+  height: 100vh;
+}
+.friends-page .side-bar {
+  display: flex;
+  flex-direction: column;
+  width: 30vw;
+  background: rgba(5, 117, 173, 0.05);
+  padding-top: 2rem;
+}
+.friends-page .side-bar .title {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-left: 2rem;
+  margin-bottom: 2rem;
+}
+.friends-page .side-bar .title img {
+  width: 1.5rem;
+}
+.friends-page .side-bar .search-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  border-radius: 10px;
+  margin: 0 1rem 2.5rem;
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+}
+.friends-page .side-bar .search-box input {
+  width: 20vw;
+  border: none;
+}
+.friends-page .side-bar .search-box input:focus {
+  outline: none;
+}
+.friends-page .side-bar .search-box button {
+  border: none;
+  background-color: transparent;
+}
+.friends-page .side-bar .friend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.friends-page .side-bar .friend-list .friend {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+}
+.friends-page .side-bar .friend-list .friend .info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+.friends-page .side-bar .friend-list .friend .actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+.friends-page .side-bar .friend-list .friend .actions .remove {
+  border-radius: 5px;
+  background: rgba(2, 48, 71, 0.1);
+  padding: 0.5rem;
+  color: #023047;
+  border: none;
+}
+.friends-page .side-bar .friend-list .friend .actions .support {
+  border: none;
+  border-radius: 5px;
+  background: #ff8f00;
+  padding: 0.5rem;
+  color: #fff;
+}
+.friends-page .content {
+  display: flex;
+  flex-direction: column;
+  width: 55vw;
+  padding-top: 2rem;
+  padding-left: 5rem;
+}
+.friends-page .content .tabs {
+  display: flex;
+  flex-direction: row;
+  gap: 1.2rem;
+  margin-bottom: 3rem;
+}
+.friends-page .content .tabs button {
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 7px;
+  background: rgba(32, 153, 183, 0.08);
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+}
+.friends-page .content .search {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+.friends-page .content .search .search-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+}
+.friends-page .content .search .search-box input {
+  width: 28vw;
+  border: none;
+}
+.friends-page .content .search .search-box input:focus {
+  outline: none;
+}
+.friends-page .content .search .search-box button {
+  border: none;
+  background-color: transparent;
+}
+.friends-page .content .search select {
+  margin-left: 2rem;
+  text-decoration: underline;
+  color: #ff8f00;
+  border: none;
+}
+.friends-page .content .search select:focus {
+  outline: none;
+}
+.friends-page .content .discover-list {
+  display: flex;
+  flex-direction: column;
+}
+.friends-page .content .discover-list .item {
+  display: flex;
+  flex-direction: row;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  gap: 1.5rem;
+  border: none;
+  border-bottom: 1px solid rgba(2, 48, 71, 0.5);
+}
+.friends-page .content .discover-list .item .info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.friends-page .content .discover-list .item .info .name-lvl {
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  gap: 1rem;
+}
+.friends-page .content .discover-list .item .info .name-lvl .name {
+  font-size: 20px;
+  font-weight: 600;
+}
+.friends-page .content .discover-list .item .info .name-lvl .level {
+  font-size: 20px;
+  color: #ff8f00;
+  font-weight: 600;
+}
+.friends-page .content .discover-list .item .info .desc {
+  font-weight: 400;
+  color: #757575;
+  line-height: 140%;
+}
+.friends-page .content .discover-list .item .info .actions {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.friends-page .content .discover-list .item .info .actions .add-friend {
+  border-radius: 5px;
+  background: #ff8f00;
+  padding: 0.6rem;
+  color: #fff;
+  border: none;
+  width: 8rem;
+}
+.friends-page .content .discover-list .item .info .actions .reject {
+  border-radius: 5px;
+  background: red;
+  padding: 0.6rem;
+  color: #fff;
+  border: none;
+  width: 8rem;
+}
+.friends-page .content .discover-list .item .info .actions .accept {
+  border-radius: 5px;
+  background: #023047;
+  padding: 0.6rem;
+  color: #fff;
+  border: none;
+  width: 8rem;
+}
+.friends-page .content .discover-list .item .info .actions .remove {
+  border-radius: 5px;
+  background: red;
+  padding: 0.6rem;
+  color: #fff;
+  border: none;
+  width: 8rem;
+}
+.friends-page .content .discover-list .item .info .actions .support {
+  border-radius: 5px;
+  background: #ff8f00;
+  padding: 0.6rem;
+  color: #fff;
+  border: none;
+  width: 8rem;
+}

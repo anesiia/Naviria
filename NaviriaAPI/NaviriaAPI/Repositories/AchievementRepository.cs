@@ -21,12 +21,12 @@ namespace NaviriaAPI.Repositories
         public async Task<AchievementEntity?> GetByIdAsync(string id) =>
             await _Achievements.Find(c => c.Id == id).FirstOrDefaultAsync();
 
-        public async Task CreateAsync(AchievementEntity Achievement) =>
-            await _Achievements.InsertOneAsync(Achievement);
+        public async Task CreateAsync(AchievementEntity achievement) =>
+            await _Achievements.InsertOneAsync(achievement);
 
-        public async Task<bool> UpdateAsync(AchievementEntity Achievement)
+        public async Task<bool> UpdateAsync(AchievementEntity achievement)
         {
-            var result = await _Achievements.ReplaceOneAsync(c => c.Id == Achievement.Id, Achievement);
+            var result = await _Achievements.ReplaceOneAsync(c => c.Id == achievement.Id, achievement);
             return result.ModifiedCount > 0;
         }
 
