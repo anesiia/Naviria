@@ -2,7 +2,7 @@
 using NaviriaAPI.IServices.ISecurityService;
 using System.Text.RegularExpressions;
 
-namespace NaviriaAPI.Services
+namespace NaviriaAPI.Services.SecurityServices
 {
     public class MessageSecurityService : IMessageSecurityService
     {

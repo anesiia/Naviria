@@ -14,6 +14,7 @@ using NaviriaAPI.Services.Validation;
 using NaviriaAPI.Configurations;
 using NaviriaAPI.DependencyInjection;
 using NaviriaAPI.IServices.ISecurityService;
+using NaviriaAPI.Services.SecurityServices;
 
 namespace NaviriaAPI.Extentions
 {
