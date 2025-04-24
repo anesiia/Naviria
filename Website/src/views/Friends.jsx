@@ -1,10 +1,43 @@
 import React from "react";
 // import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getUserFriends } from "../services/FriendsServices";
 import "../styles/friends.css";
 
 export function Friends() {
   const [activeTab, setActiveTab] = useState("discover"); // "my", "discover", "requests"
+  const [friends, setFriends] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [discover, setDiscover] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (activeTab === "my") {
+          const data = await getUserFriends();
+          setFriends(data);
+        } else if (activeTab === "requests") {
+          setRequests([1, 2]); // Тут має бути getFriendRequests()
+        } else if (activeTab === "discover") {
+          setDiscover([1, 2, 3]); // Тут має бути getDiscoverUsers()
+        }
+      } catch (e) {
+        console.error("Помилка при завантаженні:", e.message);
+      }
+    };
+    fetchData();
+  }, [activeTab]);
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const data = await getUserFriends();
+        setFriends(data);
+      } catch (e) {
+        console.error("Помилка при завантаженні друзів:", e.message);
+      }
+    };
+    fetchFriends();
+  }, []);
 
   const renderActions = () => {
     switch (activeTab) {
@@ -32,20 +65,23 @@ export function Friends() {
     }
   };
   const renderList = () => {
+    const list =
+      activeTab === "my"
+        ? friends
+        : activeTab === "requests"
+        ? requests
+        : discover;
     return (
       <div className="discover-list">
-        {[1, 2, 3, 4].map((_, index) => (
+        {list.map((user, index) => (
           <div className="item" key={index}>
             <img className="avatar" src="Ellipse 19.svg" />
             <div className="info">
               <div className="name-lvl">
-                <p className="name">Ім'я</p>
-                <p className="level">43 lvl</p>
+                <p className="name">{user.nickname}</p>
+                <p className="level">{user.levelInfo.level}</p>
               </div>
-              <p className="desc">
-                Body text for whatever you'd like to say. Add main takeaway
-                points, quotes, anecdotes, or even a very very short story.
-              </p>
+              <p className="desc">{user.description || "Опис відсутній"}</p>
               {renderActions()}
             </div>
           </div>
@@ -54,14 +90,14 @@ export function Friends() {
     );
   };
 
-  const renderMyFriensList = () => {
+  const renderMyFriendsList = () => {
     return (
       <div className="friend-list">
-        {[1, 2, 3, 4].map((_, index) => (
+        {friends.map((user, index) => (
           <div className="friend" key={index}>
             <div className="info">
               <img className="avatar" src="Ellipse 23.svg" />
-              <div className="name">Ім'я</div>
+              <div className="name">{user.nickname}</div>
             </div>
             <div className="actions">
               <button className="remove">Видалити</button>
@@ -86,7 +122,7 @@ export function Friends() {
             <img src="search.svg" alt="search" />
           </button>
         </div>
-        {renderMyFriensList()}
+        {renderMyFriendsList()}
       </aside>
       <main className="content">
         <div className="tabs">
