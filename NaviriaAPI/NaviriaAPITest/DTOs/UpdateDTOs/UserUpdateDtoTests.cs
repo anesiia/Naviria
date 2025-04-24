@@ -173,7 +173,6 @@ namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
         {
             var dto = GetValidDto();
             dto.Friends = new List<UserFriendInfo>();
-            //dto.Friends = Array.Empty<string>();
 
             var isValid = ValidateDto(dto, out var results);
             Assert.That(isValid, Is.True);
@@ -199,6 +198,50 @@ namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
             Assert.That(isValid, Is.True);
         }
 
+        [Test]
+        public void TC015_ShouldBeInvalid_WhenLevelInfoIsNull()
+        {
+            var dto = GetValidDto();
+            dto.LevelInfo = null;
+
+            var isValid = ValidateDto(dto, out var results);
+
+            Assert.That(isValid, Is.False);
+            Assert.That(results.Any(r => r.MemberNames.Contains("LevelInfo")));
+        }
+
+        [Test]
+        public void TC016_ShouldBeValid_WhenLevelInfoProgressIsZero()
+        {
+            var dto = GetValidDto();
+            dto.LevelInfo = new LevelProgressInfo
+            {
+                Level = 1,
+                TotalXp = 0,
+                XpForNextLevel = 100,
+                Progress = 0.0
+            };
+
+            var isValid = ValidateDto(dto, out var results);
+            Assert.That(isValid, Is.True);
+        }
+
+        [Test]
+        public void TC017_ShouldBeValid_WhenLevelInfoProgressIsOne()
+        {
+            var dto = GetValidDto();
+            dto.LevelInfo = new LevelProgressInfo
+            {
+                Level = 10,
+                TotalXp = 5000,
+                XpForNextLevel = 6000,
+                Progress = 1.0
+            };
+
+            var isValid = ValidateDto(dto, out var results);
+            Assert.That(isValid, Is.True);
+        }
+
         private UserUpdateDto GetValidDto()
         {
             return new UserUpdateDto
@@ -215,7 +258,14 @@ namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
                 Achievements = [],
                 LastSeen = DateTime.UtcNow,
                 IsOnline = false,
-                IsProUser = false
+                IsProUser = false,
+                LevelInfo = new LevelProgressInfo
+                {
+                    Level = 1,
+                    TotalXp = 0,
+                    XpForNextLevel = 100,
+                    Progress = 0.0
+                }
             };
         }
     }

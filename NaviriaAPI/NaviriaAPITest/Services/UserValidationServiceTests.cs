@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using NaviriaAPI.DTOs.UpdateDTOs;
 
 namespace NaviriaAPI.Tests.Services
 {
@@ -132,5 +133,21 @@ namespace NaviriaAPI.Tests.Services
             // Act & Assert
             Assert.DoesNotThrowAsync(() => _validationService.ValidateAsync(dto));
         }
+
+        [Test]
+        public void TC07_ValidateAsync_ShouldThrowValidationException_WhenLastSeenIsInTheFuture()
+        {
+            // Arrange
+            var dto = new UserUpdateDto
+            {
+                LastSeen = DateTime.UtcNow.AddMinutes(5) // майбутній час
+            };
+
+            // Act & Assert
+            var exception = Assert.Throws<ValidationException>(() =>
+                UserValidationService.ValidateAsync(dto));
+            Assert.That(exception.Message, Is.EqualTo("LastSeen cannot be in the future"));
+        }
+
     }
 }

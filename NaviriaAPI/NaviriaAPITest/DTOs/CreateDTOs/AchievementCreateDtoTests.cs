@@ -17,7 +17,8 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
             {
                 Name = "Досягнення 1",
                 Description = "Опис досягнення",
-                Points = 100
+                Points = 100,
+                IsRare = true
             };
 
             var isValid = ValidationHelper.ValidateModel(dto);
@@ -32,7 +33,8 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
             {
                 Name = "",
                 Description = "Опис",
-                Points = 10
+                Points = 10,
+                IsRare = false
             };
 
             var isValid = ValidationHelper.ValidateModel(dto);
