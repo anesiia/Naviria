@@ -73,34 +73,5 @@ namespace NaviriaAPI.Tests.Services
             Assert.That(ex.Message, Is.EqualTo("User ID is required."));
         }
 
-    //    [Test]
-    //    public async Task SendMessageAsync_ShouldClearMessagesIfLimitExceeded()
-    //    {
-    //        var userId = "123";
-    //        var dto = new AssistantChatMessageDto { UserId = userId, Message = "Message after limit" };
-
-    //        // Мокаємо, що лічильник повідомлень досяг ліміту
-    //        _mockChatRepository.Setup(repo => repo.CountByUserIdAsync(userId)).ReturnsAsync(20);
-    //        _mockChatRepository.Setup(repo => repo.DeleteAllForUserAsync(userId)).Returns(Task.CompletedTask);
-
-    //        // Мокаємо повернення повідомлень після очищення
-    //        var mockHistory = new List<AssistantChatMessageEntity>
-    //{
-    //    new AssistantChatMessageEntity { UserId = userId, Role = "user", Content = "Previous message", CreatedAt = DateTime.UtcNow }
-    //};
-    //        _mockChatRepository.Setup(repo => repo.GetByUserIdAsync(userId)).ReturnsAsync(mockHistory);
-
-    //        await _service.SendMessageAsync(dto);
-
-    //        // Перевіряємо, чи викликана функція для видалення всіх повідомлень
-    //        _mockChatRepository.Verify(repo => repo.DeleteAllForUserAsync(userId), Times.Once);
-
-    //        // Перевірка, чи запит до OpenAI відправляється з історією
-    //        _mockChatRepository.Verify(repo => repo.GetByUserIdAsync(userId), Times.Once);
-    //    }
-
-
-
-
     }
 }
