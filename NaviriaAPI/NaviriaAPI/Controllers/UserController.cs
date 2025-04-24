@@ -130,43 +130,6 @@ namespace NaviriaAPI.Controllers
             }
         }
 
-        [HttpGet("ask-chat-gpt")]
-        public async Task<IActionResult> AskChatGPT(string question)
-        {
-            if (string.IsNullOrWhiteSpace(question))
-                return BadRequest("Question is required.");
-
-            try
-            {
-                var answer = await _userService.GetAiAnswerAsync(question);
-                return Ok(answer);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to ask chat gpt question: {0}", question);
-                return StatusCode(500, $"Failed to ask chat gpt question: {question}");
-            }
-        }
-
-        [AllowAnonymous]
-        [HttpPost("upload-profile-photo")]
-        public async Task<IActionResult> UploadProfilePhoto([FromForm] string userId, [FromForm] IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded");
-
-            try
-            {
-                var answer = await _cloudinaryService.UploadImageAsync(userId, file);
-                return Ok(answer);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to upload user photo");
-                return StatusCode(500, $"Failed to upload user photo");
-            }
-        }
-
         [HttpGet("{id}/friends")]
         public async Task<IActionResult> GetFriends(string id)
         {

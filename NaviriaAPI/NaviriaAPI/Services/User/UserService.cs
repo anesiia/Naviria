@@ -95,14 +95,6 @@ namespace NaviriaAPI.Services.User
             return await _userRepository.DeleteAsync(id);
         }
 
-        public async Task<string> GetAiAnswerAsync(string question)
-        {
-            var modelName = "gpt-4o-mini";
-            var client = new ChatClient(modelName, _openAIKey);
-            var response = await client.CompleteChatAsync(question);
-            return response.Value.Content[0].Text;
-        }
-
         public async Task<bool> GiveAchievementAsync(string userId, string achievementId)
         {
             var user = await GetUserOrThrowAsync(userId);
