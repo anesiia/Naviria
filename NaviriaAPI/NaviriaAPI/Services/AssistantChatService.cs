@@ -5,6 +5,7 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.Exceptions;
 using OpenAI.Chat;
+using NaviriaAPI.IServices.ISecurityService;
 
 namespace NaviriaAPI.Services
 {
@@ -14,6 +15,7 @@ namespace NaviriaAPI.Services
 
         private readonly IAssistantChatRepository _chatRepository;
         private readonly IUserService _userService;
+        private readonly IMessageSecurityService _messageSecurityService;
         private readonly ILogger<AssistantChatService> _logger;
         private readonly string _openAiKey;
 
@@ -21,12 +23,14 @@ namespace NaviriaAPI.Services
             IAssistantChatRepository chatRepository,
             IConfiguration config,
             ILogger<AssistantChatService> logger,
-            IUserService userService)
+            IUserService userService,
+            IMessageSecurityService messageSecurityService)
         {
             _chatRepository = chatRepository;
             _openAiKey = config["OpenAIKey"];
             _logger = logger;
             _userService = userService;
+            _messageSecurityService = messageSecurityService;
         }
         public async Task<IEnumerable<AssistantChatMessageDto>> GetUserChatAsync(string userId)
         {
@@ -56,6 +60,8 @@ namespace NaviriaAPI.Services
         public async Task<string> SendMessageAsync(AssistantChatMessageDto dto)
         {
             ValidateInputs(dto);
+
+            _messageSecurityService.Validate(dto.UserId, dto.Message);
 
             await ClearIfLimitExceeded(dto.UserId);
 
