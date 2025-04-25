@@ -12,7 +12,7 @@ namespace NaviriaAPI.IServices
         Task<FriendRequestDto> CreateAsync(FriendRequestCreateDto friendRequestDto);
         Task<bool> UpdateAsync(string id, FriendRequestUpdateDto friendRequestDto);
         Task<bool> DeleteAsync(string id);
-        Task<IEnumerable<FriendRequestDto>> GetIncomingRequestsAsync(string toUserId);
+        Task<IEnumerable<UserDto>> GetIncomingRequestsAsync(string toUserId);
 
     }
 }
