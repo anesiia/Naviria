@@ -26,19 +26,17 @@ namespace NaviriaAPI.Tests.Repositories
         {
             // Load configuration directly from MongoDbSettings.json file
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("MongoDbSettings.json")
                 .Build();
 
             // Fetch MongoDB settings from configuration using MongoDbOptions
             var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
 
-            // Mock the IOptions<MongoDbOptions> object
-            var mockOptions = new Mock<IOptions<MongoDbOptions>>();
-            mockOptions.Setup(o => o.Value).Returns(mongoDbOptions);
+            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions);
 
             // Create MongoDbContext using the mock settings
-            _dbContext = new MongoDbContext(mockOptions.Object);
+            _dbContext = new MongoDbContext(options);
             _notificationRepository = new NotificationRepository(_dbContext);
 
             _notificationCollection = _dbContext.Notifications;
@@ -55,7 +53,7 @@ namespace NaviriaAPI.Tests.Repositories
         }
 
         [Test]
-        public async Task CreateAsync_ShouldAddNotification()
+        public async Task TC001_CreateAsync_ShouldAddNotification()
         {
             var notification = new NotificationEntity
             {
@@ -73,7 +71,7 @@ namespace NaviriaAPI.Tests.Repositories
         }
 
         [Test]
-        public async Task GetAllAsync_ShouldReturnNotifications()
+        public async Task TC002_GetAllAsync_ShouldReturnNotifications()
         {
             var notification1 = new NotificationEntity
             {
@@ -99,7 +97,7 @@ namespace NaviriaAPI.Tests.Repositories
         }
 
         [Test]
-        public async Task GetByIdAsync_ShouldReturnNotification()
+        public async Task TC003_GetByIdAsync_ShouldReturnNotification()
         {
             var notification = new NotificationEntity
             {
@@ -117,7 +115,7 @@ namespace NaviriaAPI.Tests.Repositories
         }
 
         [Test]
-        public async Task DeleteAsync_ShouldReturnTrue_WhenNotificationExists()
+        public async Task TC004_DeleteAsync_ShouldReturnTrue_WhenNotificationExists()
         {
             var notification = new NotificationEntity
             {
@@ -134,7 +132,7 @@ namespace NaviriaAPI.Tests.Repositories
         }
 
         [Test]
-        public async Task DeleteAsync_ShouldReturnFalse_WhenNotificationDoesNotExist()
+        public async Task TC005_DeleteAsync_ShouldReturnFalse_WhenNotificationDoesNotExist()
         {
             // Generate a valid ObjectId but don't insert it into the database
             var nonExistentId = ObjectId.GenerateNewId().ToString();
@@ -147,7 +145,7 @@ namespace NaviriaAPI.Tests.Repositories
 
 
         [Test]
-        public async Task GetAllByUserAsync_ShouldReturnUserNotifications()
+        public async Task TC006_GetAllByUserAsync_ShouldReturnUserNotifications()
         {
             var userId1 = ObjectId.GenerateNewId().ToString();
             var userId2 = ObjectId.GenerateNewId().ToString();
@@ -183,7 +181,7 @@ namespace NaviriaAPI.Tests.Repositories
         }
 
         [Test]
-        public async Task UpdateStatusAsync_ShouldUpdateNotificationStatus()
+        public async Task TC007_UpdateStatusAsync_ShouldUpdateNotificationStatus()
         {
             var notification = new NotificationEntity
             {
@@ -204,7 +202,7 @@ namespace NaviriaAPI.Tests.Repositories
         }
 
         [Test]
-        public async Task MarkAllAsReadByUserAsync_ShouldMarkAllAsRead()
+        public async Task TC008_MarkAllAsReadByUserAsync_ShouldMarkAllAsRead()
         {
             var userId = ObjectId.GenerateNewId().ToString();
 

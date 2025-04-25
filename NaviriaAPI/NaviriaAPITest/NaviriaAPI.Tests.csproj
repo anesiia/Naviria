@@ -37,4 +37,11 @@
     <Using Include="NUnit.Framework" />
   </ItemGroup>
 
+	<ItemGroup>
+		<None Update="MongoDbSettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	
 </Project>

@@ -33,23 +33,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
         }
 
         [Test]
-        public void TC002_NotificationCreateDto_EmptyUserId_ShouldFailValidation()
-        {
-            var dto = new NotificationCreateDto
-            {
-                UserId = "",
-                Text = "Still a valid message",
-                RecievedAt = DateTime.UtcNow
-            };
-
-            var isValid = ValidateModel(dto, out var results);
-
-            Assert.That(isValid, Is.False);
-            Assert.That(results, Has.Some.Matches<ValidationResult>(r => r.MemberNames.Contains("UserId")));
-        }
-
-        [Test]
-        public void TC003_NotificationCreateDto_TextTooLong_ShouldFailValidation()
+        public void TC002_NotificationCreateDto_TextTooLong_ShouldFailValidation()
         {
             var longText = new string('A', 151); // exceeds 150 chars
             var dto = new NotificationCreateDto

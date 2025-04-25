@@ -125,5 +125,80 @@ namespace NaviriaAPI.Tests.Services.User
             // Assert
             Assert.That(result, Is.False);
         }
+
+        [Test]
+        public async Task TC04_GetPotentialFriendsAsync_ShouldReturnUsersNotInFriendList()
+        {
+            // Arrange
+            var userId = "user1";
+
+            var user = new UserEntity
+            {
+                Id = userId,
+                Friends = new List<UserFriendInfo>
+        {
+            new UserFriendInfo { UserId = "friend1" },
+            new UserFriendInfo { UserId = "friend2" }
+        }
+            };
+
+            var allUsers = new List<UserEntity>
+    {
+        user, // поточний користувач
+        new UserEntity { Id = "friend1" },
+        new UserEntity { Id = "friend2" },
+        new UserEntity { Id = "potential1" },
+        new UserEntity { Id = "potential2" }
+    };
+
+            _userServiceMock.Setup(s => s.GetUserOrThrowAsync(userId)).ReturnsAsync(user);
+            _userRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(allUsers);
+
+            // Act
+            var result = (await _friendService.GetPotentialFriendsAsync(userId)).ToList();
+
+            // Assert
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result.Any(u => u.Id == "potential1"), Is.True);
+            Assert.That(result.Any(u => u.Id == "potential2"), Is.True);
+            Assert.That(result.All(u => u.Id != "friend1" && u.Id != "friend2" && u.Id != "user1"), Is.True);
+        }
+
+        [Test]
+        public async Task TC05_SearchUsersByNicknameAsync_ShouldReturnFilteredUsers()
+        {
+            // Arrange
+            var userId = "user1";
+            var query = "Ali";
+
+            var user = new UserEntity
+            {
+                Id = userId,
+                Friends = new List<UserFriendInfo> { new UserFriendInfo { UserId = "friend1" } }
+            };
+
+            var allUsers = new List<UserEntity>
+    {
+        new UserEntity { Id = "user1", Nickname = "CurrentUser" },  // поточний користувач
+        new UserEntity { Id = "friend1", Nickname = "FriendAli" },  // вже друг
+        new UserEntity { Id = "user2", Nickname = "Alice" },
+        new UserEntity { Id = "user3", Nickname = "Alicia" },
+        new UserEntity { Id = "user4", Nickname = "Bob" }
+    };
+
+            _userServiceMock.Setup(s => s.GetUserOrThrowAsync(userId)).ReturnsAsync(user);
+            _userRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(allUsers);
+
+            // Act
+            var result = (await _friendService.SearchUsersByNicknameAsync(userId, query)).ToList();
+
+            // Assert
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result.Any(u => u.Nickname == "Alice"), Is.True);
+            Assert.That(result.Any(u => u.Nickname == "Alicia"), Is.True);
+            Assert.That(result.All(u => u.Id != "friend1" && u.Id != "user1"), Is.True);
+        }
+
+
     }
 }

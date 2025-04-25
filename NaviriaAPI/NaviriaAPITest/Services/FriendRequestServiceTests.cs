@@ -282,32 +282,121 @@ namespace NaviriaAPI.Tests.Services
         }
 
         [Test]
-        public async Task TC013_GetIncomingRequestsAsync_ShouldReturnRequests_WhenExist()
+        public async Task TC013_GetIncomingRequestsAsync_ShouldReturnSenders()
         {
-            var toUserId = "2";
             var requests = new List<FriendRequestEntity>
+            {
+                new() { FromUserId = "1", ToUserId = "2" },
+                new() { FromUserId = "3", ToUserId = "2" }
+            };
+
+            var senders = new List<UserEntity>
+            {
+                new() { Id = "1", Nickname = "Alice" },
+                new() { Id = "3", Nickname = "Bob" }
+            };
+
+            _friendRequestRepository.Setup(r => r.GetByReceiverIdAsync("2")).ReturnsAsync(requests);
+            _userRepository.Setup(r => r.GetManyByIdsAsync(It.IsAny<List<string>>())).ReturnsAsync(senders);
+
+            var result = await _service.GetIncomingRequestsAsync("2");
+
+            Assert.That(result.Count(), Is.EqualTo(2));
+            Assert.That(result.Any(u => u.Nickname == "Alice"), Is.True);
+            Assert.That(result.Any(u => u.Nickname == "Bob"), Is.True);
+        }
+
+        [Test]
+        public async Task TC014_GetAllAsync_ShouldReturnListOfDtos()
         {
-            new FriendRequestEntity { Id = "1", Status = "pending", ToUserId = toUserId },
-            new FriendRequestEntity { Id = "2", Status = "rejected", ToUserId = toUserId }
-        };
+            var entities = new List<FriendRequestEntity>
+            {
+                new() { Id = "1", FromUserId = "1", ToUserId = "2" },
+                new() { Id = "2", FromUserId = "3", ToUserId = "4" }
+            };
 
-            _friendRequestRepository.Setup(r => r.GetByReceiverIdAsync(toUserId)).ReturnsAsync(requests);
+            _friendRequestRepository.Setup(r => r.GetAllAsync()).ReturnsAsync(entities);
 
-            var result = await _service.GetIncomingRequestsAsync(toUserId);
+            var result = await _service.GetAllAsync();
 
-            Assert.That(result, Is.Not.Null);
             Assert.That(result.Count(), Is.EqualTo(2));
         }
 
         [Test]
-        public async Task TC014_GetIncomingRequestsAsync_ShouldReturnEmpty_WhenNoRequests()
+        public async Task TC015_UpdateAsync_ShouldOnlyUpdate_WhenStatusIsNotAcceptedOrRejected()
         {
-            var toUserId = "2";
-            _friendRequestRepository.Setup(r => r.GetByReceiverIdAsync(toUserId)).ReturnsAsync(new List<FriendRequestEntity>());
+            var requestId = "234";
+            var entity = new FriendRequestEntity
+            {
+                Id = requestId,
+                Status = "pending",
+                FromUserId = "user1",
+                ToUserId = "user2"
+            };
 
-            var result = await _service.GetIncomingRequestsAsync(toUserId);
+            var dto = new FriendRequestUpdateDto { Status = "ignored" };
 
-            Assert.That(result, Is.Empty);
+            _friendRequestRepository.Setup(r => r.GetByIdAsync(requestId)).ReturnsAsync(entity);
+            _friendRequestRepository.Setup(r => r.UpdateAsync(It.IsAny<FriendRequestEntity>())).ReturnsAsync(true);
+
+            var result = await _service.UpdateAsync(requestId, dto);
+
+            Assert.That(result, Is.True);
+            _friendRequestRepository.Verify(r => r.DeleteAsync(It.IsAny<string>()), Times.Never);
+            _userRepository.Verify(r => r.UpdateAsync(It.IsAny<UserEntity>()), Times.Never);
         }
+
+        [Test]
+        public async Task TC016_UpdateAsync_ShouldUpdateAndAddFriends_WhenStatusIsAccepted()
+        {
+            // Arrange
+            var requestId = "req123";
+            var fromUserId = "user1";
+            var toUserId = "user2";
+
+            var friendRequest = new FriendRequestEntity
+            {
+                Id = requestId,
+                Status = "pending",
+                FromUserId = fromUserId,
+                ToUserId = toUserId
+            };
+
+            var dto = new FriendRequestUpdateDto { Status = "accepted" };
+
+            var fromUser = new UserEntity
+            {
+                Id = fromUserId,
+                Friends = new List<UserFriendInfo>()
+            };
+
+            var toUser = new UserEntity
+            {
+                Id = toUserId,
+                Friends = new List<UserFriendInfo>()
+            };
+
+            _friendRequestRepository.Setup(r => r.GetByIdAsync(requestId)).ReturnsAsync(friendRequest);
+            _friendRequestRepository.Setup(r => r.UpdateAsync(It.IsAny<FriendRequestEntity>())).ReturnsAsync(true);
+            _friendRequestRepository.Setup(r => r.DeleteAsync(requestId)).ReturnsAsync(true);
+
+            _userService.Setup(s => s.GetUserOrThrowAsync(fromUserId)).ReturnsAsync(fromUser);
+            _userService.Setup(s => s.GetUserOrThrowAsync(toUserId)).ReturnsAsync(toUser);
+            _userRepository.Setup(r => r.UpdateAsync(It.IsAny<UserEntity>())).ReturnsAsync(true);
+
+            // Act
+            var result = await _service.UpdateAsync(requestId, dto);
+
+            // Assert
+            Assert.That(result, Is.True);
+            Assert.That(friendRequest.Status, Is.EqualTo("accepted"));
+
+            _friendRequestRepository.Verify(r => r.UpdateAsync(It.Is<FriendRequestEntity>(f => f.Status == "accepted")), Times.Once);
+            _friendRequestRepository.Verify(r => r.DeleteAsync(requestId), Times.Once);
+            _userRepository.Verify(r => r.UpdateAsync(It.Is<UserEntity>(u => u.Id == fromUserId)), Times.Once);
+            _userRepository.Verify(r => r.UpdateAsync(It.Is<UserEntity>(u => u.Id == toUserId)), Times.Once);
+        }
+
+
     }
 }

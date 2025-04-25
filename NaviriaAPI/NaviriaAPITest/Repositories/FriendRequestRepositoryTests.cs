@@ -26,18 +26,15 @@ namespace NaviriaAPI.Tests.Repositories
         {
             // Load configuration directly from MongoDbSettings.json file
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("MongoDbSettings.json")
                 .Build();
 
             var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
 
-            // Mock the IOptions<MongoDbOptions> object
-            _mockMongoDbOptions = new Mock<IOptions<MongoDbOptions>>();
-            _mockMongoDbOptions.Setup(o => o.Value).Returns(mongoDbOptions);
+            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions);
 
-            // Mock MongoDbContext
-            _dbContext = new MongoDbContext(_mockMongoDbOptions.Object);
+            _dbContext = new MongoDbContext(options);
 
             _friendRequestRepository = new FriendRequestRepository(_dbContext);
             _friendRequestCollection = _dbContext.FriendsRequests;
@@ -183,7 +180,7 @@ namespace NaviriaAPI.Tests.Repositories
                 Id = ObjectId.GenerateNewId().ToString(),
                 FromUserId = fromUserId2,
                 ToUserId = toUserId2,
-                Status = "Pending"
+                Status = "Approved"
             };
 
             await _friendRequestRepository.CreateAsync(friendRequest1);

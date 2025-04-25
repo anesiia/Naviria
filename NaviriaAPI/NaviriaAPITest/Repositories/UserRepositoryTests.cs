@@ -26,25 +26,26 @@ namespace NaviriaAPI.Tests.Repositories
         {
             // Зчитуємо налаштування з файлу
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppContext.BaseDirectory)  // Для правильного доступу до файлу з налаштуваннями
                 .AddJsonFile("MongoDbSettings.json")
                 .Build();
 
+            // Отримуємо MongoDbOptions з конфігурації
             var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
 
+            // Створюємо IOptions<MongoDbOptions> за допомогою Options.Create
+            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions); // Вказуємо правильний простір імен
 
-            // Створюємо IOptions для передачі в MongoDbContext
-            var mockOptions = new Mock<IOptions<MongoDbOptions>>();
-            mockOptions.Setup(o => o.Value).Returns(mongoDbOptions); 
-
-            // Створення контексту та репозиторію з моком
-            _dbContext = new MongoDbContext(mockOptions.Object);
+            // Створюємо контекст з реальними налаштуваннями
+            _dbContext = new MongoDbContext(options);  // Потрібно передавати IOptions<MongoDbOptions>
             _userRepository = new UserRepository(_dbContext);
 
-            // Очищення колекції користувачів
+            // Очищення колекції користувачів для чистоти тесту
             _usersCollection = _dbContext.Users;
             _usersCollection.DeleteMany(FilterDefinition<UserEntity>.Empty);
         }
+
+
 
         [TearDown]
         public void TearDown()

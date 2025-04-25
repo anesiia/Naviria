@@ -27,19 +27,16 @@ namespace NaviriaAPI.Tests.Repositories
         {
             // Load configuration directly from MongoDbSettings.json file
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("MongoDbSettings.json")
                 .Build();
 
             // Fetch MongoDB settings from configuration using MongoDbOptions
             var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
 
-            // Mock the IOptions<MongoDbOptions> object
-            var mockOptions = new Mock<IOptions<MongoDbOptions>>();
-            mockOptions.Setup(o => o.Value).Returns(mongoDbOptions);
+            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions);
 
-            // Create MongoDbContext using the mock settings
-            _dbContext = new MongoDbContext(mockOptions.Object);
+            _dbContext = new MongoDbContext(options);
             _achievementRepository = new AchievementRepository(_dbContext);
 
             _achievementCollection = _dbContext.Achievements;
@@ -146,13 +143,22 @@ namespace NaviriaAPI.Tests.Repositories
                 Points = 0
             };
 
+            // Додаємо до бази
             await _achievementRepository.CreateAsync(achievement);
 
+            // Видаляємо з бази
             var deleted = await _achievementRepository.DeleteAsync(achievement.Id);
-            var fetched = await _achievementRepository.GetByIdAsync(achievement.Id);
 
+            // Перевіряємо, чи був видалений
             Assert.That(deleted, Is.True);
+
+            // Чекаємо деякий час, щоб зміни відобразились
+            await Task.Delay(500);  // Затримка на випадок асинхронних процесів
+
+            // Перевіряємо, чи немає запису в базі після видалення
+            var fetched = await _achievementRepository.GetByIdAsync(achievement.Id);
             Assert.That(fetched, Is.Null);
         }
+
     }
 }

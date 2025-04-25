@@ -54,6 +54,8 @@ namespace NaviriaAPI.Tests.Services
                 IsNew = true
             };
 
+            _userServiceMock.Setup(u => u.UserExistsAsync(createDto.UserId)).ReturnsAsync(true);
+
             _repositoryMock
                 .Setup(repo => repo.CreateAsync(It.IsAny<NotificationEntity>()))
                 .Returns(Task.CompletedTask)
@@ -320,6 +322,123 @@ namespace NaviriaAPI.Tests.Services
 
             // Assert
             Assert.That(result, Is.Empty);
+        }
+
+
+        [Test]
+        public async Task TC012_GetAllUserNotificationsAsync_ValidUserId_ReturnsNotifications()
+        {
+            // Arrange
+            var userId = "user123";
+            var notifications = new List<NotificationEntity>
+            {
+                new NotificationEntity
+                {
+                    Id = "notif001",
+                    UserId = userId,
+                    Text = "Hi!",
+                    RecievedAt = DateTime.UtcNow,
+                    IsNew = true
+                }
+            };
+
+            _userServiceMock.Setup(u => u.UserExistsAsync(userId)).ReturnsAsync(true);
+            _repositoryMock.Setup(r => r.GetAllByUserAsync(userId)).ReturnsAsync(notifications);
+
+            // Act
+            var result = await _service.GetAllUserNotificationsAsync(userId);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count(), Is.EqualTo(1));
+            Assert.That(result.First().UserId, Is.EqualTo(userId));
+        }
+
+        [Test]
+        public void TC013_GetAllUserNotificationsAsync_EmptyUserId_ThrowsArgumentException()
+        {
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _service.GetAllUserNotificationsAsync(""));
+            Assert.That(ex.ParamName, Is.EqualTo("userId"));
+        }
+
+        [Test]
+        public void TC014_GetAllUserNotificationsAsync_UserNotFound_ThrowsNotFoundException()
+        {
+            // Arrange
+            var userId = "unknown";
+            _userServiceMock.Setup(u => u.UserExistsAsync(userId)).ReturnsAsync(false);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NotFoundException>(async () =>
+                await _service.GetAllUserNotificationsAsync(userId));
+        }
+
+        [Test]
+        public async Task TC015_UpdateStatusAsync_ValidInput_UpdatesSuccessfully()
+        {
+            // Arrange
+            var id = "notif001";
+            var updateDto = new NotificationUpdateDto { IsNew = false, UserId = "user123" };
+            var entity = new NotificationEntity { Id = id, IsNew = true, UserId = "user123" };
+
+            _repositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(entity);
+            _repositoryMock.Setup(r => r.UpdateStatusAsync(entity)).ReturnsAsync(true);
+
+            // Act
+            var result = await _service.UpdateStatusAsync(id, updateDto);
+
+            // Assert
+            Assert.That(result, Is.True);
+            Assert.That(entity.IsNew, Is.EqualTo(updateDto.IsNew));
+        }
+
+        [Test]
+        public void TC016_UpdateStatusAsync_NullDto_ThrowsArgumentNullException()
+        {
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await _service.UpdateStatusAsync("notif001", null!));
+            Assert.That(ex.ParamName, Is.EqualTo("updateNotificationDto"));
+        }
+
+        [Test]
+        public void TC017_UpdateStatusAsync_NotificationNotFound_ThrowsNotFoundException()
+        {
+            // Arrange
+            var id = "notif001";
+            _repositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((NotificationEntity)null!);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NotFoundException>(async () =>
+                await _service.UpdateStatusAsync(id, new NotificationUpdateDto { IsNew = false, UserId = "user123" }));
+        }
+
+        [Test]
+        public void TC018_UpdateStatusAsync_EmptyId_ThrowsArgumentException()
+        {
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _service.UpdateStatusAsync("", new NotificationUpdateDto { IsNew = false, UserId = "user123" }
+));
+            Assert.That(ex.ParamName, Is.EqualTo("id"));
+        }
+
+        [Test]
+        public void TC019_UpdateStatusAsync_UpdateFails_ThrowsFailedToUpdateException()
+        {
+            // Arrange
+            var id = "notif001";
+            var entity = new NotificationEntity { Id = id, IsNew = true };
+
+            _repositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(entity);
+            _repositoryMock.Setup(r => r.UpdateStatusAsync(entity)).ReturnsAsync(false);
+
+            // Act & Assert
+            Assert.ThrowsAsync<FailedToUpdateException>(async () =>
+                await _service.UpdateStatusAsync(id, new NotificationUpdateDto { IsNew = false, UserId = "user123" }
+));
         }
 
     }
