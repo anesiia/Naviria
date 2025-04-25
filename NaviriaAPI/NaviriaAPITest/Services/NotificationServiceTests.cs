@@ -12,6 +12,7 @@ using NaviriaAPI.IRepositories;
 using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Exceptions;
+using NaviriaAPI.IServices;
 
 namespace NaviriaAPI.Tests.Services
 {
@@ -21,14 +22,17 @@ namespace NaviriaAPI.Tests.Services
         private Mock<ILogger<NotificationService>> _loggerMock;
         private Mock<INotificationRepository> _repositoryMock;
         private NotificationService _service;
+        private Mock<IUserService> _userServiceMock;
 
         [SetUp]
         public void SetUp()
         {
             _loggerMock = new Mock<ILogger<NotificationService>>();
             _repositoryMock = new Mock<INotificationRepository>();
-            _service = new NotificationService(_loggerMock.Object, _repositoryMock.Object);
+            _userServiceMock = new Mock<IUserService>();
+           _service = new NotificationService(_loggerMock.Object, _repositoryMock.Object, _userServiceMock.Object);
         }
+
 
         [Test]
         public async Task TC001_CreateAsync_ValidInput_ReturnsNotificationDto()
@@ -279,18 +283,19 @@ namespace NaviriaAPI.Tests.Services
             // Arrange
             var userId = "user123";
             var notifications = new List<NotificationEntity>
+    {
+        new NotificationEntity
         {
-            new NotificationEntity
-            {
-                Id = "notif001",
-                UserId = userId,
-                Text = "Hello!",
-                RecievedAt = DateTime.UtcNow,
-                IsNew = true
-            }
-        };
+            Id = "notif001",
+            UserId = userId,
+            Text = "Hello!",
+            RecievedAt = DateTime.UtcNow,
+            IsNew = true
+        }
+    };
 
-            _repositoryMock.Setup(repo => repo.GetAllByUserAsync(userId)).ReturnsAsync(notifications);
+            _userServiceMock.Setup(s => s.UserExistsAsync(userId)).ReturnsAsync(true);
+            _repositoryMock.Setup(r => r.GetAllByUserAsync(userId)).ReturnsAsync(notifications);
 
             // Act
             var result = await _service.GetAllUserNotificationsAsync(userId);
@@ -300,12 +305,15 @@ namespace NaviriaAPI.Tests.Services
             Assert.That(result.First().UserId, Is.EqualTo(userId));
         }
 
+
         [Test]
         public async Task TC017_GetAllUserNotificationsAsync_NoNotifications_ReturnsEmptyList()
         {
             // Arrange
             var userId = "user123";
-            _repositoryMock.Setup(repo => repo.GetAllByUserAsync(userId)).ReturnsAsync(new List<NotificationEntity>());
+
+            _userServiceMock.Setup(s => s.UserExistsAsync(userId)).ReturnsAsync(true);
+            _repositoryMock.Setup(r => r.GetAllByUserAsync(userId)).ReturnsAsync(new List<NotificationEntity>());
 
             // Act
             var result = await _service.GetAllUserNotificationsAsync(userId);
@@ -313,5 +321,6 @@ namespace NaviriaAPI.Tests.Services
             // Assert
             Assert.That(result, Is.Empty);
         }
+
     }
 }

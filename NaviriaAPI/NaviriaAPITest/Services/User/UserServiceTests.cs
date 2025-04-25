@@ -336,5 +336,49 @@ namespace NaviriaAPI.Tests.Services.User
             Assert.That(ex!.Message, Does.Contain("User with ID nonexistent not found"));
         }
 
+        [Test]
+        public async Task TC013_DeleteAsync_ShouldReturnFalse_WhenUserDeletionFails()
+        {
+            // Arrange
+            var userId = "54321";
+            _userRepoMock.Setup(repo => repo.DeleteAsync(userId)).ReturnsAsync(false);
+
+            // Act
+            var result = await _userService.DeleteAsync(userId);
+
+            // Assert
+            Assert.That(result, Is.False);
+
+            _userRepoMock.Verify(repo => repo.DeleteAsync(userId), Times.Once);
+        }
+
+        [Test]
+        public async Task TC014_UserExistsAsync_ShouldReturnTrue_WhenUserExists()
+        {
+            // Arrange
+            var userId = "validUser";
+            _userRepoMock.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync(new UserEntity());
+
+            // Act
+            var result = await _userService.UserExistsAsync(userId);
+
+            // Assert
+            Assert.That(result, Is.True);
+            _userRepoMock.Verify(repo => repo.GetByIdAsync(userId), Times.Once);
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("   ")]
+        public async Task TC015_UserExistsAsync_ShouldReturnFalse_WhenUserIdIsNullOrWhitespace(string? invalidId)
+        {
+            // Act
+            var result = await _userService.UserExistsAsync(invalidId);
+
+            // Assert
+            Assert.That(result, Is.False);
+            _userRepoMock.Verify(repo => repo.GetByIdAsync(It.IsAny<string>()), Times.Never);
+        }
+
     }
-    }
+}
