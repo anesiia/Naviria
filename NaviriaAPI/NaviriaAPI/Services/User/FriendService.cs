@@ -62,5 +62,22 @@ namespace NaviriaAPI.Services.User
 
             return potentialFriends;
         }
+
+        public async Task<IEnumerable<UserDto>> SearchUsersByNicknameAsync(string userId, string query)
+        {
+            var user = await _userService.GetUserOrThrowAsync(userId);
+            var excludedIds = user.Friends.Select(f => f.UserId).Append(userId).ToHashSet();
+
+            var allUsers = await _userRepository.GetAllAsync();
+
+            var matched = allUsers
+                .Where(u => !excludedIds.Contains(u.Id))
+                .Where(u => u.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(u => u.Nickname)
+                .Select(UserMapper.ToDto);
+
+            return matched;
+        }
+
     }
 }

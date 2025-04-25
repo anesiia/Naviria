@@ -183,5 +183,23 @@ namespace NaviriaAPI.Controllers
             }
         }
 
+        [HttpGet("{userId}/search-friends")]
+        public async Task<IActionResult> SearchFriendsByNickname(string userId, [FromQuery] string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return BadRequest("Search query is required.");
+
+            try
+            {
+                var results = await _friendService.SearchUsersByNicknameAsync(userId, query);
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to search users by nickname for user {UserId}", userId);
+                return StatusCode(500, "Error searching for users.");
+            }
+        }
+
     }
 }
