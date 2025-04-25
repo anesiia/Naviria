@@ -1,7 +1,7 @@
 import React from "react";
 // import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getUserFriends } from "../services/FriendsServices";
+import { getUserFriends, getFriendRequests } from "../services/FriendsServices";
 import "../styles/friends.css";
 
 export function Friends() {
@@ -17,7 +17,8 @@ export function Friends() {
           const data = await getUserFriends();
           setFriends(data);
         } else if (activeTab === "requests") {
-          setRequests([]); // Тут має бути getFriendRequests()
+          const data = await getFriendRequests();
+          setRequests(data);
         } else if (activeTab === "discover") {
           setDiscover([]); // Тут має бути getDiscoverUsers()
         }
@@ -38,6 +39,30 @@ export function Friends() {
       }
     };
     fetchFriends();
+  }, []);
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const data = await getUserFriends();
+        setFriends(data);
+      } catch (e) {
+        console.error("Помилка при завантаженні друзів:", e.message);
+      }
+    };
+    fetchFriends();
+  }, []);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const data = await getFriendRequests();
+        setRequests(data);
+      } catch (e) {
+        console.error("Помилка при завантаженні друзів:", e.message);
+      }
+    };
+    fetchRequests();
   }, []);
 
   const renderActions = () => {

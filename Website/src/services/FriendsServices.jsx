@@ -18,3 +18,39 @@ export async function getUserFriends() {
 
   return data;
 }
+
+export async function getFriendRequests() {
+  const id = localStorage.getItem("id");
+
+  const res = await fetch(`${API_URL}/api/FriendRequest/incoming/${id}`, {
+    headers: {
+      ...authHeaders(),
+      "Content-Type": "application/json",
+    },
+  });
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Не вдалося отримати профіль");
+  }
+
+  return data;
+}
+
+export async function getDiscoverUsers() {
+  //const id = localStorage.getItem("id");
+
+  const res = await fetch(`${API_URL}/api/User/`, {
+    headers: {
+      ...authHeaders(),
+      "Content-Type": "application/json",
+    },
+  });
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Не вдалося отримати профіль");
+  }
+
+  return data;
+}
