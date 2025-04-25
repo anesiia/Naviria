@@ -28,12 +28,11 @@ export function Achievements() {
           <div className="achievement" key={index}>
             <img className="preview" />
             <div className="content">
-              <p className="name">Назва</p>
-              <p className="desc">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-                vel ornare neque.
-              </p>
-              <button className="gift-btn">Подарунок</button>
+              <p className="name">{achievement.name}</p>
+              <p className="desc">{achievement.description}</p>
+              <button className="gift-btn" value={achievement.points}>
+                Подарунок
+              </button>
             </div>
           </div>
         ))}

@@ -1,7 +1,14 @@
 import React from "react";
 // import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getUserFriends, getFriendRequests } from "../services/FriendsServices";
+import {
+  getUserFriends,
+  getFriendRequests,
+  getDiscoverUsers,
+  sendFriendRequest,
+  //updateFriendRequest,
+  deleteFriend,
+} from "../services/FriendsServices";
 import "../styles/friends.css";
 
 export function Friends() {
@@ -20,7 +27,8 @@ export function Friends() {
           const data = await getFriendRequests();
           setRequests(data);
         } else if (activeTab === "discover") {
-          setDiscover([]); // Тут має бути getDiscoverUsers()
+          const data = await getDiscoverUsers();
+          setDiscover(data);
         }
       } catch (e) {
         console.error("Помилка при завантаженні:", e.message);
@@ -41,51 +49,47 @@ export function Friends() {
     fetchFriends();
   }, []);
 
-  useEffect(() => {
-    const fetchFriends = async () => {
-      try {
-        const data = await getUserFriends();
-        setFriends(data);
-      } catch (e) {
-        console.error("Помилка при завантаженні друзів:", e.message);
-      }
-    };
-    fetchFriends();
-  }, []);
-
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const data = await getFriendRequests();
-        setRequests(data);
-      } catch (e) {
-        console.error("Помилка при завантаженні друзів:", e.message);
-      }
-    };
-    fetchRequests();
-  }, []);
-
-  const renderActions = () => {
-    switch (activeTab) {
+  const renderActions = (friend, tab = activeTab) => {
+    switch (tab) {
       case "my":
         return (
           <div className="actions">
-            <button className="remove">Видалити</button>
+            <button
+              className="remove"
+              onClick={() => handleRemoveFriend(friend.id)}
+            >
+              Видалити
+            </button>
             <button className="support">Підтримати</button>
           </div>
         );
       case "requests":
         return (
           <div className="actions">
-            <button className="reject">Відхилити</button>
-            <button className="accept">Прийняти</button>
+            <button
+              className="reject"
+              //onClick={() => handleUpdateRequest(id, "declined")}
+            >
+              Відхилити
+            </button>
+            <button
+              className="accept"
+              //onClick={() => handleUpdateRequest(id, "accepted")}
+            >
+              Прийняти
+            </button>
           </div>
         );
       case "discover":
       default:
         return (
           <div className="actions">
-            <button className="add-friend">Додати друга</button>
+            <button
+              className="add-friend"
+              onClick={() => handleSendRequest(friend.id)}
+            >
+              Додати друга
+            </button>
           </div>
         );
     }
@@ -99,16 +103,16 @@ export function Friends() {
         : discover;
     return (
       <div className="discover-list">
-        {list.map((user, index) => (
+        {list.map((friend, index) => (
           <div className="item" key={index}>
             <img className="avatar" src="Ellipse 19.svg" />
             <div className="info">
               <div className="name-lvl">
-                <p className="name">{user.nickname}</p>
-                <p className="level">{user.levelInfo.level}</p>
+                <p className="name">{friend.nickname}</p>
+                <p className="level">{friend.levelInfo.level} рівень</p>
               </div>
-              <p className="desc">{user.description || "Опис відсутній"}</p>
-              {renderActions()}
+              <p className="desc">{friend.description || "Опис відсутній"}</p>
+              {renderActions(friend)}
             </div>
           </div>
         ))}
@@ -116,19 +120,43 @@ export function Friends() {
     );
   };
 
+  const handleSendRequest = async (toUserId) => {
+    try {
+      await sendFriendRequest(toUserId);
+      setDiscover((prev) => prev.filter((u) => u.id !== toUserId));
+    } catch (e) {
+      console.error("Не вдалося надіслати запит:", e.message);
+    }
+  };
+
+  // const handleUpdateRequest = async (id, status) => {
+  //   try {
+  //     await updateFriendRequest(id, status);
+  //     // опціонально: оновити список запитів після відповіді
+  //     setRequests((prev) => prev.filter((r) => r.id !== id));
+  //   } catch (e) {
+  //     console.error("Не вдалося оновити статус запиту:", e.message);
+  //   }
+  // };
+
+  const handleRemoveFriend = async (friendId) => {
+    try {
+      await deleteFriend(friendId);
+      setFriends((prev) => prev.filter((f) => f.id !== friendId));
+    } catch (e) {
+      console.error("Не вдалося видалити друга:", e.message);
+    }
+  };
   const renderMyFriendsList = () => {
     return (
       <div className="friend-list">
-        {friends.map((user, index) => (
+        {friends.map((friend, index) => (
           <div className="friend" key={index}>
             <div className="info">
               <img className="avatar" src="Ellipse 23.svg" />
-              <div className="name">{user.nickname}</div>
+              <div className="name">{friend.nickname}</div>
             </div>
-            <div className="actions">
-              <button className="remove">Видалити</button>
-              <button className="support">Підтримати</button>
-            </div>
+            {renderActions(friend, "my")}
           </div>
         ))}
       </div>
