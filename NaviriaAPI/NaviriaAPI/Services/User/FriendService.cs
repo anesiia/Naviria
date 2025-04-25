@@ -48,5 +48,19 @@ namespace NaviriaAPI.Services.User
             return updatedFrom && updatedFriend;
         }
 
+        public async Task<IEnumerable<UserDto>> GetPotentialFriendsAsync(string userId)
+        {
+            var user = await _userService.GetUserOrThrowAsync(userId);
+            var exeptionUserIds = user.Friends.Select(f => f.UserId).ToList();
+
+            exeptionUserIds.Add(userId);
+
+            var allUsers = await _userRepository.GetAllAsync();
+            var potentialFriends = allUsers
+                .Where(u => !exeptionUserIds.Contains(u.Id))
+                .Select(UserMapper.ToDto);
+
+            return potentialFriends;
+        }
     }
 }

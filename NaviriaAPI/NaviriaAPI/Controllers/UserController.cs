@@ -167,5 +167,21 @@ namespace NaviriaAPI.Controllers
                 return StatusCode(500, $"Failed to delete friend of user with ID {fromUserId}");
             }
         }
+
+        [HttpGet("{id}/potential-friends")]
+        public async Task<IActionResult> GetPotentialFriends(string id)
+        {
+            try
+            {
+                var users = await _friendService.GetPotentialFriendsAsync(id);
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get potential friends for user {UserId}", id);
+                return StatusCode(500, "An error occurred while retrieving potential friends.");
+            }
+        }
+
     }
 }
