@@ -123,10 +123,15 @@ namespace NaviriaAPI.Services
             return categories.Select(FriendRequestMapper.ToDto).ToList();
         }
 
-        public async Task<IEnumerable<FriendRequestDto>> GetIncomingRequestsAsync(string toUserId)
+        public async Task<IEnumerable<UserDto>> GetIncomingRequestsAsync(string toUserId)
         {
             var requests = await _friendRequestRepository.GetByReceiverIdAsync(toUserId);
-            return requests.Select(FriendRequestMapper.ToDto);
+
+            var senderIds = requests.Select(r => r.FromUserId).Distinct().ToList();
+
+            var senders = await _userRepository.GetManyByIdsAsync(senderIds);
+
+            return senders.Select(UserMapper.ToDto);
         }
 
     }
