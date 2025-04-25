@@ -35,6 +35,12 @@ namespace NaviriaAPI.Services
                 throw new ArgumentNullException(nameof(notificationDto), "Notification DTO cannot be null.");
             }
 
+            if (!await _userService.UserExistsAsync(notificationDto.UserId))
+            {
+                _logger.LogWarning("User with ID {UserId} not found.", notificationDto.UserId);
+                throw new NotFoundException($"User with ID {notificationDto.UserId} does not exist.");
+            }
+
             var entity = NotificationMapper.ToEntity(notificationDto);
             await _notificationRepository.CreateAsync(entity);
 
