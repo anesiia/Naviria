@@ -1,6 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { googleLogin } from "../services/AuthServices";
 import { useLogin } from "../hooks/useLogin";
 import "../styles/login.css";
 
@@ -8,6 +11,7 @@ export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const login = useLogin();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,12 +22,32 @@ export function Login() {
     }
   };
 
+  const handleGoogleLogin = async (googleToken) => {
+    try {
+      await googleLogin(googleToken);
+      navigate("/profile"); // Переходиш на профіль після входу
+    } catch (err) {
+      console.error("Помилка входу через Google:", err.message);
+    }
+  };
   return (
     <div className="login-page">
       <div className="login">
         <h1>Вітаємо у naviria!</h1>
         <p>Авторизуйтеся у naviria за допомогою облікового запису або Email</p>
-        <div className="g-signin2" data-onsuccess="onSignIn"></div>
+        <GoogleLogin
+          onSuccess={async (credentialResponse) => {
+            try {
+              await handleGoogleLogin(credentialResponse.credential);
+              navigate("/profile"); // перенаправити після успіху
+            } catch (err) {
+              console.error(err.message);
+            }
+          }}
+          onError={() => {
+            console.error("Помилка авторизації через Google");
+          }}
+        />
         <div className="or">
           <img src="Line.svg" />
           <p>або</p>
