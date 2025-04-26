@@ -11,13 +11,15 @@ export default function Header() {
         <Link to="/helper">Помічник</Link>
         <Link to="/achievements">Досягнення</Link>
         <Link to="/statistics">Статистика</Link>
-        <Link to="/community">Ком'юніті</Link>
+        <Link to="/friends">Ком'юніті</Link>
       </nav>
       <div className="actions">
         <button className="notifications">
           <img src="bell.svg" alt="notifications" />
         </button>
-        <img className="avatar" src="Ellipse.svg" alt="avatar" />
+        <Link to="/profile">
+          <img className="avatar" src="Ellipse.svg" alt="avatar" />
+        </Link>
       </div>
     </header>
   );
