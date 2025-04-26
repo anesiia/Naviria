@@ -1,0 +1,42 @@
+.achievements-page {
+  display: flex;
+  flex-direction: column;
+  padding: 4rem 6rem;
+}
+.achievements-page h1 {
+  font-weight: 600;
+  color: #ff8f00;
+  margin-bottom: 4rem;
+}
+.achievements-page .achievements {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.achievements-page .achievements .achievement {
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.25);
+  padding: 1rem;
+  width: 20vw;
+}
+.achievements-page .achievements .achievement .name {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.achievements-page .achievements .achievement .desc {
+  color: rgba(6, 59, 82, 0.6);
+  margin-bottom: 2rem;
+  font-weight: 400;
+  line-height: 140%;
+}
+.achievements-page .achievements .achievement .gift-btn {
+  border: none;
+  padding: 0.5rem 1rem;
+  color: #fff;
+  float: right;
+  border-radius: 5px;
+  font-size: 16px;
+  background: linear-gradient(90deg, #023047 0%, #219dbb 100%);
+}

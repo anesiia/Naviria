@@ -1,11 +1,16 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { getUserFriends } from "../services/FriendsServices";
+import { getAchievements } from "../services/AchievementsServices";
 import { getProfile } from "../services/ProfileServices";
 import "../styles/profile.css";
 
 export function Profile() {
   const [user, setUser] = useState(null);
+  const [friends, setFriends] = useState([]);
+  const [achievements, setAchievements] = useState([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,6 +20,30 @@ export function Profile() {
         console.error(err.message);
         navigate("/login");
       });
+  }, []);
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const data = await getUserFriends();
+        setFriends(data);
+      } catch (e) {
+        console.error("Помилка при завантаженні друзів:", e.message);
+      }
+    };
+    fetchFriends();
+  }, []);
+
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      try {
+        const data = await getAchievements();
+        setAchievements(data);
+      } catch (e) {
+        console.error("Помилка при завантаженні досягнень:", e.message);
+      }
+    };
+    fetchAchievements();
   }, []);
 
   if (!user) return <p>Завантаження…</p>;
@@ -55,47 +84,27 @@ export function Profile() {
         <div className="achievements">
           <p className="naming">Досягнення</p>
           <div className="ach-list">
-            <div className="achievement">
-              <img src="Ellipse 21.svg" className="pic" />
-              <div className="ach-info">
-                <p className="ach-name">Lalala</p>
-                <p className="ach-desc">Damn bro how...?</p>
+            {achievements.map((achievement, index) => (
+              <div className="achievement" key={index}>
+                <img src="Ellipse 21.svg" className="pic" />
+                <div className="ach-info">
+                  <p className="ach-name">{achievement.name}</p>
+                  <p className="ach-desc">{achievement.description}</p>
+                </div>
               </div>
-            </div>
-            <div className="achievement">
-              <img src="Ellipse 21.svg" className="pic" />
-              <div className="ach-info">
-                <p className="ach-name">Lalala</p>
-                <p className="ach-desc">Damn bro how...?</p>
-              </div>
-            </div>
-            <div className="achievement">
-              <img src="Ellipse 21.svg" className="pic" />
-              <div className="ach-info">
-                <p className="ach-name">Lalala</p>
-                <p className="ach-desc">Damn bro how...?</p>
-              </div>
-            </div>
-            <div className="achievement">
-              <img src="Ellipse 21.svg" className="pic" />
-              <div className="ach-info">
-                <p className="ach-name">Lalala</p>
-                <p className="ach-desc">Damn bro how...?</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
         <div className="friends">
           <p className="naming">Друзі</p>
+
           <div className="friends-list">
-            <div className="friend">
-              <img src="Ellipse 21.svg" className="pic" />
-              <p className="friend-name">Alpha</p>
-            </div>
-            <div className="friend">
-              <img src="Ellipse 21.svg" className="pic" />
-              <p className="friend-name">Alpha</p>
-            </div>
+            {friends.map((friend, index) => (
+              <div className="friend" key={index}>
+                <img src="Ellipse 21.svg" className="pic" />
+                <p className="friend-name">{friend.nickname}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
