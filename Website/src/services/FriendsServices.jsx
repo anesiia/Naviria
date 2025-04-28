@@ -112,3 +112,27 @@ export async function deleteFriend(friendId) {
     throw new Error("Не вдалося видалити друга");
   }
 }
+
+export async function searchFriends(query) {
+  const id = localStorage.getItem("id");
+
+  const res = await fetch(
+    `${API_URL}/api/Friends/${id}/search-friends?query=${encodeURIComponent(
+      query
+    )}`,
+    {
+      headers: {
+        ...authHeaders(),
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Не вдалося знайти друзів");
+  }
+
+  return data;
+}

@@ -8,6 +8,7 @@ import {
   sendFriendRequest,
   //updateFriendRequest,
   deleteFriend,
+  searchFriends,
 } from "../services/FriendsServices";
 import "../styles/friends.css";
 
@@ -16,6 +17,7 @@ export function Friends() {
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [discover, setDiscover] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -147,6 +149,26 @@ export function Friends() {
       console.error("Не вдалося видалити друга:", e.message);
     }
   };
+
+  const handleSearchDiscover = async () => {
+    if (activeTab !== "discover") return; // ❗ Нічого не робити, якщо вкладка не discover
+    if (!searchQuery.trim()) {
+      try {
+        const data = await getDiscoverUsers();
+        setDiscover(data);
+      } catch (e) {
+        console.error("Помилка завантаження discover:", e.message);
+      }
+      return;
+    }
+    try {
+      const data = await searchFriends(searchQuery);
+      setDiscover(data);
+    } catch (e) {
+      console.error("Помилка пошуку:", e.message);
+    }
+  };
+
   const renderMyFriendsList = () => {
     return (
       <div className="friend-list">
@@ -201,8 +223,13 @@ export function Friends() {
         </div>
         <div className="search">
           <div className="search-box">
-            <input type="text" placeholder="Пошук" />
-            <button className="search-btn">
+            <input
+              type="text"
+              placeholder="Пошук"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button className="search-btn" onClick={handleSearchDiscover}>
               <img src="search.svg" alt="search" />
             </button>
           </div>

@@ -38,6 +38,7 @@
   outline: none;
 }
 .friends-page .side-bar .search-box button {
+  cursor: pointer;
   border: none;
   background-color: transparent;
 }
@@ -136,6 +137,7 @@
   outline: none;
 }
 .friends-page .content .search .search-box button {
+  cursor: pointer;
   border: none;
   background-color: transparent;
 }

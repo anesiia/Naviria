@@ -28,6 +28,31 @@ export async function login(email, password) {
   return data;
 }
 
+export async function googleLogin(googleToken) {
+  const res = await fetch(`${API_URL}/api/Auth/google-login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token: googleToken }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Помилка при вході через Google");
+  }
+
+  localStorage.setItem("token", data.token);
+
+  const payload = parseJwt(data.token);
+  if (payload?.sub) {
+    localStorage.setItem("id", payload.sub);
+  }
+
+  return data;
+}
+
 export async function registration(
   fullName,
   nickname,
