@@ -74,7 +74,7 @@ namespace NaviriaAPI.Tests.Services
             var entity = new FriendRequestEntity
             {
                 Id = requestId,
-                Status = "pending",
+                Status = "new request",
                 FromUserId = "1",
                 ToUserId = "2"
             };
@@ -103,8 +103,8 @@ namespace NaviriaAPI.Tests.Services
         [Test]
         public async Task TC004_UpdateAsync_ShouldReturnFalse_WhenExceptionOccurs()
         {
-            var requestId = "123";
-            var entity = new FriendRequestEntity { Id = requestId, Status = "pending" };
+            var requestId = "123";  
+            var entity = new FriendRequestEntity { Id = requestId, Status = "new request" };
 
             _friendRequestRepository.Setup(r => r.GetByIdAsync(requestId)).ReturnsAsync(entity);
             _friendRequestRepository.Setup(r => r.UpdateAsync(It.IsAny<FriendRequestEntity>())).ReturnsAsync(true);
@@ -221,7 +221,7 @@ namespace NaviriaAPI.Tests.Services
         public async Task TC008_GetByIdAsync_ShouldReturnRequest_WhenRequestExists()
         {
             var requestId = "123";
-            var entity = new FriendRequestEntity { Id = requestId, Status = "pending" };
+            var entity = new FriendRequestEntity { Id = requestId, Status = "new request" };
 
             _friendRequestRepository.Setup(r => r.GetByIdAsync(requestId)).ReturnsAsync(entity);
 
@@ -269,7 +269,7 @@ namespace NaviriaAPI.Tests.Services
         {
             var requests = new List<FriendRequestEntity>
         {
-            new FriendRequestEntity { Id = "1", Status = "pending" },
+            new FriendRequestEntity { Id = "1", Status = "new request" },
             new FriendRequestEntity { Id = "2", Status = "accepted" }
         };
 
@@ -329,7 +329,7 @@ namespace NaviriaAPI.Tests.Services
             var entity = new FriendRequestEntity
             {
                 Id = requestId,
-                Status = "pending",
+                Status = "new request",
                 FromUserId = "user1",
                 ToUserId = "user2"
             };
@@ -357,7 +357,7 @@ namespace NaviriaAPI.Tests.Services
             var friendRequest = new FriendRequestEntity
             {
                 Id = requestId,
-                Status = "pending",
+                Status = "new request",
                 FromUserId = fromUserId,
                 ToUserId = toUserId
             };
