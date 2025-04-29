@@ -6,6 +6,7 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ICloudStorage;
 using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.IServices.IJwtService;
+using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.Services.Validation;
 
@@ -15,11 +16,16 @@ namespace NaviriaAPI.Services.User
     {
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
+        private readonly IMessageSecurityService _messageSecurityService;
 
-        public FriendService(IUserRepository userRepository, IUserService userService)
+        public FriendService(
+            IUserRepository userRepository,
+            IUserService userService, 
+            IMessageSecurityService messageSecurityService)
         {
             _userRepository = userRepository;
             _userService = userService;
+            _messageSecurityService = messageSecurityService;
         }
 
         public async Task<IEnumerable<UserDto>> GetUserFriendsAsync(string userId)
@@ -50,9 +56,13 @@ namespace NaviriaAPI.Services.User
 
         public async Task<IEnumerable<UserDto>> GetPotentialFriendsAsync(string userId)
         {
+            // get all system users
             var user = await _userService.GetUserOrThrowAsync(userId);
+
+            // remove users who are already friends of user
             var exeptionUserIds = user.Friends.Select(f => f.UserId).ToList();
 
+            // remove user himself
             exeptionUserIds.Add(userId);
 
             var allUsers = await _userRepository.GetAllAsync();
@@ -70,6 +80,8 @@ namespace NaviriaAPI.Services.User
 
             var allUsers = await _userRepository.GetAllAsync();
 
+            _messageSecurityService.Validate(userId, query);
+
             var matched = allUsers
                 .Where(u => !excludedIds.Contains(u.Id))
                 .Where(u => u.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase))
@@ -78,6 +90,28 @@ namespace NaviriaAPI.Services.User
 
             return matched;
         }
+
+        public async Task<IEnumerable<UserDto>> SearchFriendsByNicknameAsync(string userId, string query)
+        {
+            var user = await _userService.GetUserOrThrowAsync(userId);
+            var friendIds = user.Friends.Select(f => f.UserId).ToList();
+
+            _messageSecurityService.Validate(userId, query);
+
+            if (!friendIds.Any())
+                return Enumerable.Empty<UserDto>();
+
+            var friends = await _userRepository.GetManyByIdsAsync(friendIds);
+
+            var matchedFriends = friends
+                .Where(f => f.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(f => f.Nickname)
+                .Select(UserMapper.ToDto);
+
+            return matchedFriends;
+        }
+
+
 
     }
 }
