@@ -112,5 +112,25 @@ namespace NaviriaAPI.Controllers
                 return StatusCode(500, "Failed to get user achievements.");
             }
         }
+
+        
+
+        [HttpPut("{userId}/achievement/{achievementId}")]
+        public async Task<IActionResult> AwardAchievementPointsToUser(string userId, string achievementId)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(achievementId))
+                return BadRequest("User ID and Achievement ID are required.");
+
+            try
+            {
+                var updated = await _achievementsService.AwardAchievementPointsAsync(userId, achievementId);
+                return updated ? NoContent() : NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to award achievements points to user with ID {0}", userId);
+                return StatusCode(500, $"Failed to award achievements points to user with ID {userId}");
+            }
+        }
     }
 }

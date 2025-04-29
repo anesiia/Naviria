@@ -12,5 +12,6 @@ namespace NaviriaAPI.IServices
         Task<bool> UpdateAsync(string id, AchievementUpdateDto  achievementDto);
         Task<bool> DeleteAsync(string id);
         Task<IEnumerable<AchievementDto>> GetAllUserAchievementsAsync(string userId);
+        Task<bool> AwardAchievementPointsAsync(string userId, string achievementId);
     }
 }

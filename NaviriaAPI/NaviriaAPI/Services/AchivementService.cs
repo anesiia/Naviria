@@ -7,6 +7,9 @@ using NaviriaAPI.Mappings;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.Repositories;
 using NaviriaAPI.Services.User;
+using NaviriaAPI.Entities.EmbeddedEntities;
+using NaviriaAPI.Entities;
+using NaviriaAPI.IServices.IGamificationLogic;
 
 namespace NaviriaAPI.Services
 {
@@ -14,15 +17,21 @@ namespace NaviriaAPI.Services
     {
         private readonly IAchievementRepository _achievementRepository;
         private readonly IUserService _userService;
+        private readonly IUserRepository _userRepository;
+        private readonly ILevelService _levelService;
         private readonly ILogger<AchievementService> _logger;
         public AchievementService(
             IAchievementRepository achievementRepository, 
-            IUserService userService, 
-            ILogger<AchievementService> logger)
+            IUserService userService,
+            IUserRepository userRepository,
+            ILogger<AchievementService> logger,
+            ILevelService levelService)
         {
             _achievementRepository = achievementRepository;
             _userService = userService;
+            _userRepository = userRepository;
             _logger = logger;
+            _levelService = levelService;
         }
         public async Task<AchievementDto> CreateAsync(AchievementCreateDto achievementDto)
         {
@@ -78,5 +87,35 @@ namespace NaviriaAPI.Services
             return achievements.Select(AchievementMapper.ToDto);
         }
 
+        public async Task<bool> AwardAchievementPointsAsync(string userId, string achievementId)
+        {
+            var user = await _userService.GetUserOrThrowAsync(userId);
+            var achievement = await _achievementRepository.GetByIdAsync(achievementId);
+
+            if (achievement == null)
+                throw new NotFoundException("Achievement not found");
+
+            var userAchievement = user.Achievements.FirstOrDefault(a => a.AchievementId == achievementId);
+            if (userAchievement == null)
+                throw new InvalidOperationException("User does not have this achievement");
+
+            if (userAchievement.IsPointsReceived)
+                throw new InvalidOperationException("Points for this achievement already received");
+
+            ApplyPointsAndRecalculateLevel(user, achievement.Points);
+            userAchievement.IsPointsReceived = true;
+
+            var updated = await _userRepository.UpdateAsync(user);
+            if (!updated)
+                throw new FailedToUpdateException("Failed to update user points");
+
+            return updated;
+        }
+
+        private void ApplyPointsAndRecalculateLevel(UserEntity user, int additionalPoints)
+        {
+            user.Points += additionalPoints;
+            user.LevelInfo = _levelService.CalculateLevelProgress(user.Points);
+        }
     }
 }

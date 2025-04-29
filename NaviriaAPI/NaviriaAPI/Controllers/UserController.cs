@@ -100,7 +100,7 @@ namespace NaviriaAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to update user with ID {0}", id);
-                return StatusCode(500, $"Failed to get create user with ID {id}");
+                return StatusCode(500, $"Failed to get update user with ID {id}");
             }
         }
 
@@ -119,6 +119,24 @@ namespace NaviriaAPI.Controllers
             {
                 _logger.LogError(ex, "Failed to delete user with ID {0}", id);
                 return StatusCode(500, $"Failed to delete user with ID {id}");
+            }
+        }
+
+        [HttpPut("user/{userId}/achievement/{achievementId}")]
+        public async Task<IActionResult> GiveAchievementToUser(string userId, string achievementId)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(achievementId))
+                return BadRequest("User ID and Achievement ID are required.");
+
+            try
+            {
+                var updated = await _userService.GiveAchievementAsync(userId, achievementId);
+                return updated ? NoContent() : NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to give achievement user with ID {0}", userId);
+                return StatusCode(500, $"Failed to get give achievement user with ID {userId}");
             }
         }
     }
