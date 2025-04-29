@@ -61,18 +61,25 @@ namespace NaviriaAPI.Services.User
         {
             UserValidationService.ValidateAsync(userDto);
 
-            var existing = await GetUserOrThrowAsync(id);
+            var userDtoFromDb = await GetByIdAsync(id);
+            if (userDtoFromDb == null)
+                throw new NotFoundException($"User with ID {id} not found.");
+
             userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
 
-            var entity = UserMapper.ToEntity(id, userDto);
-
-            if (existing.Points != entity.Points)
-                entity.LevelInfo = _levelService.CalculateLevelProgress(entity.Points);
+            if (userDtoFromDb.Points != userDto.Points)
+            {
+                int additionalXp = userDto.Points - userDtoFromDb.Points;
+                userDto.LevelInfo = await _levelService.CalculateLevelProgressAsync(userDtoFromDb, additionalXp);
+            }
             else
-                entity.LevelInfo = existing.LevelInfo;
+            {
+                userDto.LevelInfo = userDtoFromDb.LevelInfo;
+            }
 
-            return await _userRepository.UpdateAsync(entity);
+            return await _userRepository.UpdateAsync(UserMapper.ToEntity(id, userDto));
         }
+
 
         public async Task<UserDto?> GetByIdAsync(string id)
         {

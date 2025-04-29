@@ -98,5 +98,33 @@ namespace NaviriaAPI.Mappings
                 IsOnline = dto.IsOnline,
                 IsProUser = dto.IsProUser
             };
+
+        public static UserUpdateDto ToUpdateDto(UserDto userDto)
+        {
+            return new UserUpdateDto
+            {
+                FullName = userDto.FullName,
+                Nickname = userDto.Nickname,
+                Description = userDto.Description,
+                Achievements = userDto.Achievements,
+                Email = userDto.Email,
+                Password = userDto.Password,
+                Friends = userDto.Friends,
+                FutureMessage = userDto.FutureMessage,
+                Photo = userDto.Photo,
+                Points = userDto.Points,
+                LevelInfo = userDto.LevelInfo,
+                LastSeen = userDto.LastSeen,
+                IsOnline = userDto.IsOnline,
+                IsProUser = userDto.IsProUser
+            };
+        }
+
+        public static UserEntity ToEntity(string id, UserDto userDto)
+        {
+            var updateDto = ToUpdateDto(userDto);
+            return ToEntity(id, updateDto);
+        }
+
     }
 }

@@ -87,35 +87,41 @@ namespace NaviriaAPI.Services
             return achievements.Select(AchievementMapper.ToDto);
         }
 
+
         public async Task<bool> AwardAchievementPointsAsync(string userId, string achievementId)
         {
-            var user = await _userService.GetUserOrThrowAsync(userId);
-            var achievement = await _achievementRepository.GetByIdAsync(achievementId);
+            var userDto = await _userService.GetByIdAsync(userId)
+                          ?? throw new NotFoundException($"User with ID {userId} not found.");
 
-            if (achievement == null)
-                throw new NotFoundException("Achievement not found");
+            var achievement = await _achievementRepository.GetByIdAsync(achievementId)
+                              ?? throw new NotFoundException("Achievement not found");
 
-            var userAchievement = user.Achievements.FirstOrDefault(a => a.AchievementId == achievementId);
+            var userAchievement = userDto.Achievements.FirstOrDefault(a => a.AchievementId == achievementId);
             if (userAchievement == null)
                 throw new InvalidOperationException("User does not have this achievement");
 
             if (userAchievement.IsPointsReceived)
                 throw new InvalidOperationException("Points for this achievement already received");
 
-            ApplyPointsAndRecalculateLevel(user, achievement.Points);
+            userDto = await ApplyPointsAndRecalculateLevelAsync(userDto, achievement.Points);
             userAchievement.IsPointsReceived = true;
 
-            var updated = await _userRepository.UpdateAsync(user);
+            var userEntity = UserMapper.ToEntity(userId, userDto);
+
+            var updated = await _userRepository.UpdateAsync(userEntity);
+
             if (!updated)
                 throw new FailedToUpdateException("Failed to update user points");
 
-            return updated;
+            return true;
         }
 
-        private void ApplyPointsAndRecalculateLevel(UserEntity user, int additionalPoints)
+        private async Task<UserDto> ApplyPointsAndRecalculateLevelAsync(UserDto user, int additionalPoints)
         {
+            user.LevelInfo = await _levelService.CalculateLevelProgressAsync(user, additionalPoints);
             user.Points += additionalPoints;
-            user.LevelInfo = _levelService.CalculateLevelProgress(user.Points);
+
+            return user;
         }
     }
 }

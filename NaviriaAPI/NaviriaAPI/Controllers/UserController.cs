@@ -122,7 +122,7 @@ namespace NaviriaAPI.Controllers
             }
         }
 
-        [HttpPut("user/{userId}/achievement/{achievementId}")]
+        [HttpPut("{userId}/give-achievement/{achievementId}")]
         public async Task<IActionResult> GiveAchievementToUser(string userId, string achievementId)
         {
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(achievementId))
