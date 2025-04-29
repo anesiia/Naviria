@@ -12,6 +12,7 @@ namespace NaviriaAPI.DTOs.UpdateDTOs
         public string FullName { get; set; } = string.Empty;
 
         [Required]
+        [MaxLength(20)]
         [MinLength(3)]
         [RegularExpression("^[a-zA-Z0-9]+$")]
         public string Nickname { get; set; } = string.Empty;
