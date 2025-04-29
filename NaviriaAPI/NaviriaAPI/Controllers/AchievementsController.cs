@@ -2,6 +2,7 @@
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.IServices;
 using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.Services;
 
 namespace NaviriaAPI.Controllers
 {
@@ -91,6 +92,24 @@ namespace NaviriaAPI.Controllers
             {
                 _logger.LogError(ex, "Failed to delete achievement with ID {0}", id);
                 return StatusCode(500, $"Failed to delete achievement with ID {id}");
+            }
+        }
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetAllUserAchievements(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest("User ID is required.");
+
+            try
+            {
+                var notifications = await _achievementsService.GetAllUserAchievementsAsync(userId);
+                return Ok(notifications);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get achievements for user {UserId}", userId);
+                return StatusCode(500, "Failed to get user achievements.");
             }
         }
     }
