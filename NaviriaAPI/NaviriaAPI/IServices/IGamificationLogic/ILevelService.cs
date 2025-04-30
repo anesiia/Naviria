@@ -1,9 +1,10 @@
-﻿using NaviriaAPI.Entities.EmbeddedEntities;
+﻿using NaviriaAPI.DTOs;
+using NaviriaAPI.Entities.EmbeddedEntities;
 
 namespace NaviriaAPI.IServices.IGamificationLogic
 {
     public interface ILevelService
     {
-        LevelProgressInfo CalculateLevelProgress(int xp);
+        Task<LevelProgressInfo> CalculateLevelProgressAsync(UserDto user, int additionalXp);
     }
 }

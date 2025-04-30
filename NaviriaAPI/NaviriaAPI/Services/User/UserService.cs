@@ -24,6 +24,7 @@ namespace NaviriaAPI.Services.User
         private readonly IAchievementRepository _achievementRepository;
         private readonly ILevelService _levelService;
         private readonly IJwtService _jwtService;
+        private readonly ILogger<UserService> _logger;
 
         public UserService(
             IUserRepository userRepository,
@@ -32,7 +33,8 @@ namespace NaviriaAPI.Services.User
             UserValidationService validation,
             IAchievementRepository achievementRepository,
             ILevelService levelService,
-            IJwtService jwtService)
+            IJwtService jwtService,
+            ILogger<UserService> logger)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -40,6 +42,7 @@ namespace NaviriaAPI.Services.User
             _achievementRepository = achievementRepository;
             _levelService = levelService;
             _jwtService = jwtService;
+            _logger = logger;
         }
 
         public async Task<string> CreateAsync(UserCreateDto userDto)
@@ -58,18 +61,25 @@ namespace NaviriaAPI.Services.User
         {
             UserValidationService.ValidateAsync(userDto);
 
-            var existing = await GetUserOrThrowAsync(id);
+            var userDtoFromDb = await GetByIdAsync(id);
+            if (userDtoFromDb == null)
+                throw new NotFoundException($"User with ID {id} not found.");
+
             userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
 
-            var entity = UserMapper.ToEntity(id, userDto);
-
-            if (existing.Points != entity.Points)
-                entity.LevelInfo = _levelService.CalculateLevelProgress(entity.Points);
+            if (userDtoFromDb.Points != userDto.Points)
+            {
+                int additionalXp = userDto.Points - userDtoFromDb.Points;
+                userDto.LevelInfo = await _levelService.CalculateLevelProgressAsync(userDtoFromDb, additionalXp);
+            }
             else
-                entity.LevelInfo = existing.LevelInfo;
+            {
+                userDto.LevelInfo = userDtoFromDb.LevelInfo;
+            }
 
-            return await _userRepository.UpdateAsync(entity);
+            return await _userRepository.UpdateAsync(UserMapper.ToEntity(id, userDto));
         }
+
 
         public async Task<UserDto?> GetByIdAsync(string id)
         {
@@ -106,26 +116,30 @@ namespace NaviriaAPI.Services.User
             var user = await GetUserOrThrowAsync(userId);
 
             if (user.Achievements.Any(a => a.AchievementId == achievementId))
-                return false;
+            {
+                _logger.LogWarning("User {UserId} already has achievement {AchievementId}.", userId, achievementId);
+                throw new AlreadyExistException($"User already has achievement {achievementId}");
+            }
+
+            var achievement = await _achievementRepository.GetByIdAsync(achievementId);
+            if (achievement == null)
+            {
+                _logger.LogWarning("Achievement with ID {AchievementId} not found.", achievementId);
+                throw new NotFoundException("Achievement not found.");
+            }
 
             user.Achievements.Add(new UserAchievementInfo
             {
                 AchievementId = achievementId,
-                ReceivedAt = DateTime.UtcNow
+                ReceivedAt = DateTime.UtcNow,
+                IsPointsReceived = false
             });
 
-            var achievement = await _achievementRepository.GetByIdAsync(achievementId);
-            if (achievement != null)
-                ApplyPointsAndRecalculateLevel(user, achievement.Points);
+            var updated = await _userRepository.UpdateAsync(user);
 
-            return await _userRepository.UpdateAsync(user);
+            return updated;
         }
 
-        private void ApplyPointsAndRecalculateLevel(UserEntity user, int additionalPoints)
-        {
-            user.Points += additionalPoints;
-            user.LevelInfo = _levelService.CalculateLevelProgress(user.Points);
-        }
 
         public async Task<UserEntity> GetUserOrThrowAsync(string id)
         {

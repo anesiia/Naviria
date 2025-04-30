@@ -12,5 +12,8 @@ namespace NaviriaAPI.Entities.EmbeddedEntities
         [BsonElement("received_at")]
         [BsonRepresentation(BsonType.DateTime)]
         public DateTime? ReceivedAt { get; set; }
+
+        [BsonElement("is_points_received")]
+        public bool IsPointsReceived { get; set; }
     }
 }

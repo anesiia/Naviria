@@ -2,6 +2,7 @@
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.IServices;
 using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.Services;
 
 namespace NaviriaAPI.Controllers
 {
@@ -91,6 +92,44 @@ namespace NaviriaAPI.Controllers
             {
                 _logger.LogError(ex, "Failed to delete achievement with ID {0}", id);
                 return StatusCode(500, $"Failed to delete achievement with ID {id}");
+            }
+        }
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetAllUserAchievements(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest("User ID is required.");
+
+            try
+            {
+                var notifications = await _achievementsService.GetAllUserAchievementsAsync(userId);
+                return Ok(notifications);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get achievements for user {UserId}", userId);
+                return StatusCode(500, "Failed to get user achievements.");
+            }
+        }
+
+        
+
+        [HttpPut("{userId}/award-achievement-points/{achievementId}")]
+        public async Task<IActionResult> AwardAchievementPointsToUser(string userId, string achievementId)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(achievementId))
+                return BadRequest("User ID and Achievement ID are required.");
+
+            try
+            {
+                var updated = await _achievementsService.AwardAchievementPointsAsync(userId, achievementId);
+                return updated ? NoContent() : NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to award achievements points to user with ID {0}", userId);
+                return StatusCode(500, $"Failed to award achievements points to user with ID {userId}");
             }
         }
     }

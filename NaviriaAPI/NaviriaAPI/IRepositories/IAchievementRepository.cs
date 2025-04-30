@@ -9,5 +9,6 @@ namespace NaviriaAPI.IRepositories
         Task CreateAsync(AchievementEntity category);
         Task<bool> UpdateAsync(AchievementEntity category);
         Task<bool> DeleteAsync(string id);
+        Task<IEnumerable<AchievementEntity>> GetManyByIdsAsync(IEnumerable<string> ids);
     }
 }

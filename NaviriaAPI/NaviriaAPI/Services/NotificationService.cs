@@ -15,16 +15,13 @@ namespace NaviriaAPI.Services
     {
         private readonly ILogger<NotificationService> _logger;
         private readonly INotificationRepository _notificationRepository;
-        private readonly IUserService _userService;
 
         public NotificationService(
             ILogger<NotificationService> logger,
-            INotificationRepository notificationRepository,
-            IUserService userService)
+            INotificationRepository notificationRepository)
         {
             _logger = logger;
             _notificationRepository = notificationRepository;
-            _userService = userService;
         }
 
         public async Task<NotificationDto> CreateAsync(NotificationCreateDto notificationDto)
@@ -33,12 +30,6 @@ namespace NaviriaAPI.Services
             {
                 _logger.LogWarning("Attempted to create a notification with null DTO.");
                 throw new ArgumentNullException(nameof(notificationDto), "Notification DTO cannot be null.");
-            }
-
-            if (!await _userService.UserExistsAsync(notificationDto.UserId))
-            {
-                _logger.LogWarning("User with ID {UserId} not found.", notificationDto.UserId);
-                throw new NotFoundException($"User with ID {notificationDto.UserId} does not exist.");
             }
 
             var entity = NotificationMapper.ToEntity(notificationDto);
@@ -101,13 +92,6 @@ namespace NaviriaAPI.Services
                 _logger.LogWarning("GetAllUserNotificationsAsync was called with an empty or null userId.");
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
             }
-
-            if (!await _userService.UserExistsAsync(userId))
-            {
-                _logger.LogWarning("User with ID {UserId} not found.", userId);
-                throw new NotFoundException($"User with ID {userId} does not exist.");
-            }
-
 
             var entities = await _notificationRepository.GetAllByUserAsync(userId);
             if (!entities.Any())

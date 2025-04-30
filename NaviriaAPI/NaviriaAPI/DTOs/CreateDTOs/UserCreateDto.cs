@@ -12,7 +12,7 @@ namespace NaviriaAPI.DTOs.CreateDTOs
         public string FullName { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(30)]
+        [MaxLength(20)]
         [MinLength(3, ErrorMessage = "Nickname must be at least 3 characters long.")]
         [RegularExpression("^[a-zA-Z0-9]+$", ErrorMessage = "Nickname can only contain Latin letters and digits.")]
         public string Nickname { get; set; } = string.Empty;
