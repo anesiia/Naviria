@@ -239,7 +239,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
             // Arrange
             var userDto = new UserCreateDto
             {
-                FullName = "FFhjgftyhgftyjhgftyujhgfvbghyujklkjhppgfdrtyuilihb", //50
+                FullName = new string('A', 30), 
                 Nickname = "john123",
                 Gender = "m",
                 BirthDate = new DateTime(1990, 1, 1),

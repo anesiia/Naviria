@@ -1,9 +1,10 @@
-﻿using NaviriaAPI.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Moq;
+using NaviriaAPI.Services;
+using NaviriaAPI.IServices;
+using NaviriaAPI.DTOs;
+using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.Entities.EmbeddedEntities;
+using NUnit.Framework;
 
 namespace NaviriaAPI.Tests.Services.GamificationLogic
 {
@@ -11,11 +12,13 @@ namespace NaviriaAPI.Tests.Services.GamificationLogic
     public class LevelServiceTests
     {
         private LevelService _levelService;
+        private Mock<INotificationService> _notificationServiceMock;
 
         [SetUp]
         public void Setup()
         {
-            _levelService = new LevelService();
+            _notificationServiceMock = new Mock<INotificationService>();
+            _levelService = new LevelService(_notificationServiceMock.Object);
         }
 
         private int GetXpForLevel(int level)
@@ -25,116 +28,144 @@ namespace NaviriaAPI.Tests.Services.GamificationLogic
         }
 
         [Test]
-        public void TC001_CalculateLevelProgress_ShouldReturnCorrectLevel_WhenXpIsZero()
+        public void TC001_CalculateLevelProgressAsync_ShouldThrowArgumentNullException_WhenUserIsNull()
         {
             // Arrange
-            int xp = 0;
+            UserDto user = null;
 
-            // Act
-            var result = _levelService.CalculateLevelProgress(xp);
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<ArgumentNullException>(async () =>
+                await _levelService.CalculateLevelProgressAsync(user, 100));
 
-            // Assert
-            Assert.That(result.Level, Is.EqualTo(0));
-            Assert.That(result.TotalXp, Is.EqualTo(xp));
-            Assert.That(result.XpForNextLevel, Is.GreaterThan(0));
-            Assert.That(result.Progress, Is.EqualTo(0.0));
+            Assert.That(ex!.Message, Does.Contain("User is not found"));
         }
 
-        [Test]
-        public void TC002_CalculateLevelProgress_ShouldReturnCorrectLevel_WhenXpIsEqualToNextLevelXp()
+        [TestCase(0)]
+        [TestCase(49)]
+        [TestCase(100)]
+        [TestCase(1000)]
+        public void TC002_BuildLevelProgress_ProgressShouldBeBetweenZeroAndOne(int xp)
         {
-            // Arrange
-            int xp = 50;
-
             // Act
-            var result = _levelService.CalculateLevelProgress(xp);
+            var result = InvokeBuildLevelProgress(xp);
 
             // Assert
-            Assert.That(result.Level, Is.EqualTo(1));  // Level 1 should be reached after 50 XP
-            Assert.That(result.TotalXp, Is.EqualTo(xp));
-            Assert.That(result.XpForNextLevel, Is.GreaterThan(xp));
-            Assert.That(result.Progress, Is.EqualTo(0.0));  // Full progress at the current level
+            Assert.That(result.Progress, Is.InRange(0.0, 1.0));
         }
 
-        [Test]
-        public void TC003_CalculateLevelProgress_ShouldReturnCorrectLevel_WhenXpIsInBetweenLevels()
-        {
-            // Arrange
-            int xp = 100;  // This should be between levels 1 and 2
 
+        [TestCase(0, 0)]
+        [TestCase(10, 0)]
+        [TestCase(50, 1)]
+        [TestCase(100, 1)]
+        [TestCase(231, 2)]
+        [TestCase(400, 2)]
+        [TestCase(1000, 3)] //
+        public void TC003_CalculateLevelProgress_ShouldReturnCorrectLevel(int xp, int expectedLevel)
+        {
             // Act
-            var result = _levelService.CalculateLevelProgress(xp);
+            var result = InvokeBuildLevelProgress(xp);
 
             // Assert
-            Assert.That(result.Level, Is.EqualTo(1));  // Still level 1
+            Assert.That(result.Level, Is.EqualTo(expectedLevel));
             Assert.That(result.TotalXp, Is.EqualTo(xp));
             Assert.That(result.XpForNextLevel, Is.GreaterThan(xp));
-            Assert.That(result.Progress, Is.GreaterThan(0.0).And.LessThan(1.0));  // Some progress into level 2
+            Assert.That(result.Progress, Is.GreaterThanOrEqualTo(0.0).And.LessThanOrEqualTo(1.0));
         }
 
         [Test]
-        public void CalculateLevelProgress_ShouldReturnCorrectProgress_WhenXpIsMaxForLevel()
+        public async Task TC004_LevelUpNotification_ShouldBeSent_WhenLevelIncreases()
         {
             // Arrange
-            int xpForLevel2 = GetXpForLevel(2); // припустимо, що рівень 2 починається з цього XP
-            int xpForLevel3 = GetXpForLevel(3); // а рівень 3 — з цього XP
-
-            int xp = xpForLevel3 - 1; // максимум для рівня 2
+            var user = new UserDto { Id = "user1", Points = 0 };
+            int additionalXp = GetXpForLevel(2); // Enough XP to reach level 2
 
             // Act
-            var result = _levelService.CalculateLevelProgress(xp);
+            var result = await _levelService.CalculateLevelProgressAsync(user, additionalXp);
 
             // Assert
+            _notificationServiceMock.Verify(s =>
+                s.CreateAsync(It.Is<NotificationCreateDto>(n =>
+                    n.UserId == "user1" && n.Text.Contains("рівня"))), Times.Once);
+
             Assert.That(result.Level, Is.EqualTo(2));
-            Assert.That(result.TotalXp, Is.EqualTo(xp));
-            Assert.That(result.XpForNextLevel, Is.EqualTo(xpForLevel3));
-            Assert.That(result.Progress, Is.EqualTo(1.00).Within(0.01));
         }
 
         [Test]
-        public void TC005_CalculateLevelProgress_ShouldHandleLargeXpValues()
+        public async Task TC005_NoNotification_WhenLevelDoesNotChange()
         {
             // Arrange
-            int xp = 10000;  // Test a large XP value
+            var user = new UserDto { Id = "user1", Points = GetXpForLevel(2) };
+            int additionalXp = 5; // Not enough to reach level 3
 
             // Act
-            var result = _levelService.CalculateLevelProgress(xp);
+            var result = await _levelService.CalculateLevelProgressAsync(user, additionalXp);
 
             // Assert
-            Assert.That(result.Level, Is.GreaterThan(0));  // Should be at least level 3 or higher
-            Assert.That(result.TotalXp, Is.EqualTo(xp));
-            Assert.That(result.XpForNextLevel, Is.GreaterThan(xp));
-            Assert.That(result.Progress, Is.GreaterThan(0.0).And.LessThan(1.0));  // In-progress into the next level
-        }
-
-        [Test]
-        public void TC006_CalculateLevelProgress_ShouldReturnCorrectProgress_WhenXpExceedsCurrentLevel()
-        {
-            // Arrange
-            int xp = 250;  
-
-            // Act
-            var result = _levelService.CalculateLevelProgress(xp);
-
-            // Assert
+            _notificationServiceMock.Verify(s => s.CreateAsync(It.IsAny<NotificationCreateDto>()), Times.Never);
             Assert.That(result.Level, Is.EqualTo(2));
-            Assert.That(result.TotalXp, Is.EqualTo(xp));
-            Assert.That(result.XpForNextLevel, Is.GreaterThan(xp));
-            Assert.That(result.Progress, Is.GreaterThan(0.0).And.LessThan(1.0));  // Progress into level 3
         }
 
         [Test]
-        public void TC007_CalculateLevelProgress_ShouldReturnCorrectXpForNextLevel_WhenUserIsOnFirstLevel()
+        public void TC006_GetXpForLevel_ShouldReturnIncreasingXp()
         {
-            // Arrange
-            int xp = 1;  // Small XP value, user should still be on level 0 or starting
-
-            // Act
-            var result = _levelService.CalculateLevelProgress(xp);
+            // Arrange & Act
+            int xp1 = GetXpForLevel(1);
+            int xp2 = GetXpForLevel(2);
+            int xp3 = GetXpForLevel(3);
 
             // Assert
-            Assert.That(result.Level, Is.EqualTo(0));  // Should still be at level 0
-            Assert.That(result.XpForNextLevel, Is.GreaterThan(0));  // Next level XP should be above 1
+            Assert.That(xp1, Is.LessThan(xp2));
+            Assert.That(xp2, Is.LessThan(xp3));
+        }
+
+        [Test]
+        public void TC008_GetXpForLevel_ShouldBeMultipleOfTen()
+        {
+            // Act & Assert
+            for (int level = 1; level <= 10; level++)
+            {
+                int xp = GetXpForLevel(level);
+                Assert.That(xp % 10, Is.EqualTo(0), $"XP for level {level} should be divisible by 10");
+            }
+        }
+
+        [TestCase(0)]
+        [TestCase(10)]
+        [TestCase(50)]
+        [TestCase(100)]
+        [TestCase(200)]
+        [TestCase(400)]
+        [TestCase(1000)]
+        public void TC009_PrintLevelProgressCalculations(int xp)
+        {
+            // Act
+            var result = InvokeBuildLevelProgress(xp);
+
+            // Output level thresholds for current and next level
+            int currentLevelXp = GetXpForLevel(result.Level);
+            int nextLevelXp = GetXpForLevel(result.Level + 1);
+
+            // Print output to console
+            TestContext.WriteLine($"XP: {xp}");
+            TestContext.WriteLine($"Level: {result.Level}");
+            TestContext.WriteLine($"Progress: {result.Progress:P2}"); // in percentage
+            TestContext.WriteLine($"TotalXp: {result.TotalXp}");
+            TestContext.WriteLine($"XpForNextLevel: {result.XpForNextLevel}");
+            TestContext.WriteLine($"XP required for current level ({result.Level}): {currentLevelXp}");
+            TestContext.WriteLine($"XP required for next level ({result.Level + 1}): {nextLevelXp}");
+            TestContext.WriteLine(new string('-', 50));
+
+            // Assert just to ensure values are valid
+            Assert.That(result.Level, Is.GreaterThanOrEqualTo(0));
+        }
+
+
+        // Helper to call private method via reflection for unit testing internal logic
+        private LevelProgressInfo InvokeBuildLevelProgress(int xp)
+        {
+            var method = typeof(LevelService).GetMethod("BuildLevelProgress", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            return (LevelProgressInfo)method.Invoke(_levelService, new object[] { xp });
         }
     }
 }
