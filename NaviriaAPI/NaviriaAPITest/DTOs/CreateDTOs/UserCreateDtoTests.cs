@@ -109,8 +109,33 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
             Assert.That(validationResults.Any(r => r.ErrorMessage.Contains("Nickname must be at least 3 characters long.")), Is.True);
         }
 
+        // Negative Test Cases for Nickname
         [Test]
-        public void TC005_InvalidNickname_ShouldBeInvalid_WhenContainsInvalidCharacters()
+        public void TC005_InvalidNickname_ShouldBeInvalid_WhenTooLong()
+        {
+            // Arrange
+            var userDto = new UserCreateDto
+            {
+                FullName = "John Doe",
+                Nickname = new string('A', 21),
+                Gender = "m",
+                BirthDate = new DateTime(1990, 1, 1),
+                Password = "Passw0rd123"
+            };
+
+            // Act
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(userDto);
+            var isValid = Validator.TryValidateObject(userDto, validationContext, validationResults, true);
+
+            // Assert
+            Assert.That(isValid, Is.False);
+            Assert.That(validationResults.Any(r => r.ErrorMessage.Contains("Nickname must be at least 3 characters long.")), Is.True);
+        }
+
+
+        [Test]
+        public void TC006_InvalidNickname_ShouldBeInvalid_WhenContainsInvalidCharacters()
         {
             // Arrange
             var userDto = new UserCreateDto
@@ -135,7 +160,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
 
         // Negative Test Cases for Gender
         [Test]
-        public void TC006_InvalidGender_ShouldBeInvalid_WhenNotMOrF()
+        public void TC007_InvalidGender_ShouldBeInvalid_WhenNotMOrF()
         {
             // Arrange
             var userDto = new UserCreateDto
@@ -160,7 +185,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
 
         // Negative Test Cases for Password
         [Test]
-        public void TC007_InvalidPassword_ShouldBeInvalid_WhenTooShort()
+        public void TC008_InvalidPassword_ShouldBeInvalid_WhenTooShort()
         {
             // Arrange
             var userDto = new UserCreateDto
@@ -184,7 +209,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
         }
 
         [Test]
-        public void TC008_InvalidPassword_ShouldBeInvalid_WhenMissingUppercase()
+        public void TC009_InvalidPassword_ShouldBeInvalid_WhenMissingUppercase()
         {
             // Arrange
             var userDto = new UserCreateDto
@@ -209,7 +234,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
 
         // Negative Test Cases for Email
         [Test]
-        public void TC009_InvalidEmail_ShouldBeInvalid_WhenIncorrectFormat()
+        public void TC0010_InvalidEmail_ShouldBeInvalid_WhenIncorrectFormat()
         {
             // Arrange
             var userDto = new UserCreateDto
@@ -234,12 +259,12 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
 
 
         [Test]
-        public void TC010_ValidFullName_ShouldBeValid_WhenMaxLength()
+        public void TC011_ValidFullName_ShouldBeValid_WhenMaxLength()
         {
             // Arrange
             var userDto = new UserCreateDto
             {
-                FullName = new string('A', 30), 
+                FullName = new string('A', 50), 
                 Nickname = "john123",
                 Gender = "m",
                 BirthDate = new DateTime(1990, 1, 1),
@@ -258,12 +283,12 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
         }
 
         [Test]
-        public void TC011_InvalidFullName_ShouldBeInvalid_WhenExceedsMaxLength()
+        public void TC012_InvalidFullName_ShouldBeInvalid_WhenExceedsMaxLength()
         {
             // Arrange
             var userDto = new UserCreateDto
             {
-                FullName = "FFhjgftyhgftyjhgftyujhgfvbghyujklkjhppgfdrtyuilihbq", //50 // Exceeding max length of 50 characters
+                FullName = new string('A', 51), 
                 Nickname = "john123",
                 Gender = "m",
                 BirthDate = new DateTime(1990, 1, 1),
@@ -282,7 +307,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
 
       
         [Test]
-        public void TC012_UserCreateDto_ShouldBeValid_WithEmptyOptionalFields()
+        public void TC013_UserCreateDto_ShouldBeValid_WithEmptyOptionalFields()
         {
             var userDto = new UserCreateDto
             {
