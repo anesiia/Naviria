@@ -1,0 +1,15 @@
+﻿using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.DTOs;
+
+namespace NaviriaAPI.IServices
+{
+    public interface IFolderService
+    {
+        Task<IEnumerable<FolderDto>> GetAllByUserIdAsync(string userId);
+        Task<FolderDto?> GetByIdAsync(string id);
+        Task<FolderDto> CreateAsync(FolderCreateDto dto);
+        Task<bool> UpdateAsync(string id, FolderUpdateDto dto);
+        Task<bool> DeleteAsync(string id);
+    }
+}
