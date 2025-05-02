@@ -9,6 +9,7 @@ namespace NaviriaAPI.Data
         IMongoCollection<AchievementEntity> Achievements { get; }
         IMongoCollection<AssistantChatMessageEntity> AssistantChatMessages { get; }
         IMongoCollection<CategoryEntity> Categories { get; }
+        IMongoCollection<FolderEntity> Folders { get; }
         IMongoCollection<FriendRequestEntity> FriendsRequests { get; }
         IMongoCollection<NotificationEntity> Notifications { get; }
         IMongoCollection<QuoteEntity> Quotes { get; }

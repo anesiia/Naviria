@@ -21,6 +21,9 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<IAssistantChatService, AssistantChatService>();
             services.AddScoped<IAssistantChatRepository, AssistantChatRepository>();
 
+            services.AddScoped<IFolderRepository, FolderRepository>();
+            services.AddScoped<IFolderService, FolderService>();
+
             services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
             services.AddScoped<IFriendRequestService, FriendRequestService>();
 
