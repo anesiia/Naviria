@@ -2,6 +2,7 @@
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
 using System;
+using NaviriaAPI.DTOs.FeaturesDTOs;
 
 namespace NaviriaAPI.IServices
 {
@@ -12,7 +13,7 @@ namespace NaviriaAPI.IServices
         Task<FriendRequestDto> CreateAsync(FriendRequestCreateDto friendRequestDto);
         Task<bool> UpdateAsync(string id, FriendRequestUpdateDto friendRequestDto);
         Task<bool> DeleteAsync(string id);
-        Task<IEnumerable<UserDto>> GetIncomingRequestsAsync(string toUserId);
+        Task<IEnumerable<FriendRequestWithUserDto>> GetIncomingRequestsAsync(string toUserId);
 
     }
 }
