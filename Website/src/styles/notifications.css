@@ -1,44 +1,74 @@
 .notifications-popup {
-  position: absolute;
-  top: 4rem;
-  right: 5rem;
-  width: 25rem;
+  font-size: 14px;
   background: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
   padding: 1rem;
+  width: 25rem;
+  position: absolute;
+  top: 60px;
+  right: 10px;
   z-index: 100;
-  max-height: 24rem;
-  overflow-y: auto;
 }
-.notifications-popup .no-notifications {
-  text-align: center;
-  color: #888;
-  font-size: 0.95rem;
+.notifications-popup .notifications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
-.notifications-popup .notification-item {
+.notifications-popup .notifications-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0;
+}
+.notifications-popup .mark-read-btn {
+  background: transparent;
+  border: none;
+  color: #ff9101;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.notifications-popup .mark-read-btn:hover {
+  color: #cc7300;
+}
+.notification-item {
   padding: 0.75rem;
-  border-bottom: 1px solid #eee;
-  transition: background 0.3s, font-weight 0.3s;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.3s;
 }
-.notifications-popup .notification-item:last-child {
+.notification-item:last-child {
   border-bottom: none;
 }
-.notifications-popup .notification-item.unread {
-  background-color: #fffae6;
+.notification-item.read {
+  background: #f9f9f9;
+  color: #555;
+  font-size: 14px;
+}
+.notification-item.unread {
+  background: #fff8dc;
   font-weight: 600;
 }
-.notifications-popup .notification-item.read {
-  background-color: #f7f7f7;
-  font-weight: 400;
-  opacity: 0.7;
+.notification-text {
+  margin: 0 0 0.3rem 0;
+  font-size: 14px;
 }
-.notifications-popup .notification-item .notification-text {
-  margin: 0 0 0.25rem 0;
-  font-size: 1rem;
+.notification-time {
+  font-size: 0.85rem;
+  color: #888;
 }
-.notifications-popup .notification-item .notification-time {
-  font-size: 0.75rem;
-  color: #999;
-  display: block;
+.mark-read {
+  text-align: right;
+  margin-bottom: 0.5rem;
+}
+.mark-read button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0;
+}
+.mark-read button:hover {
+  text-decoration: underline;
 }

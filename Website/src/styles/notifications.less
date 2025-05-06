@@ -1,51 +1,88 @@
-.notifications-popup {
-  position: absolute;
-  top: 4rem;
-  right: 5rem;
-  width: 25rem;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.25);
-  padding: 1rem;
-  z-index: 100;
-  max-height: 24rem;
-  overflow-y: auto;
+@import "const.less";
 
-  .no-notifications {
-    text-align: center;
-    color: #888;
-    font-size: 0.95rem;
+.notifications-popup {
+  font-size: @small_text;
+  background: #fff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  width: 25rem;
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  z-index: 100;
+
+  .notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
   }
 
-  .notification-item {
-    padding: 0.75rem;
-    border-bottom: 1px solid #eee;
-    transition: background 0.3s, font-weight 0.3s;
+  .notifications-title {
+    font-weight: 600;
+    font-size: @def_text;
+    margin: 0;
+  }
 
-    &:last-child {
-      border-bottom: none;
-    }
+  .mark-read-btn {
+    background: transparent;
+    border: none;
+    color: #ff9101;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
 
-    &.unread {
-      background-color: #fffae6;
-      font-weight: 600;
-    }
+  .mark-read-btn:hover {
+    color: #cc7300;
+  }
+}
 
-    &.read {
-      background-color: #f7f7f7;
-      font-weight: 400;
-      opacity: 0.7;
-    }
+.notification-item {
+  padding: 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.3s;
+}
 
-    .notification-text {
-      margin: 0 0 0.25rem 0;
-      font-size: 1rem;
-    }
+.notification-item:last-child {
+  border-bottom: none;
+}
 
-    .notification-time {
-      font-size: 0.75rem;
-      color: #999;
-      display: block;
+.notification-item.read {
+  background: #f9f9f9;
+  color: #555;
+  font-size: @small_text;
+}
+
+.notification-item.unread {
+  background: #fff8dc;
+  font-weight: 600;
+}
+
+.notification-text {
+  margin: 0 0 0.3rem 0;
+  font-size: @small_text;
+}
+
+.notification-time {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.mark-read {
+  text-align: right;
+  margin-bottom: 0.5rem;
+
+  button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0;
+    &:hover {
+      text-decoration: underline;
     }
   }
 }

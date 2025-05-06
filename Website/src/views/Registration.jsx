@@ -26,9 +26,9 @@ export function Registration() {
 
   const validate = () => {
     const newErrors = {};
-    if (!name.match(/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s'-]{1,50}$/))
+    if (!name.match(/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s'-]{1,20}$/))
       newErrors.name = "Ім'я введено некоректно*";
-    if (!surname.match(/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s'-]{1,50}$/))
+    if (!surname.match(/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s'-]{1,20}$/))
       newErrors.surname = "Прізвище введено некоректно*";
     if (!email.match(/^\S+@\S+\.\S+$/))
       newErrors.email = "Невірний формат пошти*";
@@ -36,9 +36,9 @@ export function Registration() {
       newErrors.password = "Пароль має містити великі та малі літери та цифру*";
     if (password !== passwordCheck)
       newErrors.passwordCheck = "Паролі не збігаються*";
-    if (!nickname.match(/^[a-zA-Z0-9]{3,50}$/))
+    if (!nickname.match(/^[a-zA-Z0-9]{3,20}$/))
       newErrors.nickname =
-        "Нікнейм має містити лише латинські літери та цифри (3-50 символів)*";
+        "Нікнейм має містити лише латинські літери та цифри (3-20 символів)*";
     if (!gender) newErrors.gender = "Оберіть стать*";
     if (!birthDate) {
       newErrors.birthDate = "Вкажіть дату народження*";
@@ -62,7 +62,17 @@ export function Registration() {
         password
       );
     } catch (err) {
-      console.error(err.message);
+      if (
+        err.message.includes("User already exists") ||
+        err.message.includes("409")
+      ) {
+        setErrors((prev) => ({
+          ...prev,
+          email: "Користувач з такою поштою або нікнеймом вже існує*",
+        }));
+      } else {
+        console.error("Помилка реєстрації:", err);
+      }
     }
   };
 
@@ -78,7 +88,7 @@ export function Registration() {
                 type="text"
                 name="name"
                 placeholder="Лайт"
-                pattern="^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s'\-]{1,50}$"
+                pattern="^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s'\-]{1,20}$"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -90,7 +100,7 @@ export function Registration() {
                 type="text"
                 name="surname"
                 placeholder="Ягамі"
-                pattern="^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s'\-]{1,50}$"
+                pattern="^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s'\-]{1,20}$"
                 value={surname}
                 onChange={(e) => setSurname(e.target.value)}
               />
@@ -201,7 +211,7 @@ export function Registration() {
                 name="nickname"
                 placeholder="sigma-killer3000"
                 minLength="3"
-                maxLength="50"
+                maxLength="20"
                 pattern="^[a-zA-Z0-9]+$"
                 onChange={(e) => setNickname(e.target.value)}
                 value={nickname}

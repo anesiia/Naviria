@@ -13,6 +13,14 @@ export default function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const ref = useRef(null);
+  const fetchNotificationsAgain = async () => {
+    try {
+      const data = await getNotifications();
+      setNotifications(data);
+    } catch (err) {
+      console.error("Помилка оновлення сповіщень:", err.message);
+    }
+  };
 
   const handleToggleNotifications = async () => {
     if (!showNotifications) {
@@ -53,7 +61,13 @@ export default function Header() {
         <button className="notifications" onClick={handleToggleNotifications}>
           <img src="bell.svg" alt="notifications" />
         </button>
-        {showNotifications && <Notifications notifications={notifications} />}
+        {showNotifications && (
+          <Notifications
+            notifications={notifications}
+            onMarkRead={fetchNotificationsAgain}
+          />
+        )}
+
         <Link to="/profile">
           <img className="avatar" src="Ellipse.svg" alt="avatar" />
         </Link>
