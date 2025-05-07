@@ -48,6 +48,7 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<IAchievementStrategy, RegistrationAchievementStrategy>();
             services.AddScoped<IAchievementGranter, AchievementGranter>();
 
+            services.AddScoped<IUserCleanupService, UserCleanupService>();
 
         }
     }

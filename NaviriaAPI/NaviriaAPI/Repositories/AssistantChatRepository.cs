@@ -25,6 +25,12 @@ namespace NaviriaAPI.Repositories
 
         public async Task<int> CountByUserIdAsync(string userId) =>
             (int)await _ai_chat_messages.CountDocumentsAsync(m => m.UserId == userId);
+
+        public async Task DeleteManyByUserIdAsync(string userId)
+        {
+            var filter = Builders<AssistantChatMessageEntity>.Filter.Eq(m => m.UserId, userId);
+            await _ai_chat_messages.DeleteManyAsync(filter);
+        }
     }
 
 }

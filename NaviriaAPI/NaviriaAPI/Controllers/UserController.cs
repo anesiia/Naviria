@@ -15,13 +15,16 @@ namespace NaviriaAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IUserCleanupService _userCleanupService;
         private readonly ILogger<UserController> _logger;
 
         public UserController(
             IUserService userService,
+            IUserCleanupService userCleanupService,
             ILogger<UserController> logger)
         {
             _userService = userService;
+            _userCleanupService = userCleanupService;
             _logger = logger;
         }
 
@@ -111,7 +114,7 @@ namespace NaviriaAPI.Controllers
 
             try
             {
-                var deleted = await _userService.DeleteAsync(id);
+                var deleted = await _userCleanupService.DeleteUserAndRelatedDataAsync(id);
                 return deleted ? NoContent() : NotFound();
             }
             catch (Exception ex)

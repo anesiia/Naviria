@@ -40,5 +40,11 @@ namespace NaviriaAPI.Repositories
             var result = await _tasks.DeleteOneAsync(t => t.Id == id);
             return result.IsAcknowledged && result.DeletedCount > 0;
         }
+
+        public async Task DeleteManyByUserIdAsync(string userId)
+        {
+            var filter = Builders<TaskEntity>.Filter.Eq(t => t.UserId, userId);
+            await _tasks.DeleteManyAsync(filter);
+        }
     }
 }

@@ -49,5 +49,11 @@ namespace NaviriaAPI.Repositories
             await _notifications.UpdateManyAsync(filter, update);
         }
 
+        public async Task DeleteManyByUserIdAsync(string userId)
+        {
+            var filter = Builders<NotificationEntity>.Filter.Eq(n => n.UserId, userId);
+            await _notifications.DeleteManyAsync(filter);
+        }
+
     }
 }

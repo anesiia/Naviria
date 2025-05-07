@@ -41,5 +41,12 @@ namespace NaviriaAPI.Repositories
             var result = await _folders.DeleteOneAsync(f => f.Id == id);
             return result.IsAcknowledged && result.DeletedCount > 0;
         }
+
+        public async Task DeleteManyByUserIdAsync(string userId)
+        {
+            var filter = Builders<FolderEntity>.Filter.Eq(f => f.UserId, userId);
+            await _folders.DeleteManyAsync(filter);
+        }
+
     }
 }

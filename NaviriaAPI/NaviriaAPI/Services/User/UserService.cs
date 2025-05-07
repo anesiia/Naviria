@@ -6,15 +6,12 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
 using Microsoft.AspNetCore.Identity;
 using NaviriaAPI.Entities;
-using OpenAI.Chat;
 using NaviriaAPI.Services.Validation;
-using NaviriaAPI.IServices.ICloudStorage;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.Helpers;
-using NaviriaAPI.Services.GamificationLogic;
 
 namespace NaviriaAPI.Services.User
 {
@@ -28,6 +25,7 @@ namespace NaviriaAPI.Services.User
         private readonly IJwtService _jwtService;
         private readonly ILogger<UserService> _logger;
         private readonly IAchievementManager _achievementManager;
+        private readonly IUserCleanupService _userCleanupService;
 
         public UserService(
             IUserRepository userRepository,
@@ -38,7 +36,8 @@ namespace NaviriaAPI.Services.User
             ILevelService levelService,
             IJwtService jwtService,
             ILogger<UserService> logger,
-            IAchievementManager achievementManager)
+            IAchievementManager achievementManager,
+            IUserCleanupService userCleanupService)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -48,6 +47,7 @@ namespace NaviriaAPI.Services.User
             _jwtService = jwtService;
             _logger = logger;
             _achievementManager = achievementManager;
+            _userCleanupService = userCleanupService;
         }
 
         public async Task<string> CreateAsync(UserCreateDto userDto)
@@ -86,7 +86,6 @@ namespace NaviriaAPI.Services.User
             return await _userRepository.UpdateAsync(UserMapper.ToEntity(id, userDto));
         }
 
-
         public async Task<UserDto?> GetByIdAsync(string id)
         {
             var entity = await _userRepository.GetByIdAsync(id);
@@ -114,7 +113,7 @@ namespace NaviriaAPI.Services.User
 
         public async Task<bool> DeleteAsync(string id)
         {
-            return await _userRepository.DeleteAsync(id);
+            return await _userCleanupService.DeleteUserAndRelatedDataAsync(id);
         }
 
         public async Task<bool> GiveAchievementAsync(string userId, string achievementId)
@@ -145,7 +144,6 @@ namespace NaviriaAPI.Services.User
 
             return updated;
         }
-
 
         public async Task<UserEntity> GetUserOrThrowAsync(string id)
         {
