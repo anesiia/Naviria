@@ -4,7 +4,7 @@ namespace NaviriaAPI.Entities.EmbeddedEntities
 {
     public class LevelProgressInfo
     {
-        [BsonElement("level")]
+        [BsonElement("level")] 
         public int Level { get; set; }
 
         [BsonElement("total_xp")]

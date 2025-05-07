@@ -4,6 +4,8 @@ using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ICloudStorage;
 using Microsoft.AspNetCore.Authorization;
+using NaviriaAPI.Helpers;
+using NaviriaAPI.IServices.IGamificationLogic;
 
 namespace NaviriaAPI.Controllers
 {
@@ -14,16 +16,13 @@ namespace NaviriaAPI.Controllers
     {
         private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
-        public readonly ICloudinaryService _cloudinaryService;
 
         public UserController(
             IUserService userService,
-            ILogger<UserController> logger,
-            ICloudinaryService cloudinaryService)
+            ILogger<UserController> logger)
         {
             _userService = userService;
             _logger = logger;
-            _cloudinaryService = cloudinaryService;
         }
 
         [AllowAnonymous]

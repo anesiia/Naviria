@@ -13,6 +13,8 @@ using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.IJwtService;
+using NaviriaAPI.Helpers;
+using NaviriaAPI.Services.GamificationLogic;
 
 namespace NaviriaAPI.Services.User
 {
@@ -25,6 +27,7 @@ namespace NaviriaAPI.Services.User
         private readonly ILevelService _levelService;
         private readonly IJwtService _jwtService;
         private readonly ILogger<UserService> _logger;
+        private readonly IAchievementManager _achievementManager;
 
         public UserService(
             IUserRepository userRepository,
@@ -34,7 +37,8 @@ namespace NaviriaAPI.Services.User
             IAchievementRepository achievementRepository,
             ILevelService levelService,
             IJwtService jwtService,
-            ILogger<UserService> logger)
+            ILogger<UserService> logger,
+            IAchievementManager achievementManager)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -43,6 +47,7 @@ namespace NaviriaAPI.Services.User
             _levelService = levelService;
             _jwtService = jwtService;
             _logger = logger;
+            _achievementManager = achievementManager;
         }
 
         public async Task<string> CreateAsync(UserCreateDto userDto)
@@ -53,6 +58,7 @@ namespace NaviriaAPI.Services.User
             entity.Password = _passwordHasher.HashPassword(entity, userDto.Password);
 
             await _userRepository.CreateAsync(entity);
+            await _achievementManager.EvaluateAsync(entity.Id, AchievementTrigger.OnRegistration);
 
             return _jwtService.GenerateUserToken(entity);
         }
