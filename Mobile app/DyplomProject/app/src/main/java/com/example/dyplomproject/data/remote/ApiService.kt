@@ -1,8 +1,8 @@
 package com.example.dyplomproject.data.remote
 
 import com.example.dyplomproject.data.remote.request.LoginRequest
-import com.example.dyplomproject.data.remote.request.UserRegestrationRequest
-import com.example.dyplomproject.data.remote.response.LoginResponse
+import com.example.dyplomproject.data.remote.request.UserRegistrationRequest
+import com.example.dyplomproject.data.remote.response.AuthResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -21,10 +21,10 @@ import retrofit2.http.Path
 interface ApiService {
 
     @POST("/api/Auth/login")
-    suspend fun login(@Body loginRequest: LoginRequest) : Response<LoginResponse>
+    suspend fun login(@Body loginRequest: LoginRequest) : Result<AuthResponse>
 
     @POST("/api/User")
-    suspend fun register(@Body registerRequest: UserRegestrationRequest) : Response<LoginResponse>
+    suspend fun register(@Body registerRequest: UserRegistrationRequest) : Result<AuthResponse>
 
     @GET("/api/Friends/{id}")
     suspend fun getFriends(@Path("id") id: String): Response<List<FriendShortDto>>

@@ -1,12 +1,31 @@
 package com.example.dyplomproject.data.remote
 
 import com.example.dyplomproject.data.remote.request.LoginRequest
-import com.example.dyplomproject.data.remote.response.LoginResponse
+import com.example.dyplomproject.data.remote.request.UserRegistrationRequest
+import com.example.dyplomproject.data.remote.response.AuthResponse
 import retrofit2.Response
-import javax.inject.Inject
 
 class AuthRepository(private val apiService: ApiService) {
-    suspend fun login(email: String, password: String): Response<LoginResponse> {
-        return apiService.login(LoginRequest(email, password))
+//    suspend fun login(email: String, password: String): Response<AuthResponse> {
+//        return apiService.login(LoginRequest(email, password))
+//    }
+    override suspend fun login(request: LoginRequest): Result<AuthResponse> {
+        return try {
+            val response = apiService.login(request)
+            if (response.isSuccessful) Result.success(response.body()!!)
+            else Result.failure(Exception("Login failed"))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun register(request: UserRegistrationRequest): Result<AuthResponse> {
+        return try {
+            val response = apiService.register(request)
+            if (response.isSuccessful) Result.success(response.body()!!)
+            else Result.failure(Exception("Registration failed"))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

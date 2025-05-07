@@ -1,6 +1,6 @@
 package com.example.dyplomproject.data.remote.response
 
 
-data class LoginResponse(
+data class AuthResponse(
     val token: String
 )
