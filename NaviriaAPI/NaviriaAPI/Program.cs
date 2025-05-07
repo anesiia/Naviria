@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddAuthorization();
+builder.Services.ConfigureJsonConverters();
+
 builder.ConfigureJwt();
 builder.ConfigureCors();
 builder.ConfigureMongo();

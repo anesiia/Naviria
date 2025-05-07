@@ -2,8 +2,8 @@
 using MongoDB.Bson;
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.DTOs;
 using NaviriaAPI.Entities;
+using NaviriaAPI.DTOs.TaskDtos;
 
 namespace NaviriaAPI.Mappings
 {
@@ -16,7 +16,7 @@ namespace NaviriaAPI.Mappings
                 Id = ObjectId.GenerateNewId().ToString(),
                 UserId = dto.UserId,
                 FolderId = dto.FolderId,
-                Name = dto.Name,
+                Title = dto.Title,
                 Description = dto.Description,
                 CategoryId = dto.CategoryId,
                 Tags = dto.Tags,
@@ -27,6 +27,8 @@ namespace NaviriaAPI.Mappings
                 NotificationDate = dto.NotificationDate,
                 Priority = dto.Priority,
                 Subtasks = dto.Subtasks
+                    .Select(SubtaskMapper.FromCreateDto)
+                    .ToList()
             };
         }
 
@@ -35,7 +37,7 @@ namespace NaviriaAPI.Mappings
             return new TaskEntity
             {
                 Id = id,
-                Name = dto.Name,
+                Title = dto.Title,
                 Description = dto.Description,
                 Tags = dto.Tags,
                 IsDeadlineOn = dto.IsDeadlineOn,
@@ -45,6 +47,10 @@ namespace NaviriaAPI.Mappings
                 NotificationDate = dto.NotificationDate,
                 Priority = dto.Priority,
                 Subtasks = dto.Subtasks
+                    .Select(SubtaskMapper.FromUpdateDto)
+                    .ToList()
+
+
             };
         }
 
@@ -55,7 +61,7 @@ namespace NaviriaAPI.Mappings
                 Id = entity.Id,
                 UserId = entity.UserId,
                 FolderId = entity.FolderId,
-                Name = entity.Name,
+                Title = entity.Title,
                 Description = entity.Description,
                 CategoryId = entity.CategoryId,
                 Tags = entity.Tags,
@@ -65,8 +71,23 @@ namespace NaviriaAPI.Mappings
                 IsNotificationsOn = entity.IsNotificationsOn,
                 NotificationDate = entity.NotificationDate,
                 Priority = entity.Priority,
-                Subtasks = entity.Subtasks
+                Subtasks = entity.Subtasks.Select(SubtaskMapper.ToDto).ToList()
             };
+        }
+
+        public static TaskEntity UpdateEntity(TaskEntity entity, TaskUpdateDto dto)
+        {
+            entity.Title = dto.Title;
+            entity.Description = dto.Description;
+            entity.IsDeadlineOn = dto.IsDeadlineOn;
+            entity.Deadline = dto.Deadline;
+            entity.IsShownProgressOnPage = dto.IsShownProgressOnPage;
+            entity.IsNotificationsOn = dto.IsNotificationsOn;
+            entity.NotificationDate = dto.NotificationDate;
+            entity.Priority = dto.Priority;
+            entity.Subtasks = dto.Subtasks;
+
+            return entity;
         }
     }
 }

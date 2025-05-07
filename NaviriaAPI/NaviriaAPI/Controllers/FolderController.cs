@@ -66,8 +66,8 @@ namespace NaviriaAPI.Controllers
 
             try
             {
-                var token = await _folderService.CreateAsync(folderDto);
-                return Ok(new { token });
+                var folder = await _folderService.CreateAsync(folderDto);
+                return Ok(new { folder });
             }
             catch (Exception ex)
             {

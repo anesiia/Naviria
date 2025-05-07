@@ -1,10 +1,11 @@
 ﻿using NaviriaAPI.Entities.EmbeddedEntities;
+using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
 
 namespace NaviriaAPI.DTOs.UpdateDTOs
 {
     public class TaskUpdateDto
     {
-        public string Name { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public List<Tags> Tags { get; set; } = new();
 
