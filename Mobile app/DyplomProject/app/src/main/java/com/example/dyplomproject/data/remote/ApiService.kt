@@ -21,10 +21,10 @@ import retrofit2.http.Path
 interface ApiService {
 
     @POST("/api/Auth/login")
-    suspend fun login(@Body loginRequest: LoginRequest) : Result<AuthResponse>
+    suspend fun login(@Body loginRequest: LoginRequest) : Response<AuthResponse>
 
     @POST("/api/User")
-    suspend fun register(@Body registerRequest: UserRegistrationRequest) : Result<AuthResponse>
+    suspend fun register(@Body registerRequest: UserRegistrationRequest) : Response<AuthResponse>
 
     @GET("/api/Friends/{id}")
     suspend fun getFriends(@Path("id") id: String): Response<List<FriendShortDto>>

@@ -9,7 +9,7 @@ class AuthRepository(private val apiService: ApiService) {
 //    suspend fun login(email: String, password: String): Response<AuthResponse> {
 //        return apiService.login(LoginRequest(email, password))
 //    }
-    override suspend fun login(request: LoginRequest): Result<AuthResponse> {
+    suspend fun login(request: LoginRequest): Result<AuthResponse> {
         return try {
             val response = apiService.login(request)
             if (response.isSuccessful) Result.success(response.body()!!)
@@ -19,7 +19,7 @@ class AuthRepository(private val apiService: ApiService) {
         }
     }
 
-    override suspend fun register(request: UserRegistrationRequest): Result<AuthResponse> {
+    suspend fun register(request: UserRegistrationRequest): Result<AuthResponse> {
         return try {
             val response = apiService.register(request)
             if (response.isSuccessful) Result.success(response.body()!!)
