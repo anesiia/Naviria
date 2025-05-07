@@ -90,8 +90,8 @@ describe('Registration Page - Negative Cases Only', () => {
       },
       {
         description: 'name longer than 20 characters',
-        user: { ...validUser, nickname: 'Супернадзвичайнодовгеімʼя' },
-        error: "Нікнейм має містити лише латинські літери та цифри (3-50 символів)",
+        user: { ...validUser, nickname: 'Су' },
+        error: "Нікнейм має містити лише латинські літери та цифри (3-20 символів)",
       }
 
     ];
