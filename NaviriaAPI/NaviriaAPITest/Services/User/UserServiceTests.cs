@@ -37,6 +37,8 @@ namespace NaviriaAPI.Tests.Services.User
         private Mock<IJwtService> _jwtServiceMock;
         private UserService _userService;
         private Mock<ILogger<UserService>> _loggerMock;
+        private Mock<IAchievementManager> _achievementManagerMock;
+        private Mock<IUserCleanupService> _userCleanupServiceMock;
 
         [SetUp]
         public void Setup()
@@ -49,6 +51,8 @@ namespace NaviriaAPI.Tests.Services.User
             _levelServiceMock = new Mock<ILevelService>();
             _jwtServiceMock = new Mock<IJwtService>();
             _loggerMock = new Mock<ILogger<UserService>>();
+            _achievementManagerMock = new Mock<IAchievementManager>();
+            _userCleanupServiceMock = new Mock<IUserCleanupService>();
 
             _configMock.Setup(c => c["OpenAIKey"]).Returns("fake-key");
 
@@ -62,7 +66,10 @@ namespace NaviriaAPI.Tests.Services.User
                 _achievementRepoMock.Object,
                 _levelServiceMock.Object,
                 _jwtServiceMock.Object,
-                 _loggerMock.Object
+                 _loggerMock.Object,
+                 _achievementManagerMock.Object,
+                _userCleanupServiceMock.Object
+
             );
         }
 
