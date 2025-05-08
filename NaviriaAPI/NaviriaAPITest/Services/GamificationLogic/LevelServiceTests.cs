@@ -5,6 +5,8 @@ using NaviriaAPI.DTOs;
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NUnit.Framework;
+using NaviriaAPI.Exceptions;
+using NaviriaAPI.Constants;
 
 namespace NaviriaAPI.Tests.Services.GamificationLogic
 {
@@ -28,17 +30,18 @@ namespace NaviriaAPI.Tests.Services.GamificationLogic
         }
 
         [Test]
-        public void TC001_CalculateLevelProgressAsync_ShouldThrowArgumentNullException_WhenUserIsNull()
+        public void TC001_CalculateLevelProgressAsync_ShouldThrowNotFoundException_WhenUserIsNull()
         {
             // Arrange
             UserDto user = null;
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            var ex = Assert.ThrowsAsync<NotFoundException>(async () =>
                 await _levelService.CalculateLevelProgressAsync(user, 100));
 
-            Assert.That(ex!.Message, Does.Contain("User is not found"));
+            Assert.That(ex!.Message, Is.EqualTo("User is not found"));
         }
+
 
         [TestCase(0)]
         [TestCase(49)]
@@ -119,8 +122,10 @@ namespace NaviriaAPI.Tests.Services.GamificationLogic
             Assert.That(xp2, Is.LessThan(xp3));
         }
 
+      
+
         [Test]
-        public void TC008_GetXpForLevel_ShouldBeMultipleOfTen()
+        public void TC007_GetXpForLevel_ShouldBeMultipleOfTen()
         {
             // Act & Assert
             for (int level = 1; level <= 10; level++)
@@ -137,7 +142,7 @@ namespace NaviriaAPI.Tests.Services.GamificationLogic
         [TestCase(200)]
         [TestCase(400)]
         [TestCase(1000)]
-        public void TC009_PrintLevelProgressCalculations(int xp)
+        public void TC008_PrintLevelProgressCalculations(int xp)
         {
             // Act
             var result = InvokeBuildLevelProgress(xp);
@@ -160,6 +165,37 @@ namespace NaviriaAPI.Tests.Services.GamificationLogic
             Assert.That(result.Level, Is.GreaterThanOrEqualTo(0));
         }
 
+        [Test]
+        public async Task TC009_LevelDoesNotDecrease_WhenXpDecreases()
+        {
+            var user = new UserDto { Id = "user2", Points = GetXpForLevel(3) };
+            int decreaseXp = -50; // Зменшення
+
+            var result = await _levelService.CalculateLevelProgressAsync(user, decreaseXp);
+
+            Assert.That(result.Level, Is.LessThanOrEqualTo(3));
+            _notificationServiceMock.Verify(s => s.CreateAsync(It.IsAny<NotificationCreateDto>()), Times.Never);
+        }
+
+        [Test]
+        public void TC010_GetLevelUpMessage_ShouldReturnDefault_WhenNotInDictionary()
+        {
+            var method = typeof(LevelService).GetMethod("GetLevelUpMessage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            string result = (string)method.Invoke(_levelService, new object[] { 999 }); // Очікуємо, що такого рівня нема в словнику
+
+            Assert.That(result, Does.Contain("🎉 Вітаємо! Ви досягли 999 рівня!"));
+        }
+
+
+        [Test]
+        public void TC011_GetLevelUpMessage_ShouldReturnSpecialMessage_WhenExists()
+        {
+            int levelWithSpecialMsg = 5; 
+            var method = typeof(LevelService).GetMethod("GetLevelUpMessage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            string result = (string)method.Invoke(_levelService, new object[] { levelWithSpecialMsg });
+
+            Assert.That(result, Is.EqualTo(LevelCongratMessages.Messages[levelWithSpecialMsg]));
+        }
 
         // Helper to call private method via reflection for unit testing internal logic
         private LevelProgressInfo InvokeBuildLevelProgress(int xp)
