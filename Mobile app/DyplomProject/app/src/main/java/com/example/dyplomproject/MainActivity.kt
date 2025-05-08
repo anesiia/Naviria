@@ -82,15 +82,15 @@ class MainActivity : ComponentActivity() {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://10.0.2.2:7172/")
+            .baseUrl("https://10.0.2.2:7172/")//.baseUrl("https://192.168.1.7:7172/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
         val apiService = retrofit.create(ApiService::class.java)
-        //
+
+
 //        val apiService = Retrofit.Builder()
-//            .baseUrl("http://10.0.2.2:5186") // Replace with your actual URL
+//            .baseUrl("http://192.168.1.6:5186") // Replace with your actual URL
 //            .addConverterFactory(GsonConverterFactory.create())
 //            .build()
 //            .create(ApiService::class.java)
@@ -102,7 +102,7 @@ class MainActivity : ComponentActivity() {
         // Create ViewModel using ViewModelFactory
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(dataStoreManager))
             .get(AuthViewModel::class.java)
-        //authViewModel.logout()
+        authViewModel.logout()
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory(authRepository))
             .get(LoginViewModel::class.java)
         enableEdgeToEdge()

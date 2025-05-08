@@ -20,7 +20,7 @@ import androidx.compose.material3.Text
 fun UnderlinedText(
     text: String,
     fontSize: TextUnit = 24.sp,
-    fontWeight: FontWeight = FontWeight.Bold,
+    fontWeight: FontWeight = FontWeight.SemiBold,
     underlineColor: Color = Color(0xFF005580),
     underlineThickness: Dp = 2.dp,
     underlineHorizontalPadding: Dp = 8.dp,
