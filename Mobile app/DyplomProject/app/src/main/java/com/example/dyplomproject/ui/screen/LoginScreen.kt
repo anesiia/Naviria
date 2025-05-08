@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -37,10 +38,11 @@ fun LoginScreen(
     loginViewModel: LoginViewModel,
     authViewModel: AuthViewModel
 ) {
-    val email by loginViewModel.email.collectAsState()
-    val password by loginViewModel.password.collectAsState()
-    val error by loginViewModel.error.collectAsState()
-    //val rememberMe by viewModel.rememberMe.collectAsState()
+//    val email by loginViewModel.email.collectAsState()
+//    val password by loginViewModel.password.collectAsState()
+//    val error by loginViewModel.error.collectAsState()
+//    val rememberMe by viewModel.rememberMe.collectAsState()
+    val uiState by loginViewModel.uiState.collectAsState()
     LaunchedEffect(authViewModel.isAuthenticated.collectAsState().value) {
         if (authViewModel.isAuthenticated.value) {
             navController.navigate("main") {
@@ -52,7 +54,6 @@ fun LoginScreen(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Background Image
         Image(
             painter = painterResource(id = R.drawable.login_background),
             contentDescription = null,
@@ -60,7 +61,6 @@ fun LoginScreen(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Foreground Content (your login UI)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -68,9 +68,8 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Your existing UI code here...
             OutlinedTextField(
-                value = email,
+                value = uiState.email,
                 onValueChange = loginViewModel::onEmailChanged,
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth()
@@ -79,7 +78,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = password,
+                value = uiState.password,
                 onValueChange = loginViewModel::onPasswordChanged,
                 label = { Text("Password") },
                 modifier = Modifier.fillMaxWidth(),
@@ -106,12 +105,13 @@ fun LoginScreen(
                     navController.navigate("register")
                 }
             )
-            if (error != null) {
-                Spacer(modifier = Modifier.height(16.dp))
+            if (uiState.isLoading) {
+                CircularProgressIndicator()
+            }
 
-                // Display the error message as Text or SnackBar
+            if (uiState.error != null) {
                 Text(
-                    text = error!!,
+                    text = uiState.error ?: "",
                     color = Color.Red,
                     style = MaterialTheme.typography.bodyLarge
                 )
@@ -136,7 +136,6 @@ fun LoginScreenPreview() {
             modifier = Modifier.fillMaxSize()
         )
 
-        // Foreground Content (your login UI)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -144,7 +143,6 @@ fun LoginScreenPreview() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Your existing UI code here...
             OutlinedTextField(
                 value = email,
                 onValueChange = {},
@@ -186,37 +184,3 @@ fun LoginScreenPreview() {
     }
 
 }
-
-
-
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                RadioButton(
-//                    selected = rememberMe,
-//                    //onClick = { viewModel.onRememberMeChanged(!rememberMe) },
-//                    colors = RadioButtonDefaults.colors(
-//                        selectedColor = Color.Blue,
-//                        unselectedColor = Color.Gray
-//                    ),
-//                    modifier = Modifier.size(24.dp)
-//                )
-//                Spacer(modifier = Modifier.width(8.dp))
-//                Text(
-//                    text = "Remember Me",
-////                    modifier = Modifier.clickable {
-////                        viewModel.onRememberMeChanged(!rememberMe)
-////                    }
-//                )
-//            }
-
-//            Button(
-//                onClick = ,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(50.dp),
-//                shape = RoundedCornerShape(10.dp)
-//            ) {
-//                Text("Увійти")
-//            }
