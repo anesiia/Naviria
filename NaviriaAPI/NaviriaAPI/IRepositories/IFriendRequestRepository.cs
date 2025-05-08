@@ -1,4 +1,5 @@
 ﻿using NaviriaAPI.Entities;
+using System.Linq.Expressions;
 
 namespace NaviriaAPI.IRepositories
 {
@@ -10,6 +11,6 @@ namespace NaviriaAPI.IRepositories
         Task<bool> UpdateAsync(FriendRequestEntity quote);
         Task<bool> DeleteAsync(string id);
         Task<IEnumerable<FriendRequestEntity>> GetByReceiverIdAsync(string toUserId);
-
+        Task DeleteManyByUserIdAsync(string userId);
     }
 }

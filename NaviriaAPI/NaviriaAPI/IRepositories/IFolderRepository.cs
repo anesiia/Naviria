@@ -11,5 +11,6 @@ namespace NaviriaAPI.IRepositories
         Task CreateAsync(FolderEntity folder);
         Task<bool> UpdateAsync(FolderEntity folder);
         Task<bool> DeleteAsync(string id);
+        Task DeleteManyByUserIdAsync(string userId);
     }
 }

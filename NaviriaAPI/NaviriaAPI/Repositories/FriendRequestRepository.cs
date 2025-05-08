@@ -4,6 +4,7 @@ using NaviriaAPI.IRepositories;
 using System;
 using MongoDB.Driver;
 using NaviriaAPI.Entities;
+using System.Linq.Expressions;
 
 public class FriendRequestRepository : IFriendRequestRepository
 {
@@ -39,6 +40,16 @@ public class FriendRequestRepository : IFriendRequestRepository
     {
         var filter = Builders<FriendRequestEntity>.Filter.Eq(r => r.ToUserId, toUserId);
         return await _friendsRequests.Find(filter).ToListAsync();
+    }
+
+    public async Task DeleteManyByUserIdAsync(string userId)
+    {
+        var filter = Builders<FriendRequestEntity>.Filter.Or(
+            Builders<FriendRequestEntity>.Filter.Eq(fr => fr.FromUserId, userId),
+            Builders<FriendRequestEntity>.Filter.Eq(fr => fr.ToUserId, userId)
+        );
+
+        await _friendsRequests.DeleteManyAsync(filter);
     }
 
 }

@@ -4,6 +4,8 @@ using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ICloudStorage;
 using Microsoft.AspNetCore.Authorization;
+using NaviriaAPI.Helpers;
+using NaviriaAPI.IServices.IGamificationLogic;
 
 namespace NaviriaAPI.Controllers
 {
@@ -13,17 +15,17 @@ namespace NaviriaAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IUserCleanupService _userCleanupService;
         private readonly ILogger<UserController> _logger;
-        public readonly ICloudinaryService _cloudinaryService;
 
         public UserController(
             IUserService userService,
-            ILogger<UserController> logger,
-            ICloudinaryService cloudinaryService)
+            IUserCleanupService userCleanupService,
+            ILogger<UserController> logger)
         {
             _userService = userService;
+            _userCleanupService = userCleanupService;
             _logger = logger;
-            _cloudinaryService = cloudinaryService;
         }
 
         [AllowAnonymous]
@@ -112,7 +114,7 @@ namespace NaviriaAPI.Controllers
 
             try
             {
-                var deleted = await _userService.DeleteAsync(id);
+                var deleted = await _userCleanupService.DeleteUserAndRelatedDataAsync(id);
                 return deleted ? NoContent() : NotFound();
             }
             catch (Exception ex)

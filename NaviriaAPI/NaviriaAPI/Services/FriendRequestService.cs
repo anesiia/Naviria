@@ -1,5 +1,6 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.DTOs.FeaturesDTOs;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Mappings;
@@ -123,16 +124,25 @@ namespace NaviriaAPI.Services
             return categories.Select(FriendRequestMapper.ToDto).ToList();
         }
 
-        public async Task<IEnumerable<UserDto>> GetIncomingRequestsAsync(string toUserId)
+        public async Task<IEnumerable<FriendRequestWithUserDto>> GetIncomingRequestsAsync(string toUserId)
         {
             var requests = await _friendRequestRepository.GetByReceiverIdAsync(toUserId);
-
             var senderIds = requests.Select(r => r.FromUserId).Distinct().ToList();
-
             var senders = await _userRepository.GetManyByIdsAsync(senderIds);
 
-            return senders.Select(UserMapper.ToDto);
+            var senderDict = senders.ToDictionary(u => u.Id);
+
+            var result = requests
+                .Where(r => senderDict.ContainsKey(r.FromUserId))
+                .Select(r => new FriendRequestWithUserDto
+                {
+                    Request = FriendRequestMapper.ToDto(r),
+                    Sender = UserMapper.ToDto(senderDict[r.FromUserId])
+                });
+
+            return result;
         }
+
 
     }
 }

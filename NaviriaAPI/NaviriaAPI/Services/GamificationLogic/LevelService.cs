@@ -4,6 +4,7 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.Constants;
 using NaviriaAPI.DTOs;
+using NaviriaAPI.Exceptions;
 
 namespace NaviriaAPI.Services
 {
@@ -19,7 +20,7 @@ namespace NaviriaAPI.Services
         public async Task<LevelProgressInfo> CalculateLevelProgressAsync(UserDto user, int additionalXp)
         {
             if (user == null)
-                throw new ArgumentNullException("User is not found");
+                throw new NotFoundException("User is not found");
 
             int oldXp = user.Points;
             int newXp = oldXp + additionalXp;

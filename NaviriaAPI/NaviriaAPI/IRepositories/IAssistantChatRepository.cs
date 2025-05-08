@@ -8,5 +8,6 @@ namespace NaviriaAPI.IRepositories
         Task AddMessageAsync(AssistantChatMessageEntity message);
         Task DeleteAllForUserAsync(string userId);
         Task<int> CountByUserIdAsync(string userId);
+        Task DeleteManyByUserIdAsync(string userId);
     }
 }
