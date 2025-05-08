@@ -66,8 +66,6 @@ class AuthViewModel(
             _isAuthenticated.value = true
             val decoded = decodeJwt(token)
             _userId.value = decoded["sub"] as? String
-            Log.d("AuthViewModel", "User_id: $userId")
-            Log.d("AuthViewModel", "Token: $userId")
         }
     }
 
