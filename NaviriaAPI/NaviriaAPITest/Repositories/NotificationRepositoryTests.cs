@@ -228,5 +228,43 @@ namespace NaviriaAPI.Tests.Repositories
 
             Assert.That(updatedNotifications.All(n => n.IsNew == false), Is.True);
         }
+
+        [Test]
+        public async Task TC009_DeleteManyByUserIdAsync_ShouldDeleteAllUserNotifications()
+        {
+            var userId = ObjectId.GenerateNewId().ToString();
+
+            var notification1 = new NotificationEntity
+            {
+                UserId = userId,
+                Text = "Notification 1",
+                IsNew = true
+            };
+            var notification2 = new NotificationEntity
+            {
+                UserId = userId,
+                Text = "Notification 2",
+                IsNew = false
+            };
+            var otherUserNotification = new NotificationEntity
+            {
+                UserId = ObjectId.GenerateNewId().ToString(),
+                Text = "Other user's notification",
+                IsNew = true
+            };
+
+            await _notificationRepository.CreateAsync(notification1);
+            await _notificationRepository.CreateAsync(notification2);
+            await _notificationRepository.CreateAsync(otherUserNotification);
+
+            // Act
+            await _notificationRepository.DeleteManyByUserIdAsync(userId);
+
+            // Assert
+            var remaining = await _notificationRepository.GetAllAsync();
+            Assert.That(remaining.All(n => n.UserId != userId), Is.True);
+            Assert.That(remaining.Any(n => n.UserId == otherUserNotification.UserId), Is.True);
+        }
+
     }
 }

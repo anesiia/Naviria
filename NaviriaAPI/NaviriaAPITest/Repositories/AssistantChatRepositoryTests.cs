@@ -178,15 +178,64 @@ namespace NaviriaAPI.Tests.Repositories
             Assert.That(messageCount, Is.EqualTo(0));
         }
 
-        //[Test]
-        //public async Task GetByUserIdAsync_NoMessages_ReturnsEmptyList()
-        //{
-        //    // Act
-        //    var result = await _assistantChatRepository.GetByUserIdAsync(_testUserId);
 
-        //    // Assert
-        //    Assert.That(result, Is.Empty);
-        //}
+        [Test]
+        public async Task TC006_DeleteAllForUserAsync_ShouldNotThrowWhenNoMessagesExist()
+        {
+            // Calling delete for a user with no messages
+            await _assistantChatRepository.DeleteAllForUserAsync(_testUserId);
 
+            // Ensure it completes without errors
+            Assert.Pass();
+        }
+
+        [Test]
+        public async Task TC007_DeleteManyByUserIdAsync_ShouldDeleteSpecificMessages()
+        {
+            var message1 = new AssistantChatMessageEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                UserId = _testUserId,
+                Content = "Message 1",
+                CreatedAt = DateTime.UtcNow.AddMinutes(-10)
+            };
+            var message2 = new AssistantChatMessageEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                UserId = _testUserId,
+                Content = "Message 2",
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _assistantChatRepository.AddMessageAsync(message1);
+            await _assistantChatRepository.AddMessageAsync(message2);
+
+            // Delete a single message
+            await _assistantChatRepository.DeleteManyByUserIdAsync(_testUserId);
+
+            // Verify that all messages for this user are deleted
+            var messages = await _assistantChatRepository.GetByUserIdAsync(_testUserId);
+            Assert.That(messages.Count(), Is.EqualTo(0));
+        }
+
+        [Test]
+        public async Task TC008_DeleteAllForUserAsync_ShouldNotFailWhenNoMessagesExist()
+        {
+            await _assistantChatRepository.DeleteAllForUserAsync(_testUserId);
+
+            // Ensure the method completes successfully without throwing errors
+            Assert.Pass();
+        }
+
+        [Test]
+        public async Task TC009_CountByUserIdAsync_ShouldReturnZeroForNoMessages()
+        {
+            var messageCount = await _assistantChatRepository.CountByUserIdAsync(ObjectId.GenerateNewId().ToString());
+
+
+            Assert.That(messageCount, Is.EqualTo(0));
+        }
+
+       
     }
 }

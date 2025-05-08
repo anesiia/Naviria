@@ -162,5 +162,29 @@ namespace NaviriaAPI.Tests.Repositories
             var result = await _folderRepository.DeleteAsync(ObjectId.GenerateNewId().ToString());
             Assert.That(result, Is.False);
         }
+
+        [Test]
+        public async Task TC009_DeleteManyByUserIdAsync_ShouldRemoveAllUserFolders()
+        {
+            var userId = ObjectId.GenerateNewId().ToString();
+
+            var folders = new[]
+            {
+        new FolderEntity { Name = "F1", UserId = userId },
+        new FolderEntity { Name = "F2", UserId = userId },
+        new FolderEntity { Name = "F3", UserId = ObjectId.GenerateNewId().ToString() } // інший користувач
+    };
+
+            await _folderCollection.InsertManyAsync(folders);
+
+            await _folderRepository.DeleteManyByUserIdAsync(userId);
+
+            var remaining = await _folderCollection.Find(f => f.UserId == userId).ToListAsync();
+            Assert.That(remaining.Count, Is.EqualTo(0));
+
+            var others = await _folderCollection.Find(f => f.UserId != userId).ToListAsync();
+            Assert.That(others.Count, Is.EqualTo(1));
+        }
+
     }
 }

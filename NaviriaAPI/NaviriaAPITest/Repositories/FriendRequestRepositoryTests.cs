@@ -192,5 +192,77 @@ namespace NaviriaAPI.Tests.Repositories
             // Assert
             Assert.That(requests, Has.All.Matches<FriendRequestEntity>(r => r.ToUserId == toUserId1));
         }
+
+        [Test]
+        public async Task TC006_GetAllAsync_ShouldReturnAllFriendRequests()
+        {
+            // Arrange
+            var request1 = new FriendRequestEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                FromUserId = ObjectId.GenerateNewId().ToString(),
+                ToUserId = ObjectId.GenerateNewId().ToString(),
+                Status = "Pending"
+            };
+            var request2 = new FriendRequestEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                FromUserId = ObjectId.GenerateNewId().ToString(),
+                ToUserId = ObjectId.GenerateNewId().ToString(),
+                Status = "Approved"
+            };
+
+            await _friendRequestRepository.CreateAsync(request1);
+            await _friendRequestRepository.CreateAsync(request2);
+
+            // Act
+            var allRequests = await _friendRequestRepository.GetAllAsync();
+
+            // Assert
+            Assert.That(allRequests.Count(), Is.EqualTo(2));
+        }
+
+
+        [Test]
+        public async Task TC007_DeleteManyByUserIdAsync_ShouldRemoveAllRelatedRequests()
+        {
+            // Arrange
+            var userId = ObjectId.GenerateNewId().ToString();
+
+            var request1 = new FriendRequestEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                FromUserId = userId,
+                ToUserId = ObjectId.GenerateNewId().ToString(),
+                Status = "Pending"
+            };
+            var request2 = new FriendRequestEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                FromUserId = ObjectId.GenerateNewId().ToString(),
+                ToUserId = userId,
+                Status = "Pending"
+            };
+            var request3 = new FriendRequestEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                FromUserId = ObjectId.GenerateNewId().ToString(),
+                ToUserId = ObjectId.GenerateNewId().ToString(),
+                Status = "Pending"
+            };
+
+            await _friendRequestRepository.CreateAsync(request1);
+            await _friendRequestRepository.CreateAsync(request2);
+            await _friendRequestRepository.CreateAsync(request3);
+
+            // Act
+            await _friendRequestRepository.DeleteManyByUserIdAsync(userId);
+            var allRequests = await _friendRequestRepository.GetAllAsync();
+
+            // Assert
+            Assert.That(allRequests, Has.Count.EqualTo(1));
+            Assert.That(allRequests.First().Id, Is.EqualTo(request3.Id));
+        }
+
     }
 }
