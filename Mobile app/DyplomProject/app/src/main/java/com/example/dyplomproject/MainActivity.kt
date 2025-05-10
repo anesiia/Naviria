@@ -42,13 +42,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dyplomproject.data.remote.ApiService
 import com.example.dyplomproject.data.remote.AuthRepository
+import com.example.dyplomproject.data.remote.UserRepository
 import com.example.dyplomproject.data.utils.DataStoreManager
+import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.ui.components.FriendRequestsScreen
 import com.example.dyplomproject.ui.screen.FriendsScreen
 import com.example.dyplomproject.ui.screen.RegistrationScreen
 import com.example.dyplomproject.ui.screen.StatisticsScreen
 import com.example.dyplomproject.ui.screen.TaskScreen
+import com.example.dyplomproject.ui.viewmodel.FriendsViewModel
 import com.example.dyplomproject.ui.viewmodel.LoginViewModel
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -127,6 +132,19 @@ class LoginViewModelFactory(private val authRepository: AuthRepository) : ViewMo
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
             return LoginViewModel(authRepository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+
+class FriendsViewModelFactory(
+    private val repository: UserRepository,
+    private val userId: String
+) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(FriendsViewModel::class.java)) {
+            return FriendsViewModel(repository, userId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
@@ -233,87 +251,7 @@ fun CustomTopAppBar(navController: NavController) {
         }
     }
 }
-//@Composable
-//fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
-//    val navController = rememberNavController()
-////    val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
-////
-////    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-////        Text("Loading... isAuthenticated = $isAuthenticated")
-////    }
-////    NavHost(
-////        navController = navController,
-////        startDestination = if (isAuthenticated) "main" else "auth"
-////    ) {
-////        // Auth Graph (Login/Register)
-////        navigation(startDestination = "login", route = "auth") {
-////            composable("login") {
-////                LoginScreen(navController, loginViewModel, authViewModel)
-////            }
-//////            composable("register") {
-//////                RegisterScreen(navController)
-//////            }
-////        }
-////
-////        // Main Graph (Home/Profile)
-////        navigation(startDestination = "friends", route = "main") {
-////            composable("statistics") {
-////                MainScaffold(navController) { StatisticsScreen(navController) }
-////            }
-////            composable("friends") {
-////                MainScaffold(navController) { FriendsScreen(navController) }
-////            }
-////            composable("tasks") {
-////                MainScaffold(navController) { TaskScreen(navController) }
-////            }
-////            // Add more main screen composables...
-////        }
-////    }
-//    val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
-//    val userId by authViewModel.userId.collectAsState()
-//
-//    // Check if user is authenticated or not
-//    if (!isAuthenticated || userId == null) {
-//        // If the user is not authenticated or the userId is null, show the login screen
-//        NavHost(
-//            navController = navController,
-//            startDestination = "login"
-//        ) {
-//            composable("login") {
-//                LoginScreen(navController, loginViewModel, authViewModel) // Your login screen
-//            }
-//            // You can also add register screen here, if needed
-//        }
-//    } else {
-//        // Once user is authenticated and userId is available, proceed to the main screen
-//        NavHost(
-//            navController = navController,
-//            startDestination = "main"
-//        ) {
-////            // Main Graph (Home/Profile)
-////            navigation(startDestination = "friends", route = "main") {
-////                composable("friends") {
-////                    FriendsScreen(navController, userId!!) // Pass userId to FriendsScreen
-////                }
-////                composable("statistics") {
-////                    StatisticsScreen(navController) // Pass userId to StatisticsScreen
-////                }
-////                // More composables...
-////            }
-//            navigation(startDestination = "friends", route = "main") {
-//                composable("statistics") {
-//                    MainScaffold(navController) { StatisticsScreen(navController) }
-//                }
-//                composable("friends") {
-//                    MainScaffold(navController) { FriendsScreen(navController, userId!!) }
-//                }
-//                composable("tasks") {
-//                    MainScaffold(navController) { TaskScreen(navController) }
-//                }
-//        }
-//        }
-//    }
-//}
+
 @Composable
 fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
     val navController = rememberNavController()
@@ -321,6 +259,13 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
     val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
     val userId by authViewModel.userId.collectAsState()
 
+//    // Create UserRepository instance
+//    val userRepository = UserRepository(RetrofitInstance.api)
+//
+//    // Create FriendsViewModel instance with userId, assuming userId is now non-null
+//    val friendsViewModel: FriendsViewModel = viewModel(
+//        factory = FriendsViewModelFactory(userRepository, userId!!)
+//    )
     NavHost(
         navController = navController,
         startDestination = if (isAuthenticated && userId != null) "main" else "login"
@@ -359,7 +304,7 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
                                 .padding(padding),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("Loading user info...")
+                            Text("Завантаження інформації...")
                         }
                 }
             }
@@ -373,38 +318,25 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
                     TaskScreen(navController, padding = padding)
                 }
             }
+            composable("friend_requests") {
+                MainScaffold(navController) { padding ->
+                    userId?.let {
+                        FriendRequestsScreen(navController, it, padding) //, friendsViewModel)
+                        //} ?: Text("Loading user info...")
+                    } ?:Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Завантаження запитів у друзі ...")
+                    }
+                }
+            }
         }
     }
 }
-//
-////@Composable
-////fun AppNavigator() {
-////    val navController = rememberNavController()
-////
-////    NavHost(
-////        navController = navController,
-////        startDestination = Routes.SPLASH
-////    ) {
-////        composable(Routes.SPLASH) {
-////            SplashScreen(navController)
-////        }
-////
-////        composable(Routes.LOGIN) {
-////            LoginScreen(navController)
-////        }
-////
-////        composable(Routes.REGISTER) {
-////            RegisterScreen(navController)
-////        }
-////
-////        composable(Routes.HOME) {
-////            MainLayout(navController)
-////        }
-////
-////        // optionally add other standalone screens
-////    }
-////}
-//
+
 //object Routes {
 //    const val SPLASH = "splash_screen"
 //    const val LOGIN = "login_screen"

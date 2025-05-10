@@ -25,9 +25,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -47,70 +51,48 @@ import com.example.dyplomproject.data.remote.UserRepository
 import com.example.dyplomproject.ui.components.ButtonStyle
 import com.example.dyplomproject.ui.components.SecondaryButton
 import com.example.dyplomproject.ui.viewmodel.FriendsViewModel
-import com.example.dyplomproject.ui.viewmodel.UserUiModel
+import com.example.dyplomproject.ui.viewmodel.UserShortUiModel
 
 @Composable
 fun FriendsScreen(
-    navController: NavHostController,
-    userId: String,
-    padding: PaddingValues
-//    backgroundColor: Color = Color.Red,
-//    text: String = "Friends screen",
-//    textColor: Color = Color.White,
-//    textSize: TextUnit = 24.sp
+    navController: NavHostController, userId: String, padding: PaddingValues
 ) {
     val repository = remember { UserRepository(RetrofitInstance.api) }
-
-    val viewModel: FriendsViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                if (modelClass.isAssignableFrom(FriendsViewModel::class.java)) {
-                    return FriendsViewModel(repository, userId) as T
-                }
-                throw IllegalArgumentException("Unknown ViewModel class")
+    var searchInput by remember { mutableStateOf("") }
+    val viewModel: FriendsViewModel = viewModel(factory = object : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(FriendsViewModel::class.java)) {
+                return FriendsViewModel(repository, userId) as T
             }
+            throw IllegalArgumentException("Unknown ViewModel class")
         }
-    )
+    })
 
-    val selectedTab = viewModel.selectedTab
-    val isLoading = viewModel.isLoading
-    val friends = viewModel.friends
-    val allUsers = viewModel.allUsers
-
+//    val selectedTab = viewModel.selectedTab
+//    val isLoading = viewModel.isLoading
+//    val friends = viewModel.friends
+//    val allUsers = viewModel.allUsers
+    val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit) {
-        viewModel.onTabSelected(selectedTab) // Загрузка при первом старте
+        viewModel.onTabSelected(uiState.selectedTab) // Загрузка при первом старте
+        viewModel.checkNewFriendRequests(userId)
     }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(padding)
-        .padding(horizontal = 8.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFFFFFFF))
+            .padding(padding)
+            .padding(horizontal = 8.dp),
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Row(horizontalArrangement = Arrangement.SpaceBetween) {
-//            Button(
-//                onClick = { viewModel.onTabSelected(FriendsViewModel.TabType.FRIENDS) },
-//                colors = ButtonDefaults.buttonColors(
-//                    containerColor = if (selectedTab == FriendsViewModel.TabType.FRIENDS) Color.Blue else Color.Gray
-//                )
-//            ) {
-//                Text("Друзі")
-//            }
-//
-//            Button(
-//                onClick = { viewModel.onTabSelected(FriendsViewModel.TabType.ALL_USERS) },
-//                colors = ButtonDefaults.buttonColors(
-//                    containerColor = if (selectedTab == FriendsViewModel.TabType.ALL_USERS) Color.Blue else Color.Gray
-//                )
-//            ) {
-//                Text("Всі користувачі")
-//            }
             SecondaryButton(
                 text = "Друзі",
                 onClick = { viewModel.onTabSelected(FriendsViewModel.TabType.FRIENDS) },
-                style = if (selectedTab == FriendsViewModel.TabType.FRIENDS) ButtonStyle.Primary else ButtonStyle.Outline(),
+                style = if (uiState.selectedTab == FriendsViewModel.TabType.FRIENDS) ButtonStyle.Primary else ButtonStyle.Outline(),
                 modifier = Modifier.weight(1f)
             )
 
@@ -119,115 +101,144 @@ fun FriendsScreen(
             SecondaryButton(
                 text = "Всі користувачі",
                 onClick = { viewModel.onTabSelected(FriendsViewModel.TabType.ALL_USERS) },
-                style = if (selectedTab == FriendsViewModel.TabType.ALL_USERS) ButtonStyle.Primary else ButtonStyle.Outline(),
+                style = if (uiState.selectedTab == FriendsViewModel.TabType.ALL_USERS) ButtonStyle.Primary else ButtonStyle.Outline(),
                 modifier = Modifier.weight(1f)
             )
         }
+        Spacer(modifier = Modifier.height(32.dp))
+        ////////search field
+        Row(modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
+                value = searchInput,
+                onValueChange = {
+                    searchInput = it
+                    viewModel.onSearchQueryChanged(it)
+                },
+                label = { Text("Пошук") },
+                modifier = Modifier.weight(1f)
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-//        if (isLoading) {
-//            CircularProgressIndicator()
-//        } else {
-//            val listToShow = when (selectedTab) {
-//                FriendsViewModel.TabType.FRIENDS -> friends
-//                FriendsViewModel.TabType.ALL_USERS -> allUsers
-//            }
-//
-//            LazyColumn {
-//                items(listToShow) { user ->
-//                    Text(
-//                        text = user.,
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(8.dp)
-//                    )
-//                }
-//            }
-//        }
-//        if (isLoading) {
-//            CircularProgressIndicator()
-//        } else {
-//            when (selectedTab) {
-//                FriendsViewModel.TabType.FRIENDS -> {
-//                    LazyColumn {
-//                        items(friends, key = { it.id }) { user ->
-//                            FriendItem(
-//                                user = user,
-//                                onRemoveClick = { /* обработка удаления */ }
-//                            )
-//                        }
-//                    }
-//                }
-//
-//                FriendsViewModel.TabType.ALL_USERS -> {
-//                    LazyColumn {
-//                        items(allUsers, key = { it.id }) { user ->
-//                            UserItem(
-//                                user = user,
-//                                onAddFriendClick = { /* обработка добавления */ }
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        if (isLoading) {
-//            CircularProgressIndicator()
-//        } else {
-//            when (selectedTab) {
-//                FriendsViewModel.TabType.FRIENDS -> {
-//                    LazyColumn {
-//                        items(friends, key = { it.id }) { user ->
-//                            FriendItem(user = user, onRemoveClick = { /* ... */ })
-//                        }
-//                    }
-//                }
-//                FriendsViewModel.TabType.ALL_USERS -> {
-//                    LazyColumn {
-//                        items(allUsers, key = { it.id }) { user ->
-//                            UserItem(user = user, onAddFriendClick = { /* ... */ })
-//                        }
-//                    }
-//                }
-//            }
-//        }
-        if (isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            val listToShow = when (selectedTab) {
-                FriendsViewModel.TabType.FRIENDS -> friends
-                FriendsViewModel.TabType.ALL_USERS -> allUsers
+            Button(onClick = { viewModel.searchUsers() }) {
+                Text("Search")
             }
 
-            LazyColumn {
-                items(listToShow, key = { it.id }) { user ->
-                    when (selectedTab) {
-                        FriendsViewModel.TabType.FRIENDS -> {
-                            FriendItem(user = user, onRemoveClick = { /* Handle remove */ })
-                        }
-                        FriendsViewModel.TabType.ALL_USERS -> {
-                            UserItem(user = user, onAddFriendClick = { /* Handle add */ })
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Button(onClick = {
+                searchInput = ""
+                viewModel.resetSearch()
+            }) {
+                Text("Reset")
+            }
+        }
+        ////////
+        Column(modifier = Modifier.weight(1f)) {
+            if (uiState.isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+//                val listToShow = when (uiState.selectedTab) {
+//                    FriendsViewModel.TabType.FRIENDS -> uiState.friends
+//                    FriendsViewModel.TabType.ALL_USERS -> uiState.allUsers
+//                }
+                val baseList = when (uiState.selectedTab) {
+                    FriendsViewModel.TabType.FRIENDS -> uiState.friends
+                    FriendsViewModel.TabType.ALL_USERS -> uiState.allUsers
+                }
+                val listToShow = uiState.searchResults ?: baseList
+                if (uiState.searchResults != null && listToShow.isEmpty()) {
+                    Text("Не знайдено жодного користувача з поданим ніком. Той во...забув..буває", style = MaterialTheme.typography.bodyMedium)
+                } else if (listToShow.isEmpty()) {
+                    Text("Потрібен час, щоб знайти однодумців, тож поки тут пусто", style = MaterialTheme.typography.bodyMedium)
+                } else {
+                    LazyColumn {
+                        items(listToShow, key = { it.id }) { user ->
+                            when (uiState.selectedTab) {
+                                FriendsViewModel.TabType.FRIENDS -> {
+                                    FriendItem(user = user, onRemoveClick = { /* Handle remove */ }, onSendSupportRequest = {  })
+                                }
+                                FriendsViewModel.TabType.ALL_USERS -> {
+                                    UserItem(user = user, onAddFriendClick = { viewModel.onAddFriend(user) })
+                                }
+                            }
                         }
                     }
                 }
+
             }
         }
+
+//        Spacer(modifier = Modifier.weight(1f)) // This will push the button to the bottom
+        Button(
+            onClick = { navController.navigate("friend_requests") }, // Navigate to the new composable
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(vertical = 16.dp),
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (uiState.hasNewFriendRequests) Color.Red else Color(0x142099B7),
+                disabledContentColor = Color(0x142099B7)
+            )
+        ) {
+            Text(
+                /*text = if (uiState.newFriendRequest) "New Friend Request" else*/ text = "Нові запити",
+                color = Color(0xFF003344),
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
+//        THIS IS A CASE WITH INHERITENCE AND WHEN I CREATE ADDITIONAL DATA CLASS FOR FRIEND
+
+//        if (uiState.isLoading) {
+//            Box(
+//                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+//            ) {
+//                CircularProgressIndicator()
+//            }
+//        } else {
+//            val listToShow = when (uiState.selectedTab) {
+//                FriendsViewModel.TabType.FRIENDS -> uiState.friends // This is now List<FriendUiModel>
+//                FriendsViewModel.TabType.ALL_USERS -> uiState.allUsers // This is still List<UserShortUiModel>
+//            }
+//
+//            LazyColumn {
+//                items(listToShow, key = { it.id }) { user ->
+//                    when (uiState.selectedTab) {
+//                        FriendsViewModel.TabType.FRIENDS -> {
+//                            // Handle FriendUiModel
+//                            if (user is FriendUiModel) {
+//                                FriendItem(
+//                                    user = user,
+//                                    onRemoveClick = { /* Handle remove friend */ })
+//                            }
+//                        }
+//
+//                        FriendsViewModel.TabType.ALL_USERS -> {
+//                            // Handle UserShortUiModel
+//                            if (user is UserShortUiModel) {
+//                                UserItem(
+//                                    user = user,
+//                                    onAddFriendClick = { /* Handle add friend */ })
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
 @Composable
 fun FriendItem(
-    user: UserUiModel,
-    onRemoveClick: () -> Unit
+    user: UserShortUiModel,
+    onRemoveClick: (UserShortUiModel) -> Unit,
+    onSendSupportRequest: () -> Unit
 ) {
-    var supported by remember { mutableStateOf(false) }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -235,8 +246,7 @@ fun FriendItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Удалить (иконка X)
-        IconButton(onClick = onRemoveClick) {
+        IconButton(onClick = { onRemoveClick(user) }) {
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = "Удалить",
@@ -245,7 +255,6 @@ fun FriendItem(
             )
         }
 
-        // Аватар
         Box(
             modifier = Modifier
                 .size(40.dp)
@@ -253,43 +262,28 @@ fun FriendItem(
                 .background(Color.LightGray)
         )
 
-        // Никнейм
         Text(
             text = user.nickname,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 8.dp),
             maxLines = 1
         )
-
-        // Кнопка "Підтримати"
-        val backgroundColor = if (supported) Color.White else Color(0xFFFF9800)
-        val contentColor = if (supported) Color(0xFFFF9800) else Color.White
-        val border = if (supported) BorderStroke(1.dp, Color(0xFFFF9800)) else null
-
-        Button(
-            onClick = { supported = !supported },
-//            colors = ButtonDefaults.buttonColors(
-//                backgroundColor = backgroundColor,
-//                contentColor = contentColor
-//            ),
-            border = border,
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.height(36.dp)
-        ) {
-            Text("Підтримати")
-        }
+        SecondaryButton(
+            text = if (!user.isRequestSent) "Підтримати" else "Підтримано",
+            onClick = { onSendSupportRequest() },
+            style = if (!user.isRequestSent) ButtonStyle.Secondary else ButtonStyle.Outline(Color(0xFFFF4500)),
+            modifier = Modifier.weight(0.5f)
+        )
     }
 }
 
 @Composable
 fun UserItem(
-    user: UserUiModel,
-    onAddFriendClick: () -> Unit
+    user: UserShortUiModel,
+    onAddFriendClick: (UserShortUiModel) -> Unit
 ) {
-    var added by remember { mutableStateOf(false) }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -297,43 +291,79 @@ fun UserItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Аватар
         Box(
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(if (user.isOnline) Color.Green else Color.Gray)
+                //.background(if (user.isOnline) Color.Green else Color.Gray) -
+                // CURRENTLY THE SERVER DON'T HANDLE THIS STATE(STATE OF USERS THAT ARE ONLINE)
+                // So basically All users online
+                .background(Color(0xFF005580))
         )
-
-        // Информация
         Column(
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 8.dp)
         ) {
-            Text(text = user.fullName, fontWeight = FontWeight.Bold)
+            Text(text = user.fullName, style = MaterialTheme.typography.labelLarge)
             Text(text = "@${user.nickname}", color = Color.Gray)
         }
+        SecondaryButton(
+            text = if (user.isRequestSent == false) "Надіслати" else "Надіслано",
+            onClick = { onAddFriendClick(user) },
+            style = if (user.isRequestSent == false) ButtonStyle.Secondary else ButtonStyle.Outline(Color(0xFFFF4500)),
+            modifier = Modifier.weight(0.5f)
+        )
+    }
+}
 
-        // Кнопка "Добавить"
-        val backgroundColor = if (added) Color.White else Color(0xFF4CAF50)
-        val contentColor = if (added) Color(0xFF4CAF50) else Color.White
-        val border = if (added) BorderStroke(1.dp, Color(0xFF4CAF50)) else null
+@Preview(showBackground = true)
+@Composable
+fun PreviewFriendItem() {
+    FriendItem(
+        user = UserShortUiModel(
+            id = "",
+            nickname = "john_doe",
+            fullName = "John Doe",
+            isOnline = true,
+            isProUser = false,
+            isRequestSent = false
+        ),
+        onRemoveClick = {},
+        onSendSupportRequest = {}
+    )
+}
 
+@Preview(showBackground = true)
+@Composable
+fun PreviewUserItem() {
+//    UserItem(
+//        user = UserShortUiModel(
+//            id = "",
+//            nickname = "john_doe",
+//            fullName = "John Doe",
+//            isOnline = true,
+//            isProUser = false,
+//            isRequestSent = false
+//        ),
+//        onAddFriendClick = {}
+//    )
+    Column (modifier = Modifier
+        .fillMaxWidth()) {
         Button(
-            onClick = {
-                added = !added
-                onAddFriendClick()
-            },
-//            colors = ButtonDefaults.buttonColors(
-//                backgroundColor = backgroundColor,
-//                contentColor = contentColor
-//            ),
-            border = border,
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.height(36.dp)
+            onClick = {  }, // Navigate to the new composable
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(vertical = 16.dp),
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(
+                /*backgroundColor = if (uiState.newFriendRequest) Color.Red else Color.Blue*/ // Change color based on new request
+            )
         ) {
-            Text(if (added) "Додано" else "Додати")
+            Text(
+                /*text = if (uiState.newFriendRequest) "New Friend Request" else*/ "Add Friend",
+                color = Color.White
+            )
         }
     }
 }

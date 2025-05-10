@@ -10,6 +10,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 //
 //private val retrofit = Retrofit.Builder().baseUrl("https://localhost:7172/")
@@ -44,9 +45,17 @@ interface ApiService {
     @POST("/api/FriendRequest")
     suspend fun sendFriendRequest(@Body friendRequest: FriendRequest): Response<FriendRequestResponse>
 
-    @GET("/api/FriendRequest/{id}")
-    suspend fun getIncomingUserRequest(@Path("id") id: String): Response<User>
+    @GET("/api/FriendRequest/incoming/{id}")
+    suspend fun getIncomingUserRequest(@Path("id") id: String): Response<List<IncomingFriendRequestDto>>
 
+    @DELETE("/api/FriendRequest/{id}")
+    suspend fun declineFriendRequest(@Path("id") id: String): Response<Unit>
+
+    @GET("/api/Friends/{userId}/searchFriends")
+    suspend fun searchFriends(@Path("userId") id: String,@Query("query") query: String): Response<List<User>>
+
+    @GET("/api/")
+    suspend fun searchUsers(@Path("userId") id: String,@Query("query") query: String): Response<Unit>
 }
 
 data class FriendRequest (
@@ -62,13 +71,13 @@ data class FriendRequestResponse(
 )
 
 data class IncomingFriendRequestDto(
-    val request: FriendRequestInfo,
+    val request: FriendRequestResponse,
     val sender: User//userDto
 )
 
-data class FriendRequestInfo(
-    val id: String,
-    val fromUserId: String,
-    val toUserId: String,
-    val status: String
-)
+//data class FriendRequestInfo(
+//    val id: String,
+//    val fromUserId: String,
+//    val toUserId: String,
+//    val status: String
+//)

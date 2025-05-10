@@ -74,6 +74,7 @@ dependencies {
     implementation("com.auth0.android:jwtdecode:2.0.1")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.26.5-rc")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
