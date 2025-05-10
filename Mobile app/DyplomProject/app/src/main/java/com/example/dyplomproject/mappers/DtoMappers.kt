@@ -1,0 +1,37 @@
+package com.example.dyplomproject.mappers
+
+
+import com.example.dyplomproject.data.remote.FriendRequestResponse
+import com.example.dyplomproject.data.remote.FriendShortDto
+import com.example.dyplomproject.data.remote.IncomingFriendRequestDto
+import com.example.dyplomproject.data.remote.User
+import com.example.dyplomproject.ui.viewmodel.IncomingRequestUiModel
+import com.example.dyplomproject.ui.viewmodel.UserShortUiModel
+
+fun FriendShortDto.toUiModel(): UserShortUiModel = UserShortUiModel(
+    id = this.userId,
+    fullName = "", // You could enrich this with a user lookup later
+    nickname = this.nickname,
+    isOnline = false,
+    isProUser = false,
+    isRequestSent = false
+)
+
+fun User.toUiModel(): UserShortUiModel = UserShortUiModel(
+    id = this.id,
+    fullName = this.fullName,
+    nickname = this.nickname,
+    isOnline = this.isOnline,
+    isProUser = this.isProUser,
+    isRequestSent = false
+)
+
+fun IncomingFriendRequestDto.toUiModel(): IncomingRequestUiModel {
+    return IncomingRequestUiModel(
+        requestId = request.id,
+        fromUserId = request.fromUserId,
+        toUserId = request.toUserId,
+        status = request.status,
+        sender = sender.toUiModel()
+    )
+}
