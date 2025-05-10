@@ -73,7 +73,33 @@ namespace NaviriaAPI.Tests.Services.User
             );
         }
 
-       
+        private UserEntity GetTestUser(string id = "123")
+        {
+            return new UserEntity
+            {
+                Id = id,
+                FullName = "Test User",
+                Nickname = "testuser",
+                Gender = "Male",  // або інше значення, яке вам потрібно
+                BirthDate = new DateTime(1990, 1, 1),
+                Description = "Test description",
+                Email = "test@example.com",
+                Password = "hashedpass",
+                Points = 0,
+                LevelInfo = new LevelProgressInfo(),  // Якщо потрібні значення, додайте їх
+                Friends = new List<UserFriendInfo>(),  // Якщо потрібні значення, додайте їх
+                Achievements = new List<UserAchievementInfo>(),  // За потреби додайте ачивки
+                FutureMessage = "Test future message",
+                Photo = "https://example.com/photo.jpg",
+                RegitseredAt = DateTime.UtcNow,
+                LastSeen = DateTime.UtcNow,  // Можна налаштувати конвертацію часу при необхідності
+                IsOnline = true,
+                IsProUser = false
+            };
+        }
+
+
+
         [Test]
         public async Task TC001_CreateAsync_ShouldReturnToken_WhenUserCreatedSuccessfully()
         {
@@ -177,16 +203,16 @@ namespace NaviriaAPI.Tests.Services.User
         {
             // Arrange
             var userId = "12345";
-            _userRepoMock.Setup(repo => repo.DeleteAsync(userId)).ReturnsAsync(true);
+            _userCleanupServiceMock.Setup(service => service.DeleteUserAndRelatedDataAsync(userId)).ReturnsAsync(true);
 
             // Act
             var result = await _userService.DeleteAsync(userId);
 
             // Assert
             Assert.That(result, Is.True);
-
-            _userRepoMock.Verify(repo => repo.DeleteAsync(userId), Times.Once);
+            _userCleanupServiceMock.Verify(service => service.DeleteUserAndRelatedDataAsync(userId), Times.Once);
         }
+
 
 
         [Test]
@@ -265,42 +291,7 @@ namespace NaviriaAPI.Tests.Services.User
             Assert.That(ex.Message, Is.EqualTo($"User with ID {userId} not found"));
         }
 
-        //[Test]
-        //public async Task TC009_GiveAchievementAsync_ShouldApplyPointsAndRecalculateLevel_WhenAchievementIsGiven()
-        //{
-        //    // Arrange
-        //    var userId = "12345";
-        //    var achievementId = "achievement1";
-        //    var achievementPoints = 50;
-
-        //    var existingUser = new UserEntity
-        //    {
-        //        Id = userId,
-        //        Points = 100,
-        //        Achievements = new List<UserAchievementInfo>()
-        //    };
-
-        //    var achievement = new AchievementEntity
-        //    {
-        //        Id = achievementId,
-        //        Points = achievementPoints
-        //    };
-
-        //    _userRepoMock.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync(existingUser);
-        //    _achievementRepoMock.Setup(repo => repo.GetByIdAsync(achievementId)).ReturnsAsync(achievement);
-        //    _userRepoMock.Setup(repo => repo.UpdateAsync(It.IsAny<UserEntity>())).ReturnsAsync(true);
-        //    //_levelServiceMock.Setup(service => service.CalculateLevelProgress(It.IsAny<int>())).Returns(new LevelProgressInfo { Level = 2 });
-
-        //    // Act
-        //    var result = await _userService.GiveAchievementAsync(userId, achievementId);
-
-        //    // Assert
-        //    Assert.That(result, Is.True);
-        //    Assert.That(existingUser.Points, Is.EqualTo(150));  // 100 + 50 points
-        //    //_levelServiceMock.Verify(service => service.CalculateLevelProgress(150), Times.Once);
-        //    _userRepoMock.Verify(repo => repo.UpdateAsync(It.IsAny<UserEntity>()), Times.Once);
-        //}
-
+     
 
         [Test]
         public async Task TC010_GetAllAsync_ShouldReturnAllUsers()
@@ -354,16 +345,16 @@ namespace NaviriaAPI.Tests.Services.User
         {
             // Arrange
             var userId = "54321";
-            _userRepoMock.Setup(repo => repo.DeleteAsync(userId)).ReturnsAsync(false);
+            _userCleanupServiceMock.Setup(service => service.DeleteUserAndRelatedDataAsync(userId)).ReturnsAsync(false);
 
             // Act
             var result = await _userService.DeleteAsync(userId);
 
             // Assert
             Assert.That(result, Is.False);
-
-            _userRepoMock.Verify(repo => repo.DeleteAsync(userId), Times.Once);
+            _userCleanupServiceMock.Verify(service => service.DeleteUserAndRelatedDataAsync(userId), Times.Once);
         }
+
 
         [Test]
         public async Task TC014_UserExistsAsync_ShouldReturnTrue_WhenUserExists()
@@ -391,7 +382,10 @@ namespace NaviriaAPI.Tests.Services.User
             // Assert
             Assert.That(result, Is.False);
             _userRepoMock.Verify(repo => repo.GetByIdAsync(It.IsAny<string>()), Times.Never);
-        }
+        }       
+
 
     }
+
 }
+
