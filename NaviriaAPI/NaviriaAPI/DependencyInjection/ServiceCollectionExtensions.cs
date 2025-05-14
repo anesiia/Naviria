@@ -26,6 +26,7 @@ namespace NaviriaAPI.Extentions
             services.AddApplicationServices();
             services.AddAuthorization();
             services.AddSignalR();
+            services.ConfigureMongoMappings();
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IGoogleAuthService, GoogleAuthService>();
