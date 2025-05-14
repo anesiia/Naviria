@@ -12,13 +12,13 @@ namespace NaviriaAPI.Helpers
         public static void AddPolymorphicSubtaskConverters(this JsonSerializerOptions options)
         {
             options.Converters.Add(
-                new PolymorphicJsonConverter<SubtaskCreateDtoBase>("type", SubtaskTypeMap.CreateMap));
+                new PolymorphicJsonConverter<SubtaskCreateDtoBase>("subtask_type", SubtaskTypeMap.CreateMap));
             options.Converters.Add(
-                new PolymorphicJsonConverter<SubtaskUpdateDtoBase>("type", SubtaskTypeMap.UpdateMap));
+                new PolymorphicJsonConverter<SubtaskUpdateDtoBase>("subtask_type", SubtaskTypeMap.UpdateMap));
             options.Converters.Add(
-                new PolymorphicJsonConverter<SubtaskDtoBase>("type", SubtaskTypeMap.ReadMap));
+                new PolymorphicJsonConverter<SubtaskDtoBase>("subtask_type", SubtaskTypeMap.ReadMap));
             options.Converters.Add(
-                new PolymorphicJsonConverter<SubtaskBase>("type", SubtaskTypeMap.EntityMap));
+                new PolymorphicJsonConverter<SubtaskBase>("subtask_type", SubtaskTypeMap.EntityMap));
         }
     }
 }
