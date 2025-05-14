@@ -15,6 +15,7 @@ using NaviriaAPI.Configurations;
 using NaviriaAPI.DependencyInjection;
 using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.Services.SecurityServices;
+using NaviriaAPI.Services.BackupService;
 
 namespace NaviriaAPI.Extentions
 {
@@ -36,6 +37,9 @@ namespace NaviriaAPI.Extentions
             services.AddScoped<ILevelService, LevelService>();
             services.AddScoped<IFriendService, FriendService>();
             services.AddScoped<UserValidationService>();
+            services.AddSingleton<BackupManager>();
+            services.AddHostedService<WeeklyBackupService>();
+
 
             services.Configure<JwtOptions>(config.GetSection("Jwt"));
             services.ConfigureCloudinary(config);
