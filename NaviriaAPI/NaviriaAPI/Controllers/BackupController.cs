@@ -4,10 +4,8 @@ using System.Diagnostics;
 
 namespace NaviriaAPI.Controllers
 {
-    //restore last collection
-    //restore certain collection
-    //same for full db
-    //get collections names
+    [ApiController]
+    [Route("api/[controller]")]
     public class BackupController : ControllerBase
     {
         private readonly string _backupFolderPath;
@@ -39,7 +37,7 @@ namespace NaviriaAPI.Controllers
             await process.WaitForExitAsync();
         }
 
-        private string GetBackupFileName()
+        private static string GetBackupFileName()
         {
             return $"backup_NaviriaDB_{DateTime.Now:yyyyMMddHHmmss}";
         }
@@ -51,11 +49,6 @@ namespace NaviriaAPI.Controllers
             await Task.Delay(2000);
             return backupFolder;
         }
-        private string GetLatestBsonFile(string backupFolder)
-        {
-            var bsonFiles = Directory.GetFiles(backupFolder, "*.bson");
-            return bsonFiles.FirstOrDefault();
-        }
 
         [HttpPost("export-db-data")]
         public async Task<IActionResult> CreateBackup()
@@ -66,7 +59,7 @@ namespace NaviriaAPI.Controllers
                 var backupFolder = await CreateBackupFolderAsync(backupFileName);
 
                 Console.WriteLine(_connectionString);
-                _logger.LogInformation("CONNECTION STRING: " + _connectionString);
+                _logger.LogInformation("CONNECTION STRING: {0}", _connectionString);
 
 
                 var processArgs = $"--uri=\"{_connectionString}\" --db NaviriaDB --archive=\"" +
