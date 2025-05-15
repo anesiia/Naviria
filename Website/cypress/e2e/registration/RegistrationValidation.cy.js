@@ -1,5 +1,4 @@
 describe('Registration Page - Negative Cases Only', () => {
-
   const validUser = {
     name: 'Лайт',
     surname: 'Ягамі',
@@ -34,74 +33,107 @@ describe('Registration Page - Negative Cases Only', () => {
     cy.get('input[name="nickname"]').clear().type(user.nickname);
   };
 
-
-
   describe('Validation Errors', () => {
     const testCases = [
       {
-        description: 'invalid name',
-        user: { ...validUser, name: '1234' },
+        description: 'invalid name characters',
+        user: { ...validUser, name: '@!$' },
         error: "Ім'я введено некоректно",
       },
       {
-        description: 'invalid surname',
-        user: { ...validUser, surname: '!!!' },
+        description: 'invalid surname characters',
+        user: { ...validUser, surname: '123' },
         error: 'Прізвище введено некоректно',
       },
       {
-        description: 'invalid email',
-        user: { ...validUser, email: 'invalid_email' },
+        description: 'invalid email formats',
+        emails: ['example.com', 'example@', 'example@com', '@example.com'],
         error: 'Невірний формат пошти',
       },
       {
-        description: 'weak password',
-        user: { ...validUser, password: '123' },
-        passwordCheck: '123',
+        description: 'weak password - only letters',
+        user: { ...validUser, password: 'Password' },
+        passwordCheck: 'Password',
         error: 'Пароль має містити великі та малі літери та цифру',
       },
       {
-        description: 'mismatched passwords',
+        description: 'weak password - only numbers',
+        user: { ...validUser, password: '12345678' },
+        passwordCheck: '12345678',
+        error: 'Пароль має містити великі та малі літери та цифру',
+      },
+      {
+        description: 'weak password - lowercase only',
+        user: { ...validUser, password: 'abc' },
+        passwordCheck: 'abc',
+        error: 'Пароль має містити великі та малі літери та цифру',
+      },
+      {
+        description: 'password mismatch',
         user: { ...validUser, password: 'Qwerty123' },
-        passwordCheck: 'Another123',
+        passwordCheck: 'Pass5678',
         error: 'Паролі не збігаються',
       },
       {
-        description: 'missing gender',
+        description: 'no gender selected',
         user: { ...validUser, gender: '' },
         error: 'Оберіть стать',
       },
       {
-        description: 'missing birth date',
-        user: { ...validUser, birthDate: '' },
-        error: 'Вкажіть дату народження',
-      },
-      {
-        description: 'underage user',
-        user: {
-          ...validUser,
-          birthDate: `${new Date().getFullYear() - 17}-01-01`,
-        },
+        description: 'underage user (1 year old)',
+        user: { ...validUser, birthDate: `${new Date().getFullYear() - 1}-01-01` },
         error: 'Потрібно бути старше 18 років',
       },
       {
-        description: 'invalid nickname',
-        user: { ...validUser, nickname: '!!!!' },
-        error: 'Нікнейм має містити лише латинські літери та цифри',
+        description: 'nickname with spaces or symbols',
+        user: { ...validUser, nickname: 'nickname with space' },
+        error: 'Нікнейм має містити лише латинські літери та цифри (3-20 символів)',
       },
       {
-        description: 'name longer than 20 characters',
-        user: { ...validUser, nickname: 'Су' },
-        error: "Нікнейм має містити лише латинські літери та цифри (3-20 символів)",
-      }
+        description: 'nickname in non-Latin letters',
+        user: { ...validUser, nickname: 'ім’я' },
+        error: 'Нікнейм має містити лише латинські літери та цифри (3-20 символів)',
+      },
+      {
+        description: 'nickname too short',
+        user: { ...validUser, nickname: 'te' },
+        error: 'Нікнейм має містити лише латинські літери та цифри (3-20 символів)',
+      },
+      {
+        description: 'nickname too long (over 20 chars)',
+        user: { ...validUser, nickname: '123456789012345678901' },
+        error: null, // Якщо помилки не очікується
+        customCheck: () => {
+          cy.get('input[name="nickname"]')
+              .invoke('val')
+              .should('have.length', 20);
+        }
+      },
 
     ];
 
-    testCases.forEach(({ description, user, error, passwordCheck }) => {
-      it(`should show error for ${description}`, () => {
-        fillForm(user, passwordCheck);
-        cy.get('.submit-button').click();
-        cy.contains(error).should('be.visible');
-      });
+    testCases.forEach(({ description, user, passwordCheck, emails, error, customCheck }) => {
+      if (emails) {
+        emails.forEach((email) => {
+          it(`should show error for ${description} - "${email}"`, () => {
+            fillForm({ ...validUser, email });
+            cy.get('.submit-button').click();
+            cy.contains(error).should('be.visible');
+          });
+        });
+      } else if (customCheck) {
+        it(`should perform custom check for ${description}`, () => {
+          fillForm(user, passwordCheck);
+          cy.get('.submit-button').click();
+          customCheck();
+        });
+      } else {
+        it(`should show error for ${description}`, () => {
+          fillForm(user, passwordCheck);
+          cy.get('.submit-button').click();
+          cy.contains(error).should('be.visible');
+        });
+      }
     });
   });
 });
