@@ -3,8 +3,10 @@ using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ICloudStorage;
+using NaviriaAPI.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using NaviriaAPI.Helpers;
+using NaviriaAPI.IServices.IEmbeddedServices;
 using NaviriaAPI.IServices.IGamificationLogic;
 
 namespace NaviriaAPI.Controllers
@@ -16,15 +18,18 @@ namespace NaviriaAPI.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserCleanupService _userCleanupService;
+        private readonly ISupportService _supportService;
         private readonly ILogger<UserController> _logger;
 
         public UserController(
             IUserService userService,
             IUserCleanupService userCleanupService,
+            ISupportService supportService,
             ILogger<UserController> logger)
         {
             _userService = userService;
             _userCleanupService = userCleanupService;
+            _supportService = supportService;
             _logger = logger;
         }
 
@@ -34,8 +39,8 @@ namespace NaviriaAPI.Controllers
         {
             try
             {
-                var qoutes = await _userService.GetAllAsync();
-                return Ok(qoutes);
+                var users = await _userService.GetAllAsync();
+                return Ok(users);
             }
             catch (Exception ex)
             {
@@ -53,7 +58,7 @@ namespace NaviriaAPI.Controllers
 
             try
             {
-                var User = await _userService.GetByIdAsync(id);
+                var user = await _userService.GetByIdAsync(id);
                 if (User == null) return NotFound();
                 return Ok(User);
             }
@@ -62,7 +67,6 @@ namespace NaviriaAPI.Controllers
                 _logger.LogError(ex, "Failed to get user by id");
                 return StatusCode(500, "Failed to get user by id");
             }
-            
         }
 
         [AllowAnonymous]
@@ -139,6 +143,27 @@ namespace NaviriaAPI.Controllers
             {
                 _logger.LogError(ex, "Failed to give achievement user with ID {0}", userId);
                 return StatusCode(500, $"Failed to get give achievement user with ID {userId}");
+            }
+        }
+        
+        [HttpPost("support/from-{senderId}/to-{receiverId}")]
+        public async Task<IActionResult> SendSupport(string senderId, string receiverId)
+        {
+            if (string.IsNullOrWhiteSpace(senderId) && string.IsNullOrWhiteSpace(receiverId))
+                return BadRequest("User ID is required.");
+            
+            try
+            {
+                var user = await _userService.GetByIdAsync(senderId);
+                if (User == null)
+                    throw new NotFoundException("Failed to get user by id");
+                
+                await _supportService.SendSupportAsync(senderId, receiverId);
+                return Ok("Support sent");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
