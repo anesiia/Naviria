@@ -2,12 +2,14 @@
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
+using NaviriaAPI.IServices.IEmbeddedServices;
 using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.Repositories;
 using NaviriaAPI.Services;
 using NaviriaAPI.Services.GamificationLogic;
 using NaviriaAPI.Services.User;
 using NaviriaAPI.Services.AchievementStrategies;
+using NaviriaAPI.Services.EmbeddedServices;
 
 namespace NaviriaAPI.DependencyInjection
 {
@@ -35,7 +37,7 @@ namespace NaviriaAPI.DependencyInjection
 
             services.AddScoped<IQuoteRepository, QuoteRepository>();
             services.AddScoped<IQuoteService, QuoteService>();
-
+            
             services.AddScoped<ITaskRepository, TaskRepository>();
             services.AddScoped<ITaskService, TaskService>();
 
@@ -49,6 +51,7 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<IAchievementGranter, AchievementGranter>();
 
             services.AddScoped<IUserCleanupService, UserCleanupService>();
+            services.AddScoped<ISupportService, SupportService>();
 
         }
     }
