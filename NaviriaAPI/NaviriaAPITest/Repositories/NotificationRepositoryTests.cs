@@ -11,46 +11,26 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using NaviriaAPI.Options;
 using MongoDB.Bson;
+using NaviriaAPI.Tests.helper;
 
 namespace NaviriaAPI.Tests.Repositories
 {
     [TestFixture]
-    public class NotificationRepositoryTests
+    public class NotificationRepositoryTests : RepositoryTestBase<NotificationEntity>
     {
-        private IMongoDbContext _dbContext;
-        private INotificationRepository _notificationRepository;
-        private IMongoCollection<NotificationEntity> _notificationCollection;
+        private INotificationRepository _notificationRepository = null!;
 
-        [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            // Load configuration directly from MongoDbSettings.json file
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("MongoDbSettings.json")
-                .Build();
-
-            // Fetch MongoDB settings from configuration using MongoDbOptions
-            var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
-
-            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions);
-
-            // Create MongoDbContext using the mock settings
-            _dbContext = new MongoDbContext(options);
-            _notificationRepository = new NotificationRepository(_dbContext);
-
-            _notificationCollection = _dbContext.Notifications;
-
-            // Ensure the collection is empty before each test to keep tests isolated
-            _notificationCollection.DeleteMany(FilterDefinition<NotificationEntity>.Empty);
+            base.SetUp();
+            _notificationRepository = new NotificationRepository(DbContext);
         }
 
-        [TearDown]
-        public void TearDown()
+        protected override IMongoCollection<NotificationEntity> GetCollection(IMongoDbContext dbContext)
         {
-            
-            _notificationRepository = null;
+            return dbContext.Notifications;
         }
+
 
         [Test]
         public async Task TC001_CreateAsync_ShouldAddNotification()
@@ -64,7 +44,7 @@ namespace NaviriaAPI.Tests.Repositories
 
             await _notificationRepository.CreateAsync(notification);
 
-            var result = await _notificationCollection.Find(n => n.UserId == notification.UserId).ToListAsync();
+            var result = await Collection.Find(n => n.UserId == notification.UserId).ToListAsync();
 
             Assert.That(result.Count, Is.EqualTo(1));
             Assert.That(result.First().Text, Is.EqualTo("Test notification"));

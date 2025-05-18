@@ -12,44 +12,26 @@ using NaviriaAPI.IRepositories;
 using MongoDB.Bson;
 using Microsoft.Extensions.Configuration;
 using NaviriaAPI.Options;
+using NaviriaAPI.Tests.helper;
 
 namespace NaviriaAPI.Tests.Repositories
 {
     [TestFixture]
-    public class AchievementRepositoryTests
+    public class AchievementRepositoryTests : RepositoryTestBase<AchievementEntity>
     {
-        private IMongoDbContext _dbContext;
-        private IAchievementRepository _achievementRepository;
-        private IMongoCollection<AchievementEntity> _achievementCollection;
+        private IAchievementRepository _achievementRepository = null!;
 
-        [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            // Load configuration directly from MongoDbSettings.json file
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("MongoDbSettings.json")
-                .Build();
-
-            // Fetch MongoDB settings from configuration using MongoDbOptions
-            var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
-
-            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions);
-
-            _dbContext = new MongoDbContext(options);
-            _achievementRepository = new AchievementRepository(_dbContext);
-
-            _achievementCollection = _dbContext.Achievements;
-
-            // Ensure the collection is empty before each test to keep tests isolated
-            _achievementCollection.DeleteMany(FilterDefinition<AchievementEntity>.Empty);
+            base.SetUp();
+            _achievementRepository = new AchievementRepository(DbContext);
         }
 
-        [TearDown]
-        public void TearDown()
+        protected override IMongoCollection<AchievementEntity> GetCollection(IMongoDbContext dbContext)
         {
-            _achievementRepository = null;
+            return dbContext.Achievements;
         }
+
 
         [Test]
         public async Task TC001_CreateAsync_And_GetByIdAsync_ShouldWorkCorrectly()
@@ -71,7 +53,7 @@ namespace NaviriaAPI.Tests.Repositories
                 Assert.That(fetched.Name, Is.EqualTo(achievement.Name));
                 Assert.That(fetched.Description, Is.EqualTo(achievement.Description));
                 Assert.That(fetched.Points, Is.EqualTo(100));
-                
+
             });
         }
 
@@ -84,7 +66,7 @@ namespace NaviriaAPI.Tests.Repositories
                 Name = "Test A",
                 Description = "A",
                 Points = 50
-                
+
             };
 
             var achievement2 = new AchievementEntity
@@ -118,7 +100,7 @@ namespace NaviriaAPI.Tests.Repositories
 
             achievement.Description = "Updated Description";
             achievement.Points = 20;
-           
+
 
             var updated = await _achievementRepository.UpdateAsync(achievement);
             var fetched = await _achievementRepository.GetByIdAsync(achievement.Id);
@@ -128,7 +110,7 @@ namespace NaviriaAPI.Tests.Repositories
             {
                 Assert.That(fetched.Description, Is.EqualTo("Updated Description"));
                 Assert.That(fetched.Points, Is.EqualTo(20));
-        
+
             });
         }
 

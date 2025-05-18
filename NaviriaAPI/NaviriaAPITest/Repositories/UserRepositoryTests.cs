@@ -11,51 +11,26 @@ using NaviriaAPI.IRepositories;
 using MongoDB.Bson;
 using Microsoft.Extensions.Configuration;
 using NaviriaAPI.Options;
+using NaviriaAPI.Tests.helper;
 
 namespace NaviriaAPI.Tests.Repositories
 {
     [TestFixture]
-    public class UserRepositoryTests
+    public class UserRepositoryTests : RepositoryTestBase<UserEntity>
     {
-        private IMongoDbContext _dbContext;
-        private IUserRepository _userRepository;
-        private IMongoCollection<UserEntity> _usersCollection;
+        private IUserRepository _userRepository = null!;
 
-        [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            // Зчитуємо налаштування з файлу
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)  // Для правильного доступу до файлу з налаштуваннями
-                .AddJsonFile("MongoDbSettings.json")
-                .Build();
-
-            // Отримуємо MongoDbOptions з конфігурації
-            var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
-
-            // Створюємо IOptions<MongoDbOptions> за допомогою Options.Create
-            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions); // Вказуємо правильний простір імен
-
-            // Створюємо контекст з реальними налаштуваннями
-            _dbContext = new MongoDbContext(options);  // Потрібно передавати IOptions<MongoDbOptions>
-            _userRepository = new UserRepository(_dbContext);
-
-            // Очищення колекції користувачів для чистоти тесту
-            _usersCollection = _dbContext.Users;
-            _usersCollection.DeleteMany(FilterDefinition<UserEntity>.Empty);
+            base.SetUp();
+            _userRepository = new UserRepository(DbContext);
         }
 
-
-
-        [TearDown]
-        public void TearDown()
+        protected override IMongoCollection<UserEntity> GetCollection(IMongoDbContext dbContext)
         {
-            // Очищення колекції після тесту
-            if (_userRepository != null)
-            {
-                _userRepository = null;
-            }
+            return dbContext.Users;
         }
+
 
         [Test]
         public async Task TC001_CreateAsync_And_GetByIdAsync_ShouldWorkCorrectly()
@@ -75,7 +50,7 @@ namespace NaviriaAPI.Tests.Repositories
             var fetchedUser = await _userRepository.GetByIdAsync(user.Id);
 
             // Assert
-            Assert.That(fetchedUser, Is.Not.Null); 
+            Assert.That(fetchedUser, Is.Not.Null);
             Assert.That(fetchedUser.Email, Is.EqualTo(user.Email));
             Assert.That(fetchedUser.Nickname, Is.EqualTo(user.Nickname));
         }
@@ -315,74 +290,3 @@ namespace NaviriaAPI.Tests.Repositories
 
 
 
-
-
-
-
-
-
-//using MongoDB.Driver;
-//using NaviriaAPI.Data;
-//using NaviriaAPI.Entities;
-//using NaviriaAPI.Repositories;
-//using NUnit.Framework;
-//using Microsoft.Extensions.Options;
-//using Moq;
-//using System;
-//using System.Threading.Tasks;
-//using NaviriaAPI.IRepositories;
-//using MongoDB.Bson;
-
-//namespace NaviriaAPI.Tests
-//{
-//    [TestFixture]
-//    public class UserRepositoryTests
-//    {
-//        private IMongoDbContext _dbContext;
-//        private IUserRepository _userRepository;
-//        private IMongoCollection<UserEntity> _usersCollection;
-
-//        [SetUp]
-//        public void SetUp()
-//        {
-//            // Мок для MongoDbSettings
-//            var mongoDbSettings = new MongoDbSettings
-//            {
-//                ConnectionString = "mongodb://localhost:27017",
-//                DatabaseName = "NaviriaTestDB"
-//            };
-
-//            var mockOptions = new Mock<IOptions<MongoDbSettings>>();
-//            mockOptions.Setup(x => x.Value).Returns(mongoDbSettings);
-
-//            // Створення контексту та репозиторію з моком
-//            _dbContext = new MongoDbContext(mockOptions.Object);
-//            _userRepository = new UserRepository(_dbContext);
-//        }
-
-//        [Test]
-//        public async Task CreateUser_ShouldInsertUser()
-//        {
-//            // Arrange
-//            var user = new UserEntity
-//            {
-//                Id = ObjectId.GenerateNewId().ToString(),
-//                Email = "test@example.com",
-//                Nickname = "testuser",
-//                LastSeen = DateTime.UtcNow,
-//                IsOnline = true,
-//                Photo = "https://res.cloudinary.com/dyvnoao0d/image/upload/v1744484518/users_photos/b4eeee78-b746-4a7c-828c-fd3a64317f2d.jpg"
-//            };
-
-//            // Act
-//            await _userRepository.CreateAsync(user);
-
-//            // Assert
-//            var insertedUser = await _userRepository.GetByIdAsync(user.Id);
-//            Assert.That(insertedUser, Is.Not.Null);
-//            Assert.That(insertedUser.Email, Is.EqualTo("test@example.com"));
-//            Assert.That(insertedUser.Nickname, Is.EqualTo("testuser"));
-//        }
-
-//    }
-//}

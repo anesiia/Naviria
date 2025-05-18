@@ -10,45 +10,27 @@ using MongoDB.Bson;
 using Microsoft.Extensions.Configuration;
 using NaviriaAPI.Options;
 using System.IO;
+using NaviriaAPI.Tests.helper;
 
 namespace NaviriaAPI.Tests.Repositories
 {
     [TestFixture]
-    public class FriendRequestRepositoryTests
+    public class FriendRequestRepositoryTests : RepositoryTestBase<FriendRequestEntity>
     {
         private IFriendRequestRepository _friendRequestRepository;
-        private IMongoCollection<FriendRequestEntity> _friendRequestCollection;
-        private Mock<IOptions<MongoDbOptions>> _mockMongoDbOptions;
-        private IMongoDbContext _dbContext;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            // Load configuration directly from MongoDbSettings.json file
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("MongoDbSettings.json")
-                .Build();
-
-            var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
-
-            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions);
-
-            _dbContext = new MongoDbContext(options);
-
-            _friendRequestRepository = new FriendRequestRepository(_dbContext);
-            _friendRequestCollection = _dbContext.FriendsRequests;
-
-            // Clean up the collection before each test to ensure isolated tests
-            _friendRequestCollection.DeleteMany(FilterDefinition<FriendRequestEntity>.Empty);
+            base.SetUp();
+            _friendRequestRepository = new FriendRequestRepository(DbContext);
         }
 
-        [TearDown]
-        public void TearDown()
+        protected override IMongoCollection<FriendRequestEntity> GetCollection(IMongoDbContext dbContext)
         {
-            // Clean up the repository after each test
-            _friendRequestRepository = null;
+            return dbContext.FriendsRequests;
         }
+
 
         [Test]
         public async Task TC001_CreateAsync_ShouldAddFriendRequest()

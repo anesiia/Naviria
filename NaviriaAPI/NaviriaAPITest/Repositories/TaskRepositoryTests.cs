@@ -11,42 +11,32 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using NaviriaAPI.Tests.helper;
 
 namespace NaviriaAPI.Tests.Repositories
 {
     [TestFixture]
-    public class TaskRepositoryTests
+    public class TaskRepositoryTests : RepositoryTestBase<TaskEntity>
     {
-        private IMongoDbContext _dbContext;
-        private TaskRepository _taskRepository;
-        private IMongoCollection<TaskEntity> _taskCollection;
-        private string _testUserId;
+        private TaskRepository _taskRepository = null!;
+        private string _testUserId = null!;
 
-        [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("MongoDbSettings.json")
-                .Build();
+            base.SetUp();
 
-            var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
-            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions);
-
-            _dbContext = new MongoDbContext(options);
-            _taskRepository = new TaskRepository(_dbContext);
-            _taskCollection = _dbContext.GetDatabase().GetCollection<TaskEntity>("tasks");
-
+            _taskRepository = new TaskRepository(DbContext);
             _testUserId = ObjectId.GenerateNewId().ToString();
 
-            // Clean test data
-            _taskCollection.DeleteMany(t => t.UserId == _testUserId);
+            // Очищення тільки для цього userId (якщо потрібно)
+            Collection.DeleteMany(t => t.UserId == _testUserId);
         }
 
-        [TearDown]
-        public void TearDown()
+    
+        protected override IMongoCollection<TaskEntity> GetCollection(IMongoDbContext dbContext)
         {
-            _taskCollection.DeleteMany(t => t.UserId == _testUserId);
+            // Якщо в DbContext немає готового властивості для TaskEntity, беремо колекцію напряму
+            return dbContext.GetDatabase().GetCollection<TaskEntity>("tasks");
         }
 
         [Test]
@@ -56,7 +46,7 @@ namespace NaviriaAPI.Tests.Repositories
 
             await _taskRepository.CreateAsync(task);
 
-            var inserted = await _taskCollection.Find(t => t.Id == task.Id).FirstOrDefaultAsync();
+            var inserted = await Collection.Find(t => t.Id == task.Id).FirstOrDefaultAsync();
 
             Assert.That(inserted, Is.Not.Null);
             Assert.That(inserted.Title, Is.EqualTo(task.Title));
@@ -66,7 +56,7 @@ namespace NaviriaAPI.Tests.Repositories
         public async Task TC002_GetByIdAsync_ShouldReturnCorrectTask()
         {
             var task = GetSampleTask(_testUserId);
-            await _taskCollection.InsertOneAsync(task);
+            await Collection.InsertOneAsync(task);
 
             var result = await _taskRepository.GetByIdAsync(task.Id);
 
@@ -80,7 +70,7 @@ namespace NaviriaAPI.Tests.Repositories
             var task1 = GetSampleTask(_testUserId);
             var task2 = GetSampleTask(_testUserId);
 
-            await _taskCollection.InsertManyAsync(new[] { task1, task2 });
+            await Collection.InsertManyAsync(new[] { task1, task2 });
 
             var result = await _taskRepository.GetAllByUserAsync(_testUserId);
 
@@ -92,12 +82,12 @@ namespace NaviriaAPI.Tests.Repositories
         public async Task TC004_UpdateAsync_ShouldUpdateExistingTask()
         {
             var task = GetSampleTask(_testUserId);
-            await _taskCollection.InsertOneAsync(task);
+            await Collection.InsertOneAsync(task);
 
             task.Title = "Updated Title";
             var updated = await _taskRepository.UpdateAsync(task);
 
-            var updatedFromDb = await _taskCollection.Find(t => t.Id == task.Id).FirstOrDefaultAsync();
+            var updatedFromDb = await Collection.Find(t => t.Id == task.Id).FirstOrDefaultAsync();
 
             Assert.That(updated, Is.True);
             Assert.That(updatedFromDb.Title, Is.EqualTo("Updated Title"));
@@ -107,10 +97,10 @@ namespace NaviriaAPI.Tests.Repositories
         public async Task TC005_DeleteAsync_ShouldRemoveTask()
         {
             var task = GetSampleTask(_testUserId);
-            await _taskCollection.InsertOneAsync(task);
+            await Collection.InsertOneAsync(task);
 
             var deleted = await _taskRepository.DeleteAsync(task.Id);
-            var fromDb = await _taskCollection.Find(t => t.Id == task.Id).FirstOrDefaultAsync();
+            var fromDb = await Collection.Find(t => t.Id == task.Id).FirstOrDefaultAsync();
 
             Assert.That(deleted, Is.True);
             Assert.That(fromDb, Is.Null);
@@ -123,11 +113,11 @@ namespace NaviriaAPI.Tests.Repositories
             var task2 = GetSampleTask(_testUserId);
             var otherTask = GetSampleTask(ObjectId.GenerateNewId().ToString());
 
-            await _taskCollection.InsertManyAsync(new[] { task1, task2, otherTask });
+            await Collection.InsertManyAsync(new[] { task1, task2, otherTask });
 
             await _taskRepository.DeleteManyByUserIdAsync(_testUserId);
 
-            var remaining = await _taskCollection.Find(t => t.UserId == _testUserId).ToListAsync();
+            var remaining = await Collection.Find(t => t.UserId == _testUserId).ToListAsync();
 
             Assert.That(remaining, Is.Empty);
         }

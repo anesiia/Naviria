@@ -11,44 +11,26 @@ using System.Threading.Tasks;
 using System.Linq;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.Options;
+using NaviriaAPI.Tests.helper;
 
 namespace NaviriaAPI.Tests.Repositories
 {
     [TestFixture]
-    public class QuoteRepositoryTests
+    public class QuoteRepositoryTests : RepositoryTestBase<QuoteEntity>
     {
-        private IMongoDbContext _dbContext;
-        private IQuoteRepository _quoteRepository;
-        private IMongoCollection<QuoteEntity> _quoteCollection;
+        private IQuoteRepository _quoteRepository = null!;
 
-        [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            // Налаштування конфігурації MongoDB для тестів
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("MongoDbSettings.json")
-                .Build();
-
-            var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
-            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions);
-
-            // Створюємо контекст для тестів
-            _dbContext = new MongoDbContext(options);
-            _quoteRepository = new QuoteRepository(_dbContext);
-
-            // Встановлюємо колекцію
-            _quoteCollection = _dbContext.Quotes;
-
-            // Очищаємо колекцію перед кожним тестом
-            _quoteCollection.DeleteMany(FilterDefinition<QuoteEntity>.Empty);
+            base.SetUp();
+            _quoteRepository = new QuoteRepository(DbContext);
         }
 
-        [TearDown]
-        public void TearDown()
+        protected override IMongoCollection<QuoteEntity> GetCollection(IMongoDbContext dbContext)
         {
-            _quoteRepository = null;
+            return dbContext.Quotes;
         }
+
 
         [Test]
         public async Task CreateAsync_ShouldInsertQuote()

@@ -11,39 +11,26 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
+using NaviriaAPI.Tests.helper;
 
 namespace NaviriaAPI.Tests.Repositories
 {
     [TestFixture]
-    public class FolderRepositoryTests
+    public class FolderRepositoryTests : RepositoryTestBase<FolderEntity>
     {
-        private IMongoDbContext _dbContext;
         private IFolderRepository _folderRepository;
-        private IMongoCollection<FolderEntity> _folderCollection;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("MongoDbSettings.json")
-                .Build();
-
-            var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
-            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions);
-
-            _dbContext = new MongoDbContext(options);
-            _folderRepository = new FolderRepository(_dbContext);
-            _folderCollection = _dbContext.Folders;
-
-            // Очистити колекцію перед кожним тестом
-            _folderCollection.DeleteMany(Builders<FolderEntity>.Filter.Empty);
+            base.SetUp();
+            _folderRepository = new FolderRepository(DbContext);
         }
 
-        [TearDown]
-        public void TearDown()
+
+        protected override IMongoCollection<FolderEntity> GetCollection(IMongoDbContext dbContext)
         {
-            _folderRepository = null;
+            return dbContext.Folders;
         }
 
         [Test]
@@ -57,7 +44,7 @@ namespace NaviriaAPI.Tests.Repositories
 
             await _folderRepository.CreateAsync(folder);
 
-            var inserted = await _folderCollection.Find(f => f.Id == folder.Id).FirstOrDefaultAsync();
+            var inserted = await Collection.Find(f => f.Id == folder.Id).FirstOrDefaultAsync();
             Assert.That(inserted, Is.Not.Null);
             Assert.That(inserted.Name, Is.EqualTo("Test Folder"));
         }
@@ -71,7 +58,7 @@ namespace NaviriaAPI.Tests.Repositories
                 UserId = ObjectId.GenerateNewId().ToString(),
             };
 
-            await _folderCollection.InsertOneAsync(folder);
+            await Collection.InsertOneAsync(folder);
 
             var result = await _folderRepository.GetByIdAsync(folder.Id);
             Assert.That(result, Is.Not.Null);
@@ -97,7 +84,7 @@ namespace NaviriaAPI.Tests.Repositories
                 new FolderEntity { Name = "Other", UserId = ObjectId.GenerateNewId().ToString() }
             };
 
-            await _folderCollection.InsertManyAsync(folders);
+            await Collection.InsertManyAsync(folders);
 
             var result = await _folderRepository.GetAllByUserIdAsync(userId);
             Assert.That(result.Count(), Is.EqualTo(2));
@@ -113,14 +100,14 @@ namespace NaviriaAPI.Tests.Repositories
                 UserId = ObjectId.GenerateNewId().ToString()
             };
 
-            await _folderCollection.InsertOneAsync(folder);
+            await Collection.InsertOneAsync(folder);
 
             folder.Name = "Updated Name";
             var updated = await _folderRepository.UpdateAsync(folder);
 
             Assert.That(updated, Is.True);
 
-            var fetched = await _folderCollection.Find(f => f.Id == folder.Id).FirstOrDefaultAsync();
+            var fetched = await Collection.Find(f => f.Id == folder.Id).FirstOrDefaultAsync();
             Assert.That(fetched.Name, Is.EqualTo("Updated Name"));
         }
 
@@ -147,12 +134,12 @@ namespace NaviriaAPI.Tests.Repositories
                 UserId = ObjectId.GenerateNewId().ToString()
             };
 
-            await _folderCollection.InsertOneAsync(folder);
+            await Collection.InsertOneAsync(folder);
 
             var result = await _folderRepository.DeleteAsync(folder.Id);
             Assert.That(result, Is.True);
 
-            var check = await _folderCollection.Find(f => f.Id == folder.Id).FirstOrDefaultAsync();
+            var check = await Collection.Find(f => f.Id == folder.Id).FirstOrDefaultAsync();
             Assert.That(check, Is.Null);
         }
 
@@ -175,14 +162,14 @@ namespace NaviriaAPI.Tests.Repositories
         new FolderEntity { Name = "F3", UserId = ObjectId.GenerateNewId().ToString() } // інший користувач
     };
 
-            await _folderCollection.InsertManyAsync(folders);
+            await Collection.InsertManyAsync(folders);
 
             await _folderRepository.DeleteManyByUserIdAsync(userId);
 
-            var remaining = await _folderCollection.Find(f => f.UserId == userId).ToListAsync();
+            var remaining = await Collection.Find(f => f.UserId == userId).ToListAsync();
             Assert.That(remaining.Count, Is.EqualTo(0));
 
-            var others = await _folderCollection.Find(f => f.UserId != userId).ToListAsync();
+            var others = await Collection.Find(f => f.UserId != userId).ToListAsync();
             Assert.That(others.Count, Is.EqualTo(1));
         }
 

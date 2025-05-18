@@ -11,48 +11,36 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using NaviriaAPI.Options;
+using NaviriaAPI.Tests.helper;
 
 namespace NaviriaAPI.Tests.Repositories
 {
-    [TestFixture]
-    public class CategoryRepositoryTests
-    {
-        private IMongoDbContext _dbContext = null!;
-        private ICategoryRepository _repository = null!;
-        private IMongoCollection<CategoryEntity> _categoriesCollection = null!;
-        private string _testId = string.Empty;
 
-        [SetUp]
-        public void Setup()
+        [TestFixture]
+        public class CategoryRepositoryTests : RepositoryTestBase<CategoryEntity>
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("MongoDbSettings.json")
-                .Build();
+            private ICategoryRepository _repository = null!;
 
-            var mongoOptions = config.GetSection("MongoDbSettings").Get<MongoDbOptions>();
-            var options = Microsoft.Extensions.Options.Options.Create(mongoOptions);
+            [SetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+                _repository = new CategoryRepository(DbContext);
+            }
 
-            _dbContext = new MongoDbContext(options);
-            _repository = new CategoryRepository(_dbContext);
-            _categoriesCollection = _dbContext.Categories;
+            protected override IMongoCollection<CategoryEntity> GetCollection(IMongoDbContext dbContext)
+            {
+                return dbContext.Categories;
+            }
+            [Test]
 
-            _categoriesCollection.DeleteMany(Builders<CategoryEntity>.Filter.Empty);
-        }
 
-        [TearDown]
-        public void TearDown()
-        {
-            _categoriesCollection.DeleteMany(Builders<CategoryEntity>.Filter.Empty);
-        }
-
-        [Test]
         public async Task TC001_CreateAsync_ShouldInsertCategory()
         {
             var category = new CategoryEntity { Name = "Health" };
             await _repository.CreateAsync(category);
 
-            var fromDb = await _categoriesCollection.Find(c => c.Id == category.Id).FirstOrDefaultAsync();
+            var fromDb = await Collection.Find(c => c.Id == category.Id).FirstOrDefaultAsync();
 
             Assert.That(fromDb, Is.Not.Null);
             Assert.That(fromDb.Name, Is.EqualTo("Health"));
@@ -67,7 +55,7 @@ namespace NaviriaAPI.Tests.Repositories
                 new() { Name = "Study" }
             };
 
-            await _categoriesCollection.InsertManyAsync(categories);
+            await Collection.InsertManyAsync(categories);
 
             var result = await _repository.GetAllAsync();
 
@@ -79,7 +67,7 @@ namespace NaviriaAPI.Tests.Repositories
         public async Task TC003_GetByIdAsync_ShouldReturnCorrectCategory()
         {
             var category = new CategoryEntity { Name = "Fitness" };
-            await _categoriesCollection.InsertOneAsync(category);
+            await Collection.InsertOneAsync(category);
 
             var result = await _repository.GetByIdAsync(category.Id);
 
@@ -91,12 +79,12 @@ namespace NaviriaAPI.Tests.Repositories
         public async Task TC004_UpdateAsync_ShouldUpdateCategory()
         {
             var category = new CategoryEntity { Name = "Travel" };
-            await _categoriesCollection.InsertOneAsync(category);
+            await Collection.InsertOneAsync(category);
 
             category.Name = "Adventure";
 
             var updated = await _repository.UpdateAsync(category);
-            var result = await _categoriesCollection.Find(c => c.Id == category.Id).FirstOrDefaultAsync();
+            var result = await Collection.Find(c => c.Id == category.Id).FirstOrDefaultAsync();
 
             Assert.That(updated, Is.True);
             Assert.That(result!.Name, Is.EqualTo("Adventure"));
@@ -106,10 +94,10 @@ namespace NaviriaAPI.Tests.Repositories
         public async Task TC005_DeleteAsync_ShouldRemoveCategory()
         {
             var category = new CategoryEntity { Name = "DeleteMe" };
-            await _categoriesCollection.InsertOneAsync(category);
+            await Collection.InsertOneAsync(category);
 
             var deleted = await _repository.DeleteAsync(category.Id);
-            var result = await _categoriesCollection.Find(c => c.Id == category.Id).FirstOrDefaultAsync();
+            var result = await Collection.Find(c => c.Id == category.Id).FirstOrDefaultAsync();
 
             Assert.That(deleted, Is.True);
             Assert.That(result, Is.Null);

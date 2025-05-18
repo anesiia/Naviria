@@ -13,53 +13,30 @@ using NaviriaAPI.Options;
 using NaviriaAPI.Repositories;
 using Moq;
 using MongoDB.Bson;
+using NaviriaAPI.Tests.helper;
 
 namespace NaviriaAPI.Tests.Repositories
 {
+   
     [TestFixture]
-    public class AssistantChatRepositoryTests
+    public class AssistantChatRepositoryTests : RepositoryTestBase<AssistantChatMessageEntity>
     {
-        private IMongoDbContext _dbContext;
-        private IAssistantChatRepository _assistantChatRepository;
-        private IMongoCollection<AssistantChatMessageEntity> _aiChatMessagesCollection;
-        private string _testUserId;
+        private IAssistantChatRepository _assistantChatRepository = null!;
+        private string _testUserId = null!;
 
-        [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
-            // Завантажуємо налаштування з файлу MongoDbSettings.json
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("MongoDbSettings.json")
-                .Build();
-
-            var mongoDbOptions = configuration.GetSection("MongoDbSettings").Get<MongoDbOptions>();
-            var options = Microsoft.Extensions.Options.Options.Create(mongoDbOptions); // Вказуємо правильний простір імен
-
-            // Створюємо контекст з реальними налаштуваннями
-            _dbContext = new MongoDbContext(options);  // Потрібно передавати IOptions<MongoDbOptions>
-
-            // Ініціалізація репозиторію
-            _assistantChatRepository = new AssistantChatRepository(_dbContext);
-
-            // Отримуємо колекцію повідомлень
-            _aiChatMessagesCollection = _dbContext.AssistantChatMessages;
-
-            // Очищаємо колекцію перед кожним тестом
-            _aiChatMessagesCollection.DeleteMany(FilterDefinition<AssistantChatMessageEntity>.Empty);
-
-            // Генеруємо тестовий userId
+            base.SetUp();
+            _assistantChatRepository = new AssistantChatRepository(DbContext);
             _testUserId = ObjectId.GenerateNewId().ToString();
         }
 
-        [TearDown]
-        public void TearDown()
+    
+        protected override IMongoCollection<AssistantChatMessageEntity> GetCollection(IMongoDbContext dbContext)
         {
-            // Очищаємо після кожного тесту
-            _assistantChatRepository = null;
-            _dbContext = null;
-            _aiChatMessagesCollection = null;
+            return dbContext.AssistantChatMessages;
         }
+
 
         [Test]
         public async Task TC001_AddMessageAsync_ShouldAddMessage()
