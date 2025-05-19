@@ -60,7 +60,7 @@ namespace NaviriaAPI.Controllers
             {
                 var user = await _userService.GetByIdAsync(id);
                 if (User == null) return NotFound();
-                return Ok(User);
+                return Ok(user);
             }
             catch (Exception ex)
             {
