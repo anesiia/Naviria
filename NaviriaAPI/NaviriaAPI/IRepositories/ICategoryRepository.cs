@@ -9,5 +9,6 @@ namespace NaviriaAPI.IRepositories
         Task CreateAsync(CategoryEntity category);
         Task<bool> UpdateAsync(CategoryEntity category);
         Task<bool> DeleteAsync(string id);
+        Task<CategoryEntity?> GetByNameAsync(string name);
     }
 }

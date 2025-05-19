@@ -34,5 +34,9 @@ namespace NaviriaAPI.Repositories
             var result = await _categories.DeleteOneAsync(c => c.Id == id);
             return result.DeletedCount > 0;
         }
+        public async Task<CategoryEntity?> GetByNameAsync(string name)
+        {
+            return await _categories.Find(c => c.Name == name).FirstOrDefaultAsync();
+        }
     }
 }
