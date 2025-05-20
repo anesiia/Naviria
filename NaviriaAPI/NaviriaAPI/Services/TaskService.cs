@@ -11,6 +11,9 @@ using NaviriaAPI.IServices.IUserServices;
 
 namespace NaviriaAPI.Services
 {
+    /// <summary>
+    /// Service for managing user tasks and task-related operations.
+    /// </summary>
     public class TaskService : ITaskService
     {
         private readonly ITaskRepository _taskRepository;
@@ -33,6 +36,12 @@ namespace NaviriaAPI.Services
             _messageSecurityService = messageSecurityService;
         }
 
+        /// <summary>
+        /// Gets all tasks for the specified user.
+        /// </summary>
+        /// <param name="userId">User ID.</param>
+        /// <returns>A list of TaskDto objects.</returns>
+        /// <exception cref="NotFoundException">Thrown if the user does not exist or has no tasks.</exception>
         public async Task<IEnumerable<TaskDto>> GetAllByUserAsync(string userId)
         {
             if (!await _userService.UserExistsAsync(userId))
@@ -49,6 +58,12 @@ namespace NaviriaAPI.Services
             return tasks.Select(TaskMapper.ToDto);
         }
 
+        /// <summary>
+        /// Gets a task by its ID.
+        /// </summary>
+        /// <param name="id">Task ID.</param>
+        /// <returns>The TaskDto object.</returns>
+        /// <exception cref="NotFoundException">Thrown if the task does not exist.</exception>
         public async Task<TaskDto?> GetByIdAsync(string id)
         {
             var task = await _taskRepository.GetByIdAsync(id);
@@ -59,6 +74,13 @@ namespace NaviriaAPI.Services
             return TaskMapper.ToDto(task);
         }
 
+        /// <summary>
+        /// Creates a new task.
+        /// </summary>
+        /// <param name="dto">Task creation data transfer object.</param>
+        /// <returns>The created TaskDto.</returns>
+        /// <exception cref="NotFoundException">Thrown if the user does not exist.</exception>
+        /// <exception cref="SuspiciousMessageException">Thrown if the title or description contains forbidden content.</exception>
         public async Task<TaskDto> CreateAsync(TaskCreateDto dto)
         {
             if (!await _userService.UserExistsAsync(dto.UserId))
@@ -76,6 +98,14 @@ namespace NaviriaAPI.Services
             return TaskMapper.ToDto(entity);
         }
 
+        /// <summary>
+        /// Updates an existing task.
+        /// </summary>
+        /// <param name="id">Task ID.</param>
+        /// <param name="dto">Task update data transfer object.</param>
+        /// <returns>True if updated successfully, otherwise false.</returns>
+        /// <exception cref="NotFoundException">Thrown if the task does not exist.</exception>
+        /// <exception cref="SuspiciousMessageException">Thrown if the title or description contains forbidden content.</exception>
         public async Task<bool> UpdateAsync(string id, TaskUpdateDto dto)
         {
             var existing = await _taskRepository.GetByIdAsync(id);
@@ -96,6 +126,12 @@ namespace NaviriaAPI.Services
             return result;
         }
 
+        /// <summary>
+        /// Deletes a task by its ID.
+        /// </summary>
+        /// <param name="id">Task ID.</param>
+        /// <returns>True if deleted successfully, otherwise false.</returns>
+        /// <exception cref="NotFoundException">Thrown if the task does not exist.</exception>
         public async Task<bool> DeleteAsync(string id)
         {
             var existing = await _taskRepository.GetByIdAsync(id);
@@ -108,6 +144,12 @@ namespace NaviriaAPI.Services
             return result;
         }
 
+        /// <summary>
+        /// Gets all tasks for a user, grouped by folders.
+        /// </summary>
+        /// <param name="userId">User ID.</param>
+        /// <returns>A collection of FolderWithTasksDto with grouped tasks.</returns>
+        /// <exception cref="NotFoundException">Thrown if the user does not exist or has no tasks.</exception>
         public async Task<IEnumerable<FolderWithTasksDto>> GetGroupedTasksByFoldersAsync(string userId)
         {
             _logger.LogInformation("Grouping tasks by folders for user {UserId}", userId);
@@ -141,6 +183,12 @@ namespace NaviriaAPI.Services
             return grouped;
         }
 
+        /// <summary>
+        /// Gets all tasks with a deadline on the specified date.
+        /// </summary>
+        /// <param name="deadlineDate">Deadline date.</param>
+        /// <returns>A list of TaskDto with the specified deadline.</returns>
+        /// <exception cref="NotFoundException">Thrown if no tasks are found with the specified deadline.</exception>
         public async Task<IEnumerable<TaskDto>> GetTasksWithDeadlineAsync(DateTime deadlineDate)
         {
             _logger.LogInformation("Getting tasks with deadline on {DeadlineDate}", deadlineDate.ToShortDateString());

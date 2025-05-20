@@ -3,11 +3,12 @@ using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using NaviriaAPI.Services;
 
 namespace NaviriaAPI.Controllers
 {
+    /// <summary>
+    /// Controller for managing user tasks.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class TaskController : ControllerBase
@@ -21,6 +22,13 @@ namespace NaviriaAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Gets all tasks for the specified user.
+        /// </summary>
+        /// <param name="userId">The user ID.</param>
+        /// <returns>A list of the user's tasks.</returns>
+        /// <response code="200">Returns a list of tasks.</response>
+        /// <response code="500">If an error occurs.</response>
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetAllByUser(string userId)
         {
@@ -36,6 +44,14 @@ namespace NaviriaAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets a task by its ID.
+        /// </summary>
+        /// <param name="id">The task ID.</param>
+        /// <returns>The task with the specified ID.</returns>
+        /// <response code="200">Returns the task.</response>
+        /// <response code="404">If the task is not found.</response>
+        /// <response code="500">If an error occurs.</response>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -54,6 +70,14 @@ namespace NaviriaAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates a new task.
+        /// </summary>
+        /// <param name="dto">The task creation data transfer object.</param>
+        /// <returns>The created task.</returns>
+        /// <response code="201">Returns the created task.</response>
+        /// <response code="400">If the model state is invalid.</response>
+        /// <response code="500">If an error occurs.</response>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Create([FromBody] TaskCreateDto dto)
@@ -65,7 +89,6 @@ namespace NaviriaAPI.Controllers
             {
                 var result = await _taskService.CreateAsync(dto);
                 return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
-
             }
             catch (Exception ex)
             {
@@ -74,7 +97,16 @@ namespace NaviriaAPI.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Updates an existing task.
+        /// </summary>
+        /// <param name="id">The task ID.</param>
+        /// <param name="dto">The task update data transfer object.</param>
+        /// <returns>No content if the update is successful.</returns>
+        /// <response code="204">If the update was successful.</response>
+        /// <response code="400">If the model state is invalid or ID is missing.</response>
+        /// <response code="404">If the task is not found.</response>
+        /// <response code="500">If an error occurs.</response>
         [HttpPut("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> Update(string id, [FromBody] TaskUpdateDto dto)
@@ -97,6 +129,15 @@ namespace NaviriaAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Deletes a task by its ID.
+        /// </summary>
+        /// <param name="id">The task ID.</param>
+        /// <returns>No content if deleted.</returns>
+        /// <response code="204">If the task was deleted.</response>
+        /// <response code="400">If the ID is missing.</response>
+        /// <response code="404">If the task is not found.</response>
+        /// <response code="500">If an error occurs.</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -115,6 +156,13 @@ namespace NaviriaAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets all tasks for the user, grouped by folders.
+        /// </summary>
+        /// <param name="userId">The user ID.</param>
+        /// <returns>Grouped tasks by folders.</returns>
+        /// <response code="200">Returns grouped tasks.</response>
+        /// <response code="500">If an error occurs.</response>
         [HttpGet("grouped/user/{userId}")]
         public async Task<IActionResult> GetGroupedByFolders(string userId)
         {
