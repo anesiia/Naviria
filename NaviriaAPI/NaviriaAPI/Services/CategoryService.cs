@@ -4,6 +4,7 @@ using NaviriaAPI.Mappings;
 using NaviriaAPI.IServices;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
+using NaviriaAPI.Entities;
 
 namespace NaviriaAPI.Services
 {
@@ -39,6 +40,9 @@ namespace NaviriaAPI.Services
             var categories = await _categoryRepository.GetAllAsync();
             return categories.Select(CategoryMapper.ToDto).ToList();
         }
-
+        public async Task<CategoryEntity?> GetByNameAsync(string name)
+        {
+            return await _categoryRepository.GetByNameAsync(name);
+        }
     }
 }

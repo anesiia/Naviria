@@ -1,6 +1,7 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
+using NaviriaAPI.Entities;
 
 namespace NaviriaAPI.IServices
 {
@@ -11,5 +12,6 @@ namespace NaviriaAPI.IServices
         Task<CategoryDto> CreateAsync(CategoryCreateDto categoryDto);
         Task<bool> UpdateAsync(string id, CategoryUpdateDto categoryDto);
         Task<bool> DeleteAsync(string id);
+        Task<CategoryEntity?> GetByNameAsync(string name);
     }
 }

@@ -23,7 +23,6 @@
     <Folder Include="IServices\IAchievementStrategies\" />
     <Folder Include="Models\" />
     <Folder Include="Backups\" />
-    <Folder Include="Services\EmbeddedServices\" />
   </ItemGroup>
 
 </Project>
