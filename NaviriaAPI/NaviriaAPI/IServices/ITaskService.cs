@@ -13,7 +13,6 @@ namespace NaviriaAPI.IServices
         Task<bool> UpdateAsync(string id, TaskUpdateDto dto);
         Task<bool> DeleteAsync(string id);
         Task<IEnumerable<FolderWithTasksDto>> GetGroupedTasksByFoldersAsync(string userId);
-
+        Task<IEnumerable<TaskDto>> GetTasksWithDeadlineAsync(DateTime deadlineDate);
     }
-
 }

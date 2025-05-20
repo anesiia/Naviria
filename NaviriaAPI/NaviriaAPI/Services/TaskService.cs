@@ -78,7 +78,12 @@ namespace NaviriaAPI.Services
             return grouped;
         }
 
+        public async Task<IEnumerable<TaskDto>> GetTasksWithDeadlineAsync(DateTime deadlineDate)
+        {
+            var tasks = await _taskRepository.GetTasksWithDeadlineOnDateAsync(deadlineDate);
+
+            return tasks.Select(TaskMapper.ToDto);
+        }
+
     }
-
-
 }

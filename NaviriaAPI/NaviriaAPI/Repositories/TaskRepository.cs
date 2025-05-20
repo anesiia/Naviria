@@ -46,5 +46,20 @@ namespace NaviriaAPI.Repositories
             var filter = Builders<TaskEntity>.Filter.Eq(t => t.UserId, userId);
             await _tasks.DeleteManyAsync(filter);
         }
+
+        public async Task<IEnumerable<TaskEntity>> GetTasksWithDeadlineOnDateAsync(DateTime deadlineDate)
+        {
+            var from = deadlineDate.Date;
+            var to = from.AddDays(1);
+
+            var filter = Builders<TaskEntity>.Filter.And(
+                Builders<TaskEntity>.Filter.Eq(t => t.IsDeadlineOn, true),
+                Builders<TaskEntity>.Filter.Eq(t => t.IsNotificationsOn, true),
+                Builders<TaskEntity>.Filter.Gte(t => t.Deadline, from),
+                Builders<TaskEntity>.Filter.Lt(t => t.Deadline, to)
+            );
+
+            return await _tasks.Find(filter).ToListAsync();
+        }
     }
 }
