@@ -4,63 +4,125 @@ using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.DTOs.FeaturesDTOs;
-using NaviriaAPI.Repositories;
 using NaviriaAPI.DTOs.TaskDtos;
+using NaviriaAPI.Exceptions;
+using NaviriaAPI.IServices.ISecurityService;
 
 namespace NaviriaAPI.Services
 {
     public class TaskService : ITaskService
     {
         private readonly ITaskRepository _taskRepository;
-        private readonly IFolderRepository _folerRepository;
+        private readonly IFolderRepository _folderRepository;
         private readonly ILogger<TaskService> _logger;
+        private readonly IUserService _userService;
+        private readonly IMessageSecurityService _messageSecurityService;
 
-        public TaskService(ITaskRepository taskRepository, ILogger<TaskService> logger, IFolderRepository folerRepository)
+        public TaskService(
+            ITaskRepository taskRepository,
+            ILogger<TaskService> logger,
+            IFolderRepository folderRepository,
+            IUserService userService,
+            IMessageSecurityService messageSecurityService)
         {
             _taskRepository = taskRepository;
             _logger = logger;
-            _folerRepository = folerRepository;
+            _folderRepository = folderRepository;
+            _userService = userService;
+            _messageSecurityService = messageSecurityService;
         }
 
         public async Task<IEnumerable<TaskDto>> GetAllByUserAsync(string userId)
         {
-            var tasks = await _taskRepository.GetAllByUserAsync(userId);
+            if (!await _userService.UserExistsAsync(userId))
+            {
+                throw new NotFoundException($"User with ID {userId} not found.");
+            }
+
+            var tasks = (await _taskRepository.GetAllByUserAsync(userId)).ToList();
+            if (!tasks.Any())
+            {
+                throw new NotFoundException($"User with ID {userId} has no tasks.");
+            }
+
             return tasks.Select(TaskMapper.ToDto);
         }
 
         public async Task<TaskDto?> GetByIdAsync(string id)
         {
             var task = await _taskRepository.GetByIdAsync(id);
-            return task == null ? null : TaskMapper.ToDto(task);
+            if (task == null)
+            {
+                throw new NotFoundException($"Task with ID {id} not found.");
+            }
+            return TaskMapper.ToDto(task);
         }
 
         public async Task<TaskDto> CreateAsync(TaskCreateDto dto)
         {
+            if (!await _userService.UserExistsAsync(dto.UserId))
+            {
+                throw new NotFoundException($"User with ID {dto.UserId} not found.");
+            }
+
+            // Validate title and description for security
+            _messageSecurityService.Validate(dto.UserId, dto.Title);
+            _messageSecurityService.Validate(dto.UserId, dto.Description);
+
             var entity = TaskMapper.ToEntity(dto);
             await _taskRepository.CreateAsync(entity);
+
             return TaskMapper.ToDto(entity);
         }
 
         public async Task<bool> UpdateAsync(string id, TaskUpdateDto dto)
         {
             var existing = await _taskRepository.GetByIdAsync(id);
-            if (existing == null) return false;
+            if (existing == null)
+            {
+                throw new NotFoundException($"Task with ID {id} not found.");
+            }
 
-            // Мапимо оновлені поля
+            // Validate updated title/description if provided
+            if (!string.IsNullOrWhiteSpace(dto.Title))
+                _messageSecurityService.Validate(existing.UserId, dto.Title);
+            if (!string.IsNullOrWhiteSpace(dto.Description))
+                _messageSecurityService.Validate(existing.UserId, dto.Description);
+
             existing = TaskMapper.UpdateEntity(existing, dto);
 
-            return await _taskRepository.UpdateAsync(existing);
+            var result = await _taskRepository.UpdateAsync(existing);
+            return result;
         }
 
         public async Task<bool> DeleteAsync(string id)
         {
-            return await _taskRepository.DeleteAsync(id);
+            var existing = await _taskRepository.GetByIdAsync(id);
+            if (existing == null)
+            {
+                throw new NotFoundException($"Task with ID {id} not found.");
+            }
+
+            var result = await _taskRepository.DeleteAsync(id);
+            return result;
         }
 
         public async Task<IEnumerable<FolderWithTasksDto>> GetGroupedTasksByFoldersAsync(string userId)
         {
-            var tasks = await _taskRepository.GetAllByUserAsync(userId);
-            var folders = await _folerRepository.GetAllByUserIdAsync(userId); // потрібен IFolderRepository
+            _logger.LogInformation("Grouping tasks by folders for user {UserId}", userId);
+
+            if (!await _userService.UserExistsAsync(userId))
+            {
+                throw new NotFoundException($"User with ID {userId} not found.");
+            }
+
+            var tasks = (await _taskRepository.GetAllByUserAsync(userId)).ToList();
+            var folders = (await _folderRepository.GetAllByUserIdAsync(userId)).ToList();
+
+            if (!tasks.Any())
+            {
+                throw new NotFoundException($"User with ID {userId} has no tasks.");
+            }
 
             var grouped = tasks
                 .GroupBy(t => t.FolderId)
@@ -80,10 +142,15 @@ namespace NaviriaAPI.Services
 
         public async Task<IEnumerable<TaskDto>> GetTasksWithDeadlineAsync(DateTime deadlineDate)
         {
-            var tasks = await _taskRepository.GetTasksWithDeadlineOnDateAsync(deadlineDate);
+            _logger.LogInformation("Getting tasks with deadline on {DeadlineDate}", deadlineDate.ToShortDateString());
+            var tasks = (await _taskRepository.GetTasksWithDeadlineOnDateAsync(deadlineDate)).ToList();
+
+            if (!tasks.Any())
+            {
+                throw new NotFoundException("No tasks found with the specified deadline.");
+            }
 
             return tasks.Select(TaskMapper.ToDto);
         }
-
     }
 }
