@@ -1,4 +1,4 @@
-﻿namespace NaviriaAPI.IServices
+﻿namespace NaviriaAPI.IServices.IUserServices
 {
     public interface IUserCleanupService
     {

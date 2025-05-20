@@ -1,5 +1,5 @@
 ﻿using NaviriaAPI.IRepositories;
-using NaviriaAPI.IServices;
+using NaviriaAPI.IServices.IUserServices;
 
 namespace NaviriaAPI.Services.User
 {

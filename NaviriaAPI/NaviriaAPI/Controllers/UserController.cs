@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ICloudStorage;
 using NaviriaAPI.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using NaviriaAPI.Helpers;
 using NaviriaAPI.IServices.IEmbeddedServices;
 using NaviriaAPI.IServices.IGamificationLogic;
+using NaviriaAPI.IServices.IUserServices;
 
 namespace NaviriaAPI.Controllers
 {

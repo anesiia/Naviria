@@ -7,6 +7,7 @@ using NaviriaAPI.DTOs.FeaturesDTOs;
 using NaviriaAPI.DTOs.TaskDtos;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.ISecurityService;
+using NaviriaAPI.IServices.IUserServices;
 
 namespace NaviriaAPI.Services
 {

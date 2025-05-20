@@ -2,7 +2,6 @@
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.IRepositories;
-using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
 using Microsoft.AspNetCore.Identity;
 using NaviriaAPI.Entities;
@@ -12,6 +11,7 @@ using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.Helpers;
+using NaviriaAPI.IServices.IUserServices;
 
 namespace NaviriaAPI.Services.User
 {

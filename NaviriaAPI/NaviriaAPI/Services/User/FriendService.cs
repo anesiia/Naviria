@@ -7,6 +7,7 @@ using NaviriaAPI.IServices.ICloudStorage;
 using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.IServices.ISecurityService;
+using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.Services.Validation;
 

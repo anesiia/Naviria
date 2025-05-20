@@ -3,7 +3,7 @@ using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.Entities;
 
-namespace NaviriaAPI.IServices
+namespace NaviriaAPI.IServices.IUserServices
 {
     public interface IUserService
     {

@@ -10,6 +10,7 @@ using NaviriaAPI.Services.User;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IServices.IGamificationLogic;
+using NaviriaAPI.IServices.IUserServices;
 
 namespace NaviriaAPI.Services
 {

@@ -10,6 +10,7 @@ using NaviriaAPI.Services.GamificationLogic;
 using NaviriaAPI.Services.User;
 using NaviriaAPI.Services.AchievementStrategies;
 using NaviriaAPI.Services.EmbeddedServices;
+using NaviriaAPI.IServices.IUserServices;
 
 namespace NaviriaAPI.DependencyInjection
 {
