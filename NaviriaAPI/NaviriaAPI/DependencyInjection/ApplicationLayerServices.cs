@@ -53,6 +53,7 @@ namespace NaviriaAPI.DependencyInjection
 
             services.AddScoped<IUserCleanupService, UserCleanupService>();
             services.AddScoped<ISupportService, SupportService>();
+            services.AddScoped<IUserSearchService, UserSearchService>();
 
         }
     }

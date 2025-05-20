@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using NaviriaAPI.Data;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
@@ -60,6 +61,13 @@ namespace NaviriaAPI.Repositories
             );
 
             return await _tasks.Find(filter).ToListAsync();
+        }
+        public async Task<List<string>> GetUserIdsByCategoryAsync(string categoryId)
+        {
+            var filter = Builders<TaskEntity>.Filter.Eq(t => t.CategoryId, categoryId);
+            var cursor = await _tasks.DistinctAsync<ObjectId>("user_id", filter);
+            var objectIds = await cursor.ToListAsync();
+            return objectIds.Select(x => x.ToString()).ToList();
         }
     }
 }

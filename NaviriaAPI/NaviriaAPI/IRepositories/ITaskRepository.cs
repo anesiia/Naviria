@@ -11,6 +11,8 @@ namespace NaviriaAPI.IRepositories
         Task<bool> DeleteAsync(string id);
         Task DeleteManyByUserIdAsync(string userId);
         Task<IEnumerable<TaskEntity>> GetTasksWithDeadlineOnDateAsync(DateTime deadlineDate);
+        Task<List<string>> GetUserIdsByCategoryAsync(string categoryId);
+
 
     }
 }
