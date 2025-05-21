@@ -17,6 +17,31 @@ namespace NaviriaAPI.Services
             _notificationService = notificationService;
         }
 
+        public LevelProgressInfo CalculateFirstLevelProgress(int totalXp)
+        {
+            int level = 0;
+            int currentXp = 0;
+            int nextXp = 0;
+
+            while (true)
+            {
+                nextXp = GetXpForLevel(level + 1);
+                if (totalXp < nextXp) break;
+                currentXp = nextXp;
+                level++;
+            }
+
+            double progress = (double)(totalXp - currentXp) / (nextXp - currentXp);
+
+            return new LevelProgressInfo
+            {
+                Level = level,
+                TotalXp = totalXp,
+                XpForNextLevel = nextXp,
+                Progress = Math.Round(progress, 2)
+            };
+        }
+
         public async Task<LevelProgressInfo> CalculateLevelProgressAsync(UserDto user, int additionalXp)
         {
             if (user == null)
