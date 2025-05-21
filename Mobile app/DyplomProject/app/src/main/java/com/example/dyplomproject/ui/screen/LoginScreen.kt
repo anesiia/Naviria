@@ -29,7 +29,9 @@ import androidx.compose.ui.unit.dp
 import com.example.dyplomproject.R
 import com.example.dyplomproject.ui.viewmodel.LoginViewModel
 import androidx.navigation.NavHostController
+import com.example.dyplomproject.ui.components.LabeledTextField
 import com.example.dyplomproject.ui.components.PrimaryButton
+import com.example.dyplomproject.ui.components.UnderlinedText
 import com.example.dyplomproject.ui.viewmodel.AuthViewModel
 
 @Composable
@@ -66,27 +68,46 @@ fun LoginScreen(
                 .fillMaxSize()
                 .padding(24.dp),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.Start
         ) {
-            OutlinedTextField(
+            UnderlinedText(
+                text = "Увійти в акаунт", useGradient = false
+            )
+            Spacer(modifier = Modifier.height(48.dp))
+
+            LabeledTextField(
+                label = "Пошта",
                 value = uiState.email,
-                onValueChange = loginViewModel::onEmailChanged,
-                label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth()
+                onValueChange = { loginViewModel.updateField("email", it) },
+                placeholder = "example@gmail.com",
+                fieldKey = "email",
+                fieldErrors = uiState.fieldErrors
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
+            LabeledTextField(
+                label = "Пароль",
                 value = uiState.password,
-                onValueChange = loginViewModel::onPasswordChanged,
-                label = { Text("Password") },
-                modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation()
+                onValueChange = {  loginViewModel.updateField("password", it) },
+                placeholder = "*******",
+                fieldKey = "password",
+                fieldErrors = uiState.fieldErrors,
+                isPassword = true
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
+//            OutlinedTextField(
+//                value = uiState.email,
+//                onValueChange = loginViewModel::onEmailChanged,
+//                label = { Text("Email") },
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//            Spacer(modifier = Modifier.height(16.dp))
+//            OutlinedTextField(
+//                value = uiState.password,
+//                onValueChange = loginViewModel::onPasswordChanged,
+//                label = { Text("Password") },
+//                modifier = Modifier.fillMaxWidth(),
+//                visualTransformation = PasswordVisualTransformation()
+//            )
+//            Spacer(modifier = Modifier.height(16.dp))
             Spacer(modifier = Modifier.height(24.dp))
 
             PrimaryButton(

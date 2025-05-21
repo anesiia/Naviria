@@ -23,7 +23,7 @@ import com.example.dyplomproject.R
 
 @Composable
 fun PrimaryButton(
-    imageRes: Int, // e.g., R.drawable.my_background
+    imageRes: Int,
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier.fillMaxWidth(),
@@ -52,8 +52,7 @@ fun PrimaryButton(
         Text(
             text = text,
             color = contentColor,
-            //style = MaterialTheme.typography.labelLarge,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(12.dp)
@@ -67,11 +66,9 @@ fun PrimaryButton(
 )
 @Composable
 fun DefaultButtonPreview() {
-    // Важно: вам нужно использовать существующий ресурс изображения
     PrimaryButton(
-        imageRes = R.drawable.default_button_bg, // замените на свой ресурс
+        imageRes = R.drawable.default_button_bg,
         text = "Увійти",
-        onClick = {} // пустой обработчик
+        onClick = {}
     )
-
 }

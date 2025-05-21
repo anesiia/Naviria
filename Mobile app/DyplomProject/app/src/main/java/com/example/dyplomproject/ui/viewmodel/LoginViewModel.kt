@@ -7,14 +7,17 @@ import com.example.dyplomproject.data.remote.AuthRepository
 import com.example.dyplomproject.data.remote.request.LoginRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
 
 data class LoginUiState(
     val email: String = "",
     val password: String = "",
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val fieldErrors: Map<String, String> = emptyMap()
 )
 
 class LoginViewModel(
@@ -27,48 +30,33 @@ class LoginViewModel(
 //    val password: StateFlow<String> = _password
 //    private val _error = MutableStateFlow<String?>(null)
 //    val error: StateFlow<String?> = _error
-
-    private val _uiState = MutableStateFlow(LoginUiState())
-    val uiState: StateFlow<LoginUiState> = _uiState
-
-
-    fun onEmailChanged(newEmail: String) {
-        //_email.value = newEmail
-        _uiState.value = _uiState.value.copy(email = newEmail)
-    }
-
-    fun onPasswordChanged(newPassword: String) {
-        //_password.value = newPassword
-        _uiState.value = _uiState.value.copy(password = newPassword)
-    }
-
-//    fun onLoginClicked(authViewModel: AuthViewModel) {
-//        val state = _uiState.value
-//        viewModelScope.launch {
-//            _uiState.value = state.copy(isLoading = true, error = null)
-//            try {
-//                //val response = authRepository.login(state.email, state.password)
-//                val response = authRepository.login("elison@gmail.com", "Eli78@son")
-//                if (response.isSuccessful && response.body() != null) {
-//                    val token = response.body()!!.token
-//                    authViewModel.onLoginSuccess(token)
-//                    Log.d("HTTPS", "Response Code: $response")
-//                } else {
-//                    _uiState.value = state.copy(isLoading = false, error = "Invalid credentials")
-//                    Log.d("HTTPS", "Response Code: $response")
-//                }
-//            } catch (e: Exception) {
-//                _uiState.value = state.copy(isLoading = false, error = "Login failed: ${e.message}")
-//                Log.d("HTTPS", "Response Code: ${e.message}")
-//            }
-//        }
+//    fun onEmailChanged(newEmail: String) {
+//        _uiState.value = _uiState.value.copy(email = newEmail)
 //    }
+//    fun onPasswordChanged(newPassword: String) {
+//        _uiState.value = _uiState.value.copy(password = newPassword)
+//    }
+    private val _uiState = MutableStateFlow(LoginUiState())
+    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()//good practice to use asStateFlow()
+
+    fun updateField(field: String, value: String) {
+        _uiState.update {
+            when (field) {
+                "email" -> it.copy(email = value)
+                "password" -> it.copy(password = value)
+                else -> it
+            }
+        }
+    }
 
     fun onLoginClicked(authViewModel: AuthViewModel) {
         val state = _uiState.value
-        val error = validate(state)
-        if (error != null) {
-            showError(error)
+//        val error = validate(state)
+//        if (error != null) {
+//            showError(error)
+//            return
+//        }
+        if (!validateAndUpdateErrors(state)) {
             return
         }
 
@@ -87,8 +75,39 @@ class LoginViewModel(
         }
     }
 
-    private fun validate(state: LoginUiState): String? {
-        return null
+//    private fun validate(state: LoginUiState): String? {
+//        return null
+//    }
+
+    fun validateAndUpdateErrors(state: LoginUiState): Boolean {
+        val errors = mutableMapOf<String, String>()
+        val emailRegex = Regex("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")
+
+        if (state.email.isBlank()) {
+            errors["email"] = "Пошта обов’язкова."
+        } else if (!emailRegex.matches(state.email)) {
+            errors["email"] = "Неправильний формат пошти."
+        }
+
+        if (state.password.isBlank()) {
+            errors["password"] = "Пароль обов’язковий."
+        } else {
+            if (state.password.length < 8) {
+                errors["password"] = "Пароль має містити щонайменше 8 символів, здається ви забули пароль трошки"
+            } else {
+                if (!state.password.any { it.isLowerCase() }) {
+                    errors["password"] = "Пароль повинен містити хоча б одну велику літеру, здається ви забули пароль трошки"
+                }
+                if (!state.password.any { it.isUpperCase() }) {
+                    errors["password"] = "Пароль повинен містити хоча б одну маленьку літеру, здається ви забули пароль трошки"
+                }
+            }
+        }
+//        if (state.password.length < 8) {
+//            errors["password"] = "Пароль має містити щонайменше 8 символів."
+//        }
+        _uiState.update { it.copy(fieldErrors = errors) }
+        return errors.isEmpty()
     }
 
     private fun showError(message: String) {
