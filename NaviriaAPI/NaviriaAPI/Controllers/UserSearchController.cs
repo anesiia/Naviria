@@ -56,6 +56,40 @@ namespace NaviriaAPI.Controllers
         }
 
         /// <summary>
+        /// Get all users' potentional friends who have at least one task in the given category.
+        /// </summary>
+        /// <param name="categoryId">The ID of the category.</param>
+        /// /// <param name="userId">The ID of the user.</param>
+        /// <returns>
+        /// 200: List of users (<see cref="UserDto"/>) who have at least one task in this category.<br/>
+        /// 400: If the categoryId is not provided.<br/>
+        /// 404: If no users are found for this category.<br/>
+        /// 500: If an internal error occurs.
+        /// </returns>
+        [HttpGet("potential-friends/by-category/{categoryId}")]
+        public async Task<IActionResult> GetPotentialFriendsByTaskByCategory([FromQuery] string userId, string categoryId)
+        {
+            if (string.IsNullOrWhiteSpace(categoryId))
+                return BadRequest("Category ID is required.");
+
+            try
+            {
+                var result = await _userSearchService.GetPotentialFriendsByTaskCategoryAsync(userId, categoryId);
+                return Ok(result);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex, "No users found for category {CategoryId}", categoryId);
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to search users by category {CategoryId}", categoryId);
+                return StatusCode(500, "Failed to search users by category.");
+            }
+        }
+
+        /// <summary>
         /// Search among potential friends by nickname.
         /// </summary>
         /// <param name="userId">The ID of the user who is searching.</param>

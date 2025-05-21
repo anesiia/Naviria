@@ -35,32 +35,26 @@ namespace NaviriaAPI.Services.User
             _messageSecurityService = messageSecurityService;
         }
 
-        /// <summary>
-        /// Gets all users who have at least one task in the given category.
-        /// </summary>
-        /// <param name="categoryId">The ID of the category.</param>
-        /// <returns>List of users (UserDto) who have at least one task in this category.</returns>
-        /// <exception cref="NotFoundException">Thrown if no users are found for this category.</exception>
+        /// <inheritdoc />
         public async Task<List<UserDto>> GetUsersByTaskCategoryAsync(string categoryId)
         {
             var userIds = await _taskRepository.GetUserIdsByCategoryAsync(categoryId);
-
-            if (userIds == null || !userIds.Any())
-                throw new NotFoundException("No users found for this category.");
-
-            var usersByCategory = await _userRepository.GetManyByIdsAsync(userIds);
-
-            var userDtos = usersByCategory.Select(UserMapper.ToDto).ToList();
-
-            return userDtos;
+            return await GetUserDtosOrThrowAsync(userIds, "No users found for this category.");
         }
 
-        /// <summary>
-        /// Searches potential friends (users who are not yet friends and not the user themself) by nickname.
-        /// </summary>
-        /// <param name="userId">ID of the user performing the search.</param>
-        /// <param name="query">Search string (part of nickname).</param>
-        /// <returns>List of UserDto matching the search among potential friends.</returns>
+        /// <inheritdoc />
+        public async Task<List<UserDto>> GetPotentialFriendsByTaskCategoryAsync(string userId, string categoryId)
+        {
+            var user = await _userService.GetUserOrThrowAsync(userId);
+            var excludeIds = user.Friends.Select(f => f.UserId).Append(userId).ToHashSet();
+
+            var userIds = await _taskRepository.GetUserIdsByCategoryAsync(categoryId);
+            var filtered = userIds?.Where(id => !excludeIds.Contains(id)) ?? Enumerable.Empty<string>();
+
+            return await GetUserDtosOrThrowAsync(filtered, "No potential friends found for this category.");
+        }
+
+        /// <inheritdoc />
         public async Task<IEnumerable<UserDto>> SearchPotentialFriendsByNicknameAsync(string userId, string query)
         {
             var user = await _userService.GetUserOrThrowAsync(userId);
@@ -79,12 +73,7 @@ namespace NaviriaAPI.Services.User
             return matched;
         }
 
-        /// <summary>
-        /// Searches friends of the user by nickname.
-        /// </summary>
-        /// <param name="userId">ID of the user whose friends to search.</param>
-        /// <param name="query">Search string (part of nickname).</param>
-        /// <returns>List of UserDto matching the search among user's friends.</returns>
+        /// <inheritdoc />
         public async Task<IEnumerable<UserDto>> SearchFriendsByNicknameAsync(string userId, string query)
         {
             var user = await _userService.GetUserOrThrowAsync(userId);
@@ -105,12 +94,7 @@ namespace NaviriaAPI.Services.User
             return matched;
         }
 
-        /// <summary>
-        /// Searches among users who sent a friend request to the specified user, by nickname.
-        /// </summary>
-        /// <param name="userId">The ID of the user who received the friend requests.</param>
-        /// <param name="query">Search string (part of nickname).</param>
-        /// <returns>List of UserDto matching the search among users who sent incoming friend requests.</returns>
+        /// <inheritdoc />
         public async Task<IEnumerable<UserDto>> SearchIncomingFriendRequestsByNicknameAsync(string userId, string query)
         {
             _messageSecurityService.Validate(userId, query);
@@ -129,6 +113,20 @@ namespace NaviriaAPI.Services.User
                 .Select(UserMapper.ToDto);
 
             return matched;
+        }
+        private async Task<List<UserDto>> GetUserDtosOrThrowAsync(IEnumerable<string> userIds, string notFoundMessage)
+        {
+            var ids = userIds?.Distinct().ToList() ?? new List<string>();
+            if (!ids.Any())
+                throw new NotFoundException(notFoundMessage);
+
+            var users = await _userRepository.GetManyByIdsAsync(ids);
+            var dtos = users.Select(UserMapper.ToDto).ToList();
+
+            if (!dtos.Any())
+                throw new NotFoundException(notFoundMessage);
+
+            return dtos;
         }
     }
 }
