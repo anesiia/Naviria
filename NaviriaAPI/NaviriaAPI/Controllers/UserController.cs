@@ -91,7 +91,9 @@ namespace NaviriaAPI.Controllers
         /// <returns>The JWT token of the created user.</returns>
         /// <response code="200">Returns the created user's token.</response>
         /// <response code="400">If the model state is invalid.</response>
-        /// <response code="500">If an error occurs while creating the user.</response>
+        /// <response code="409">If a user with the given email already exists.</response>
+        /// <response code="422">If a user with the given nickname already exists.</response>
+        /// <response code="500">If an unexpected error occurs while creating the user.</response>
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] UserCreateDto UserDto)
@@ -104,12 +106,23 @@ namespace NaviriaAPI.Controllers
                 var token = await _userService.CreateAsync(UserDto);
                 return Ok(new { token });
             }
+            catch (EmailAlreadyExistException ex)
+            {
+                _logger.LogWarning(ex, ex.Message);
+                return StatusCode(409, ex.Message);
+            }
+            catch (NicknameAlreadyExistException ex)
+            {
+                _logger.LogWarning(ex, ex.Message);
+                return StatusCode(422, ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to create user");
                 return StatusCode(500, "Failed to create user");
             }
         }
+
 
         /// <summary>
         /// Updates user information by user ID.
