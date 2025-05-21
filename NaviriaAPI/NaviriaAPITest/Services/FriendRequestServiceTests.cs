@@ -6,7 +6,7 @@ using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.Entities;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IRepositories;
-using NaviriaAPI.IServices;
+using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.Services;
 using System;
 using System.Collections.Generic;

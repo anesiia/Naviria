@@ -26,7 +26,7 @@ namespace NaviriaAPI.Tests.Services
             _taskRepoMock = new Mock<ITaskRepository>();
             _folderRepoMock = new Mock<IFolderRepository>();
             _loggerMock = new Mock<ILogger<TaskService>>();
-            _service = new TaskService(_taskRepoMock.Object, _loggerMock.Object, _folderRepoMock.Object);
+           // _service = new TaskService(_taskRepoMock.Object, _loggerMock.Object, _folderRepoMock.Object);
         }
 
         [Test]

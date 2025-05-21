@@ -12,6 +12,7 @@ using NaviriaAPI.Services; // For actual service classes like UserService
 using NaviriaAPI.IServices.ICloudStorage; // For cloud storage services (if used)
 using NaviriaAPI.IServices.IGamificationLogic; // For gamification services (if used)
 using NaviriaAPI.IServices.IJwtService; // For JWT services (if used)
+using NaviriaAPI.IServices.ICleanupServices;
 using NaviriaAPI.Services.Validation; // For validation services (like UserValidationService)
 using System; // For basic system types like exceptions
 using System.Threading.Tasks; // For async tasks in tests
@@ -60,14 +61,14 @@ namespace NaviriaAPI.Tests.Services.User
             _userService = new UserService(
                 _userRepoMock.Object,
                 _hasherMock.Object,
-                _configMock.Object,
+               // _configMock.Object,
                 validation,
                 //_cloudinaryServiceMock.Object,
                 _achievementRepoMock.Object,
                 _levelServiceMock.Object,
                 _jwtServiceMock.Object,
-                 _loggerMock.Object,
-                 _achievementManagerMock.Object,
+                _loggerMock.Object,
+                _achievementManagerMock.Object,
                 _userCleanupServiceMock.Object
 
             );

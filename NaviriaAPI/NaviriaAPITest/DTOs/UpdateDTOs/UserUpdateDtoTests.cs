@@ -242,6 +242,67 @@ namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
             Assert.That(isValid, Is.True);
         }
 
+        [Test]
+        public void TC018_ShouldBeInvalid_WhenFullNameTooLong()
+        {
+            var dto = GetValidDto();
+            dto.FullName = new string('a', 51); // 51 символ
+
+            var isValid = ValidateDto(dto, out var results);
+            Assert.That(isValid, Is.False);
+            Assert.That(results.Any(r => r.MemberNames.Contains("FullName")));
+        }
+
+        [Test]
+        public void TC019_ShouldBeInvalid_WhenFullNameHasInvalidChars()
+        {
+            var dto = GetValidDto();
+            dto.FullName = "John_Doe123"; // підкреслення і цифри не дозволені
+
+            var isValid = ValidateDto(dto, out var results);
+            Assert.That(isValid, Is.False);
+        }
+
+        [Test]
+        public void TC020_ShouldBeInvalid_WhenNicknameTooLong()
+        {
+            var dto = GetValidDto();
+            dto.Nickname = new string('a', 21); // 21 символ
+
+            var isValid = ValidateDto(dto, out var results);
+            Assert.That(isValid, Is.False);
+        }
+
+        [Test]
+        public void TC021_ShouldBeInvalid_WhenFutureMessageTooLong()
+        {
+            var dto = GetValidDto();
+            dto.FutureMessage = new string('a', 151);
+
+            var isValid = ValidateDto(dto, out var results);
+            Assert.That(isValid, Is.False);
+        }
+
+        [Test]
+        public void TC022_ShouldBeInvalid_WhenDescriptionHasInvalidChars()
+        {
+            var dto = GetValidDto();
+            dto.Description = "Invalid@Description#"; // @ і # не дозволені
+
+            var isValid = ValidateDto(dto, out var results);
+            Assert.That(isValid, Is.False);
+        }
+
+        [Test]
+        public void TC023_ShouldBeInvalid_WhenFutureMessageHasInvalidChars()
+        {
+            var dto = GetValidDto();
+            dto.FutureMessage = "Future message @invalid#";
+
+            var isValid = ValidateDto(dto, out var results);
+            Assert.That(isValid, Is.False);
+        }
+
         private UserUpdateDto GetValidDto()
         {
             return new UserUpdateDto

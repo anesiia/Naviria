@@ -55,7 +55,7 @@ namespace NaviriaAPI.Tests.DTOs.Auth
             // Arrange
             var userLoginDto = new UserLoginDto
             {
-                Email = "john.doe@com",  // Invalid email format
+                Email = "john.doe@com",  
                 Password = "Passw0rd123"
             };
 
@@ -76,7 +76,7 @@ namespace NaviriaAPI.Tests.DTOs.Auth
             var userLoginDto = new UserLoginDto
             {
                 Email = "john.doe@example.com",
-                Password = "Short1" // Too short password
+                Password = "Short1" 
             };
 
             // Act
@@ -86,7 +86,6 @@ namespace NaviriaAPI.Tests.DTOs.Auth
 
             // Assert
             Assert.That(isValid, Is.False);
-            //Assert.That(validationResults.Any(r => r.ErrorMessage.Contains("Password must be at least 8 characters")), Is.True);
         }
 
         [Test]
@@ -96,7 +95,7 @@ namespace NaviriaAPI.Tests.DTOs.Auth
             var userLoginDto = new UserLoginDto
             {
                 Email = "john.doe@example.com",
-                Password = "password123"  // Missing uppercase letter
+                Password = "password123"  
             };
 
             // Act
@@ -116,7 +115,7 @@ namespace NaviriaAPI.Tests.DTOs.Auth
             var userLoginDto = new UserLoginDto
             {
                 Email = "john.doe@example.com",
-                Password = "Password"  // Missing digit
+                Password = "Password"  
             };
 
             // Act
@@ -128,5 +127,23 @@ namespace NaviriaAPI.Tests.DTOs.Auth
             Assert.That(isValid, Is.False);
             Assert.That(validationResults.Any(r => r.ErrorMessage.Contains("Password must contain upper, lower letters and digits")), Is.True);
         }
+
+        [Test]
+        public void TC07_InvalidPassword_ShouldBeInvalid_WhenPasswordIsEmpty()
+        {
+            var userLoginDto = new UserLoginDto
+            {
+                Email = "john.doe@example.com",
+                Password = ""
+            };
+
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(userLoginDto);
+            var isValid = Validator.TryValidateObject(userLoginDto, validationContext, validationResults, true);
+
+            Assert.That(isValid, Is.False);
+            Assert.That(validationResults.Any(r => r.ErrorMessage.Contains("Password is required")), Is.True);
+        }
+
     }
 }

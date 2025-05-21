@@ -35,7 +35,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
         [Test]
         public void TC002_NotificationCreateDto_TextTooLong_ShouldFailValidation()
         {
-            var longText = new string('A', 151); // exceeds 150 chars
+            var longText = new string('A', 151); 
             var dto = new NotificationCreateDto
             {
                 UserId = "user123",
@@ -49,6 +49,6 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
             Assert.That(results, Has.Some.Matches<ValidationResult>(r => r.MemberNames.Contains("Text")));
         }
 
-       
+
     }
 }

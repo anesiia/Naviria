@@ -62,7 +62,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
         {
             var dto = new AchievementCreateDto
             {
-                Name = new string('A', 51), // 51 characters
+                Name = new string('A', 51), 
                 Description = "Опис",
                 Points = 10
             };
@@ -77,7 +77,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
         {
             var dto = new AchievementCreateDto
             {
-                Name = "Achiev@ment!", // contains invalid characters
+                Name = "Achiev@ment!", 
                 Description = "Valid",
                 Points = 10
             };
@@ -93,7 +93,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
             var dto = new AchievementCreateDto
             {
                 Name = "Valid Name",
-                Description = new string('D', 151), // 151 characters
+                Description = new string('D', 151), 
                 Points = 10
             };
 
@@ -135,7 +135,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
         [Test]
         public void TC009_MissingRequiredFields_ShouldFailValidation()
         {
-            var dto = new AchievementCreateDto(); // all defaults
+            var dto = new AchievementCreateDto(); 
 
             var isValid = ValidationHelper.ValidateModel(dto);
 

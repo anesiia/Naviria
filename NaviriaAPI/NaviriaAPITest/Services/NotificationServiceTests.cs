@@ -12,7 +12,7 @@ using NaviriaAPI.IRepositories;
 using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Exceptions;
-using NaviriaAPI.IServices;
+using NaviriaAPI.IServices.IUserServices;
 
 namespace NaviriaAPI.Tests.Services
 {

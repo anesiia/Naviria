@@ -31,7 +31,7 @@ namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
             // Arrange
             var dto = new AchievementUpdateDto
             {
-                Name = "A", // Too short, should fail validation
+                Name = "A", 
                 Description = "Valid description.",
                 Points = 10
             };
@@ -50,7 +50,7 @@ namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
             // Arrange
             var dto = new AchievementUpdateDto
             {
-                Name = "InvalidName@123", // Invalid characters, should fail validation
+                Name = "InvalidName@123", // @
                 Description = "Valid description.",
                 Points = 10
             };
@@ -88,7 +88,7 @@ namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
             var dto = new AchievementUpdateDto
             {
                 Name = "Valid Name",
-                Description = "Invalid description with # characters!", // Invalid characters, should fail validation
+                Description = "Invalid description with # characters!", 
                 Points = 10
             };
 
@@ -108,7 +108,7 @@ namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
             {
                 Name = "Valid Name",
                 Description = "Valid description.",
-                Points = 50 // Valid points
+                Points = 50 
             };
 
             // Act
@@ -126,7 +126,7 @@ namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
             {
                 Name = "Valid Name",
                 Description = "Valid description.",
-                Points = -5 // Invalid points, should fail validation
+                Points = -5 
             };
 
             // Act
@@ -136,6 +136,49 @@ namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
             Assert.That(validationResults, Has.Count.EqualTo(1), "Expected validation error for Points being out of range.");
             Assert.That(validationResults[0].ErrorMessage, Is.EqualTo("The field Points must be between 0 and 2147483647."));
         }
+
+        [Test]
+        public void TC008_Name_ShouldFailValidation_WhenTooLong()
+        {
+            // Arrange
+            var dto = new AchievementUpdateDto
+            {
+                Name = new string('a', 51), 
+                Description = "Valid description.",
+                Points = 10,
+                IsRare = true
+            };
+
+            // Act
+            var validationResults = ValidateModel(dto);
+
+            // Assert
+            Assert.That(validationResults, Has.Exactly(1).Matches<ValidationResult>(
+                vr => vr.MemberNames.Contains("Name") && vr.ErrorMessage.Contains("maximum length")),
+                "Expected validation error for Name exceeding max length.");
+        }
+
+        [Test]
+        public void TC009_Description_ShouldFailValidation_WhenTooLong()
+        {
+            // Arrange
+            var dto = new AchievementUpdateDto
+            {
+                Name = "Valid Name",
+                Description = new string('a', 151), 
+                Points = 10,
+                IsRare = true
+            };
+
+            // Act
+            var validationResults = ValidateModel(dto);
+
+            // Assert
+            Assert.That(validationResults, Has.Exactly(1).Matches<ValidationResult>(
+                vr => vr.MemberNames.Contains("Description") && vr.ErrorMessage.Contains("maximum length")),
+                "Expected validation error for Description exceeding max length.");
+        }
+
 
         private static IList<ValidationResult> ValidateModel(object model)
         {

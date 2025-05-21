@@ -130,7 +130,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
 
             // Assert
             Assert.That(isValid, Is.False);
-            //Assert.That(validationResults.Any(r => r.ErrorMessage.Contains("Nickname must be at least 3 characters long.")), Is.True);
+            
         }
 
 
@@ -195,7 +195,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
                 Gender = "m",
                 BirthDate = new DateTime(1990, 1, 1),
                 Email = "john.doe@example.com",
-                Password = "Pass1" // Too short (less than 8 characters)
+                Password = "Pass1" 
             };
 
             // Act
@@ -205,7 +205,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
 
             // Assert
             Assert.That(isValid, Is.False);
-            /*Assert.That(validationResults.Any(r => r.ErrorMessage.Contains("Password must be at least 8 characters long")), Is.True);*/ // Checking the error message for minimum length
+             
         }
 
         [Test]
@@ -243,7 +243,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
                 Nickname = "john123",
                 Gender = "m",
                 BirthDate = new DateTime(1990, 1, 1),
-                Email = "invalid@email", // Invalid email format
+                Email = "invalid@email", 
                 Password = "Passw0rd123"
 
             };
@@ -257,9 +257,28 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
             Assert.That(isValid, Is.False);
         }
 
+        [Test]
+        public void TC011_InvalidEmail_ShouldBeInvalid_WhenMissingAtSymbol()
+        {
+            var dto = new UserCreateDto
+            {
+                FullName = "Jane Doe",
+                Nickname = "jane123",
+                Gender = "f",
+                BirthDate = new DateTime(1995, 5, 20),
+                Email = "jane.doeexample.com", // no '@'
+                Password = "StrongPass1"
+            };
+            var results = new List<ValidationResult>();
+            var context = new ValidationContext(dto);
+            var isValid = Validator.TryValidateObject(dto, context, results, true);
+            Assert.That(isValid, Is.False);
+            Assert.That(results.Any(r => r.ErrorMessage.Contains("Email")), Is.True);
+        }
+
 
         [Test]
-        public void TC011_ValidFullName_ShouldBeValid_WhenMaxLength()
+        public void TC012_ValidFullName_ShouldBeValid_WhenMaxLength()
         {
             // Arrange
             var userDto = new UserCreateDto
@@ -283,7 +302,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
         }
 
         [Test]
-        public void TC012_InvalidFullName_ShouldBeInvalid_WhenExceedsMaxLength()
+        public void TC013_InvalidFullName_ShouldBeInvalid_WhenExceedsMaxLength()
         {
             // Arrange
             var userDto = new UserCreateDto
@@ -307,7 +326,7 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
 
       
         [Test]
-        public void TC013_UserCreateDto_ShouldBeValid_WithEmptyOptionalFields()
+        public void TC014_UserCreateDto_ShouldBeValid_WithEmptyOptionalFields()
         {
             var userDto = new UserCreateDto
             {
@@ -329,6 +348,46 @@ namespace NaviriaAPI.Tests.DTOs.CreateDTOs
             Assert.That(isValid, Is.True);
             Assert.That(results, Is.Empty);
         }
+
+        [Test]
+        public void TC015_InvalidFutureMessage_ShouldBeInvalid_WhenTooLong()
+        {
+            var dto = new UserCreateDto
+            {
+                FullName = "Oleg Vasylenko",
+                Nickname = "olegv",
+                Gender = "m",
+                BirthDate = new DateTime(1988, 11, 23),
+                Email = "oleg.v@example.com",
+                Password = "Password1",
+                FutureMessage = new string('a', 151)
+            };
+            var results = new List<ValidationResult>();
+            var context = new ValidationContext(dto);
+            var isValid = Validator.TryValidateObject(dto, context, results, true);
+            Assert.That(isValid, Is.False);
+        }
+
+        [Test]
+        public void TC016_InvalidFutureMessage_ShouldBeInvalid_WhenContainsInvalidCharacters()
+        {
+            var dto = new UserCreateDto
+            {
+                FullName = "Dmytro P.",
+                Nickname = "dmytro777",
+                Gender = "m",
+                BirthDate = new DateTime(2000, 7, 17),
+                Email = "d.p@example.com",
+                Password = "Passw0rd!",
+                FutureMessage = "Stay strong! #hope" // #
+            };
+            var results = new List<ValidationResult>();
+            var context = new ValidationContext(dto);
+            var isValid = Validator.TryValidateObject(dto, context, results, true);
+            Assert.That(isValid, Is.False);
+            Assert.That(results.Any(r => r.ErrorMessage.Contains("FutureMessage contains invalid characters.")), Is.True);
+        }
+
 
     }
 }

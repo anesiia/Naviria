@@ -4,9 +4,9 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
-using NaviriaAPI.Services.User;
+using NaviriaAPI.IServices.ICleanupServices;
 using NUnit.Framework;
-
+using NaviriaAPI.Services.CleanupServices;
 
 namespace NaviriaAPI.Tests.Services.User
 {
@@ -39,7 +39,7 @@ namespace NaviriaAPI.Tests.Services.User
                 _notificationRepositoryMock.Object,
                 _friendRequestRepositoryMock.Object,
                 _assistantChatRepositoryMock.Object,
-                _loggerMock.Object,
+             
                 _taskRepositoryMock.Object
             );
         }

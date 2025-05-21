@@ -36,7 +36,7 @@ namespace NaviriaAPI.Tests.DTOs.FeaturesDTOs
             var dto = new AssistantChatMessageDto
             {
                 UserId = "user-123",
-                Message = "" // too short == required error
+                Message = "" 
             };
 
             var results = ValidateDto(dto);

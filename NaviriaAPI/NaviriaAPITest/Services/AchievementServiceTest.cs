@@ -7,6 +7,7 @@ using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.Services;
+using NaviriaAPI.IServices.IUserServices;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System.Collections.Generic;

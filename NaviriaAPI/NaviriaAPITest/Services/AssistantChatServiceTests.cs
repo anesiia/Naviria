@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.Services;
 using Microsoft.Extensions.Configuration;
 using NaviriaAPI.IServices.ISecurityService;
