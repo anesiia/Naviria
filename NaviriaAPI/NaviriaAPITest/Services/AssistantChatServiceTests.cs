@@ -26,6 +26,9 @@ namespace NaviriaAPI.Tests.Services
         private Mock<ILogger<AssistantChatService>> _mockLogger;
         private Mock<IUserService> _mockUserService;
         private Mock<IMessageSecurityService> _mockMessageSecurityService;
+        private Mock<IFolderService> _mockFolderService;
+        private Mock<ITaskService> _mockTaskService;
+        private Mock<ICategoryService> _mockCategoryService;
         private AssistantChatService _service;
 
         [SetUp]
@@ -35,6 +38,10 @@ namespace NaviriaAPI.Tests.Services
             _mockLogger = new Mock<ILogger<AssistantChatService>>();
             _mockUserService = new Mock<IUserService>();
             _mockMessageSecurityService = new Mock<IMessageSecurityService>();
+            _mockFolderService = new Mock<IFolderService>();
+            _mockTaskService = new Mock<ITaskService>();
+            _mockCategoryService = new Mock<ICategoryService>();
+
 
             var mockConfig = new Mock<IConfiguration>();
             mockConfig.Setup(c => c["OpenAIKey"]).Returns("fake-api-key");
@@ -43,8 +50,11 @@ namespace NaviriaAPI.Tests.Services
                 _mockChatRepository.Object,
                 mockConfig.Object,
                 _mockLogger.Object,
+                _mockFolderService.Object,
                 _mockUserService.Object,
-                _mockMessageSecurityService.Object
+                _mockTaskService.Object,
+                _mockMessageSecurityService.Object,
+                _mockCategoryService.Object
             );
         }
 
