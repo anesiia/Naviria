@@ -12,6 +12,7 @@ using NaviriaAPI.Services.AchievementStrategies;
 using NaviriaAPI.Services.EmbeddedServices;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.Services.CleanupServices;
+using NaviriaAPI.IServices.ICleanupServices;
 
 namespace NaviriaAPI.DependencyInjection
 {
@@ -53,6 +54,8 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<IAchievementGranter, AchievementGranter>();
 
             services.AddScoped<IUserCleanupService, UserCleanupService>();
+            services.AddScoped<ICategoryCleanupService, CategoryCleanupService>();
+
             services.AddScoped<ISupportService, SupportService>();
             services.AddScoped<IUserSearchService, UserSearchService>();
 

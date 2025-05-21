@@ -48,6 +48,12 @@ namespace NaviriaAPI.Repositories
             await _tasks.DeleteManyAsync(filter);
         }
 
+        public async Task DeleteManyByCategoryIdAsync(string categoryId)
+        {
+            var filter = Builders<TaskEntity>.Filter.Eq(t => t.CategoryId, categoryId);
+            await _tasks.DeleteManyAsync(filter);
+        }
+
         public async Task<IEnumerable<TaskEntity>> GetTasksWithDeadlineOnDateAsync(DateTime deadlineDate)
         {
             var from = deadlineDate.Date;
@@ -69,5 +75,6 @@ namespace NaviriaAPI.Repositories
             var objectIds = await cursor.ToListAsync();
             return objectIds.Select(x => x.ToString()).ToList();
         }
+    
     }
 }
