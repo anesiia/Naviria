@@ -42,14 +42,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dyplomproject.data.remote.ApiService
 import com.example.dyplomproject.data.remote.AuthRepository
 import com.example.dyplomproject.data.remote.UserRepository
 import com.example.dyplomproject.data.utils.DataStoreManager
-import com.example.dyplomproject.data.utils.RetrofitInstance
 import com.example.dyplomproject.ui.components.FriendRequestsScreen
 import com.example.dyplomproject.ui.screen.FriendsScreen
+import com.example.dyplomproject.ui.screen.ProfileScreen
 import com.example.dyplomproject.ui.screen.RegistrationScreen
 import com.example.dyplomproject.ui.screen.StatisticsScreen
 import com.example.dyplomproject.ui.screen.TaskScreen
@@ -87,7 +86,8 @@ class MainActivity : ComponentActivity() {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://10.0.2.2:7172/")//.baseUrl("https://192.168.1.7:7172/")
+            //.baseUrl("http://10.0.2.2:5186/") //Mariam's URL//.baseUrl("https://192.168.1.7:7172/")
+            .baseUrl("https://10.0.2.2:7172/") //Lisa's URL //.baseUrl("https://192.168.1.7:7172/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -155,7 +155,7 @@ fun MainScaffold(
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
-        topBar = { CustomTopAppBar(navController) },
+        topBar = { NaviriaTopAppBar(navController) },
         bottomBar = {
             BottomNavigation (
                 backgroundColor = Color(0xFFFF8F01),
@@ -205,7 +205,7 @@ fun MainScaffold(
 }
 
 @Composable
-fun CustomTopAppBar(navController: NavController) {
+fun NaviriaTopAppBar(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -298,14 +298,14 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
                     userId?.let {
                         FriendsScreen(navController, it, padding)
                         //} ?: Text("Loading user info...")
-                        } ?:Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(padding),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("Завантаження інформації...")
-                        }
+                    } ?: Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Завантаження інформації...")
+                    }
                 }
             }
             composable("statistics") {
@@ -333,19 +333,33 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
                     }
                 }
             }
+            composable("profile") {
+                MainScaffold(navController) { padding ->
+                    userId?.let {
+                        ProfileScreen(navController, it, padding)
+                    } ?: Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Завантаження інформації...")
+                    }
+                }
+            }
         }
     }
 }
 
-//object Routes {
-//    const val SPLASH = "splash_screen"
-//    const val LOGIN = "login_screen"
-//    const val HOME = "home_screen"
-//    const val REGISTER = "register_screen"
-//    const val PROFILE_SCREEN = "profile_screen"
-//    const val SETTINGS_SCREEN = "settings_screen"
-//    const val DETAIL_SCREEN = "detail_screen"
-//}
+object Routes {
+    const val SPLASH = "splash_screen"
+    const val LOGIN = "login_screen"
+    const val HOME = "home_screen"
+    const val REGISTER = "register_screen"
+    const val PROFILE_SCREEN = "profile_screen"
+    const val SETTINGS_SCREEN = "settings_screen"
+    const val DETAIL_SCREEN = "detail_screen"
+}
 //
 //@Composable
 //fun MyApp() {

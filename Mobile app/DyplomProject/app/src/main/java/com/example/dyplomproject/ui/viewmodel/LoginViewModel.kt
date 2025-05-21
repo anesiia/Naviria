@@ -73,8 +73,9 @@ class LoginViewModel(
         }
 
         launchDataLoad {
-            //val result = authRepository.login(LoginRequest(state.email, state.password))
-            val result = authRepository.login(LoginRequest("elison@gmail.com", "Eli78@son"))
+            val result = authRepository.login(LoginRequest(state.email, state.password))
+            //val result = authRepository.login(LoginRequest("elison@gmail.com", "Eli78@son"))
+            //val result = authRepository.login(LoginRequest("alexander.davis@example.com", "Alex1234"))
             result.onSuccess { response ->
                 val token = response.token
                 authViewModel.onLoginSuccess(token)

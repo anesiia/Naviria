@@ -1,5 +1,6 @@
 package com.example.dyplomproject.data.remote
 
+import android.util.Log
 import com.example.dyplomproject.mappers.toUiModel
 import com.example.dyplomproject.ui.viewmodel.IncomingRequestUiModel
 import com.example.dyplomproject.ui.viewmodel.UserShortUiModel
@@ -19,6 +20,7 @@ class UserRepository(private val apiService: ApiService) {
             val response = apiService.getFriends(userId)
             if (response.isSuccessful) {
                 val body = response.body() ?: emptyList()
+                Log.d("GET FRIENDS", "FRIENDS: ${body}")
                 Result.success(body.map { it.toUiModel() })
 //                val mapped = body.map {
 //                    UserUiModel(
@@ -106,7 +108,8 @@ class UserRepository(private val apiService: ApiService) {
     suspend fun searchAllUsers(userId: String, query: String): Result<List<UserShortUiModel>> {
         return Result.success(emptyList())
     }
-//    suspend fun searchAllUsers(query: String): Result<List<UserShortUiModel>> {
+
+    //    suspend fun searchAllUsers(query: String): Result<List<UserShortUiModel>> {
 //        return try {
 //            val response = api.searchAllUsers(query)
 //            if (response.isSuccessful) {
@@ -118,5 +121,63 @@ class UserRepository(private val apiService: ApiService) {
 //            Result.failure(e)
 //        }
 //    }
+    suspend fun getUserInfo(userId: String): Result<User> {
+        return try {
+            val response = apiService.getUserInfo(userId)
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+                    Log.d("GET USER INFO", "USER: ${userId}")
+                    Result.success(body)
+                } else {
+                    Log.d("GET USER INFO", "USER: NULLLLLLL")
+                    Result.failure(Exception("Response body is null"))
 
+                }
+            } else {
+                Result.failure(Exception("Failed: ${response.code()} ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getCompleteUserAchievements(userId: String): Result<List<UserAchievement>> {
+        return try {
+            val userResponse = apiService.getUserInfo(userId)
+            val achievementsResponse = apiService.getUserAchievements(userId)
+
+            if (userResponse.isSuccessful && achievementsResponse.isSuccessful) {
+                val user = userResponse.body()
+                val achievementMetaList = achievementsResponse.body()
+
+                if (user != null && achievementMetaList != null) {
+                    val userAchievementsMap = user.achievements.associateBy { it.achievementId }
+
+                    val completeAchievements = achievementMetaList.map { meta ->
+                        val userAchievement = userAchievementsMap[meta.id]
+                        UserAchievement(
+                            id = meta.id,
+                            name = meta.name,
+                            description = meta.description,
+                            points = meta.points,
+                            isRare = meta.isRare,
+                            receivedAt = userAchievement?.receivedAt,
+                            isPointsReceived = userAchievement?.isPointsReceived
+                        )
+                    }
+
+                    Result.success(completeAchievements)
+                } else {
+                    Result.failure(Exception("Response body is null"))
+                }
+            } else {
+                Result.failure(
+                    Exception("API call failed: ${userResponse.code()} / ${achievementsResponse.code()}")
+                )
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

@@ -28,13 +28,16 @@ interface ApiService {
     suspend fun register(@Body registerRequest: UserRegistrationRequest) : Response<AuthResponse>
 
     @GET("/api/Friends/{id}")
-    suspend fun getFriends(@Path("id") id: String): Response<List<FriendShortDto>>
+    suspend fun getFriends(@Path("id") id: String): Response<List<User>>//<FriendShortDto>>
 
     @GET("/api/User")
     suspend fun getAllUsers() : Response<List<User>>
 
     @GET("/api/User/{id}")
     suspend fun getUserInfo(@Path("id") id: String): Response<User>
+
+    @GET("/api/Achievements/user/{id}")
+    suspend fun getUserAchievements(@Path("id") id: String): Response<List<UserAchievementDto>>
 
     @DELETE("/api/User/{id}")
     suspend fun deleteUser(@Path("id") id: String): Response<Unit>
