@@ -8,7 +8,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace NaviriaAPI.Tests
+namespace NaviriaAPI.Tests.helper
 {
     // Testable Cloudinary Service для мокання
     public class TestableCloudinaryService : ICloudinaryService

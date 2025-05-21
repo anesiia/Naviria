@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using NaviriaAPI.DTOs.UpdateDTOs;
 
-namespace NaviriaAPI.Tests.Services
+namespace NaviriaAPI.Tests.Services.Validation
 {
     [TestFixture]
     public class UserValidationServiceTests
@@ -35,7 +35,7 @@ namespace NaviriaAPI.Tests.Services
             };
 
             _mockUserRepository.Setup(repo => repo.GetByEmailAsync(dto.Email))
-                               .ReturnsAsync(new NaviriaAPI.Entities.UserEntity());  // Simulate existing user with this email
+                               .ReturnsAsync(new Entities.UserEntity());  // Simulate existing user with this email
 
             // Act & Assert
             var exception = Assert.ThrowsAsync<ArgumentException>(() => _validationService.ValidateAsync(dto));
@@ -54,7 +54,7 @@ namespace NaviriaAPI.Tests.Services
             };
 
             _mockUserRepository.Setup(repo => repo.GetByNicknameAsync(dto.Nickname))
-                               .ReturnsAsync(new NaviriaAPI.Entities.UserEntity());  // Simulate existing user with this nickname
+                               .ReturnsAsync(new Entities.UserEntity());  // Simulate existing user with this nickname
 
             // Act & Assert
             var exception = Assert.ThrowsAsync<ArgumentException>(() => _validationService.ValidateAsync(dto));
@@ -125,10 +125,10 @@ namespace NaviriaAPI.Tests.Services
             };
 
             _mockUserRepository.Setup(repo => repo.GetByEmailAsync(dto.Email))
-                               .ReturnsAsync((NaviriaAPI.Entities.UserEntity?)null);  // Simulate email does not exist
+                               .ReturnsAsync((Entities.UserEntity?)null);  // Simulate email does not exist
 
             _mockUserRepository.Setup(repo => repo.GetByNicknameAsync(dto.Nickname))
-                               .ReturnsAsync((NaviriaAPI.Entities.UserEntity?)null);  // Simulate nickname does not exist
+                               .ReturnsAsync((Entities.UserEntity?)null);  // Simulate nickname does not exist
 
             // Act & Assert
             Assert.DoesNotThrowAsync(() => _validationService.ValidateAsync(dto));
