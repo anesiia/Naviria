@@ -1,5 +1,5 @@
 ﻿using NaviriaAPI.IRepositories;
-using NaviriaAPI.IServices.IUserServices;
+using NaviriaAPI.IServices.ICleanupServices;
 
 namespace NaviriaAPI.Services.CleanupServices
 {
@@ -31,6 +31,7 @@ namespace NaviriaAPI.Services.CleanupServices
             _taskRepository = taskRepository;
         }
 
+        /// <inheritdoc />
         public async Task<bool> DeleteUserAndRelatedDataAsync(string userId)
         {
             var user = await _userRepository.GetByIdAsync(userId);

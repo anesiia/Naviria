@@ -12,6 +12,7 @@ using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.Helpers;
 using NaviriaAPI.IServices.IUserServices;
+using NaviriaAPI.IServices.ICleanupServices;
 
 namespace NaviriaAPI.Services.User
 {

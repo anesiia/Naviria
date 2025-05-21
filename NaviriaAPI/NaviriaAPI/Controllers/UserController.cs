@@ -3,9 +3,9 @@ using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Exceptions;
 using Microsoft.AspNetCore.Authorization;
-using NaviriaAPI.Helpers;
 using NaviriaAPI.IServices.IEmbeddedServices;
 using NaviriaAPI.IServices.IUserServices;
+using NaviriaAPI.IServices.ICleanupServices;
 
 namespace NaviriaAPI.Controllers
 {
