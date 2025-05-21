@@ -13,16 +13,13 @@ namespace NaviriaAPI.Services.CleanupServices
     {
         private readonly IFolderRepository _folderRepository;
         private readonly ITaskRepository _taskRepository;
-        private readonly ILogger<FolderCleanupService> _logger;
 
         public FolderCleanupService(
             IFolderRepository folderRepository,
-            ITaskRepository taskRepository,
-            ILogger<FolderCleanupService> logger)
+            ITaskRepository taskRepository)
         {
             _folderRepository = folderRepository;
             _taskRepository = taskRepository;
-            _logger = logger;
         }
 
         /// <inheritdoc />
