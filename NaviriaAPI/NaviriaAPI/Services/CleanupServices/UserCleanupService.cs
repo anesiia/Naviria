@@ -1,7 +1,7 @@
 ﻿using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices.IUserServices;
 
-namespace NaviriaAPI.Services.User
+namespace NaviriaAPI.Services.CleanupServices
 {
     public class UserCleanupService : IUserCleanupService
     {

@@ -11,6 +11,7 @@ using NaviriaAPI.Services.User;
 using NaviriaAPI.Services.AchievementStrategies;
 using NaviriaAPI.Services.EmbeddedServices;
 using NaviriaAPI.IServices.IUserServices;
+using NaviriaAPI.Services.CleanupServices;
 
 namespace NaviriaAPI.DependencyInjection
 {
