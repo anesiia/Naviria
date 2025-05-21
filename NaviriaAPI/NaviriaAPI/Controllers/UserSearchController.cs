@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NaviriaAPI.IServices.IUserServices;
-using NaviriaAPI.Exceptions;
-using Microsoft.Extensions.Logging;
 using NaviriaAPI.IServices;
 using NaviriaAPI.DTOs;
+using NaviriaAPI.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace NaviriaAPI.Controllers
 {
+    /// <summary>
+    /// Provides search and filtering operations for users, friends, and incoming friend requests
+    /// by optional category and/or name (nickname or full name).
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class UserSearchController : ControllerBase
@@ -23,119 +26,116 @@ namespace NaviriaAPI.Controllers
         }
 
         /// <summary>
-        /// Get all users who have at least one task in the given category.
+        /// Search all users in the system (excluding the current user) with optional filtering by category and/or nickname or full name.
         /// </summary>
-        /// <param name="categoryId">The ID of the category.</param>
+        /// <param name="userId">The ID of the user performing the search (excluded from results).</param>
+        /// <param name="categoryId">Optional category ID to filter users who have at least one task in this category.</param>
+        /// <param name="query">Optional search string for nickname or full name.</param>
         /// <returns>
-        /// 200: List of users (<see cref="UserDto"/>) who have at least one task in this category.<br/>
-        /// 400: If the categoryId is not provided.<br/>
-        /// 404: If no users are found for this category.<br/>
+        /// 200: List of users (<see cref="UserDto"/>) matching the criteria.<br/>
+        /// 400: If <paramref name="userId"/> is not provided.<br/>
+        /// 404: If no users found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
-        [HttpGet("users/by-category/{categoryId}")]
-        public async Task<IActionResult> GetUsersByTaskCategory(string categoryId)
+        [HttpGet("search-all")]
+        public async Task<IActionResult> SearchAllUsers(
+            [FromQuery] string userId,
+            [FromQuery] string? categoryId = null,
+            [FromQuery] string? query = null)
         {
-            if (string.IsNullOrWhiteSpace(categoryId))
-                return BadRequest("Category ID is required.");
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest("User ID is required.");
 
             try
             {
-                var result = await _userSearchService.GetUsersByTaskCategoryAsync(categoryId);
-                return Ok(result);
+                var users = await _userSearchService.SearchAllUsersAsync(userId, categoryId, query);
+                return Ok(users);
             }
             catch (NotFoundException ex)
             {
-                _logger.LogWarning(ex, "No users found for category {CategoryId}", categoryId);
+                _logger.LogWarning(ex, "No users found for search-all for user {UserId}", userId);
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to search users by category {CategoryId}", categoryId);
-                return StatusCode(500, "Failed to search users by category.");
+                _logger.LogError(ex, "Failed to search all users for user {UserId}", userId);
+                return StatusCode(500, "Failed to search users.");
             }
         }
 
         /// <summary>
-        /// Search among potential friends by nickname.
+        /// Search among the user's friends with optional filtering by category and/or nickname or full name.
         /// </summary>
-        /// <param name="userId">The ID of the user who is searching.</param>
-        /// <param name="query">Search string (part of nickname).</param>
+        /// <param name="userId">The ID of the user performing the search.</param>
+        /// <param name="categoryId">Optional category ID to filter friends who have at least one task in this category.</param>
+        /// <param name="query">Optional search string for nickname or full name.</param>
         /// <returns>
-        /// 200: List of users (<see cref="UserDto"/>) matching the query and not being friends with the user.<br/>
-        /// 400: If userId or query is not provided.<br/>
+        /// 200: List of friends (<see cref="UserDto"/>) matching the criteria.<br/>
+        /// 400: If <paramref name="userId"/> is not provided.<br/>
+        /// 404: If no friends found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
-        [HttpGet("potential-friends/search")]
-        public async Task<IActionResult> SearchPotentialFriendsByNickname([FromQuery] string userId, [FromQuery] string query)
+        [HttpGet("search-friends")]
+        public async Task<IActionResult> SearchFriends(
+            [FromQuery] string userId,
+            [FromQuery] string? categoryId = null,
+            [FromQuery] string? query = null)
         {
-            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(query))
-                return BadRequest("User ID and search query are required.");
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest("User ID is required.");
 
             try
             {
-                var result = await _userSearchService.SearchPotentialFriendsByNicknameAsync(userId, query);
-                return Ok(result);
+                var friends = await _userSearchService.SearchFriendsAsync(userId, categoryId, query);
+                return Ok(friends);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex, "No friends found for user {UserId}", userId);
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to search potential friends by nickname for user {UserId}", userId);
-                return StatusCode(500, "Failed to search potential friends by nickname.");
+                _logger.LogError(ex, "Failed to search friends for user {UserId}", userId);
+                return StatusCode(500, "Failed to search friends.");
             }
         }
 
         /// <summary>
-        /// Search among user's friends by nickname.
+        /// Search among users who have sent a friend request to the user, with optional filtering by category and/or nickname or full name.
         /// </summary>
-        /// <param name="userId">The ID of the user who is searching.</param>
-        /// <param name="query">Search string (part of nickname).</param>
+        /// <param name="userId">The ID of the user performing the search.</param>
+        /// <param name="categoryId">Optional category ID to filter users who have at least one task in this category.</param>
+        /// <param name="query">Optional search string for nickname or full name.</param>
         /// <returns>
-        /// 200: List of user's friends (<see cref="UserDto"/>) matching the query.<br/>
-        /// 400: If userId or query is not provided.<br/>
+        /// 200: List of users (<see cref="UserDto"/>) who sent friend requests and match the criteria.<br/>
+        /// 400: If <paramref name="userId"/> is not provided.<br/>
+        /// 404: If no incoming friend requests found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
-        [HttpGet("friends/search")]
-        public async Task<IActionResult> SearchFriendsByNickname([FromQuery] string userId, [FromQuery] string query)
+        [HttpGet("search-incoming-requests")]
+        public async Task<IActionResult> SearchIncomingFriendRequests(
+            [FromQuery] string userId,
+            [FromQuery] string? categoryId = null,
+            [FromQuery] string? query = null)
         {
-            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(query))
-                return BadRequest("User ID and search query are required.");
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest("User ID is required.");
 
             try
             {
-                var result = await _userSearchService.SearchFriendsByNicknameAsync(userId, query);
-                return Ok(result);
+                var requests = await _userSearchService.SearchIncomingFriendRequestsAsync(userId, categoryId, query);
+                return Ok(requests);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex, "No incoming requests found for user {UserId}", userId);
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to search friends by nickname for user {UserId}", userId);
-                return StatusCode(500, "Failed to search friends by nickname.");
-            }
-        }
-
-        /// <summary>
-        /// Search among users who sent a friend request to the specified user, by nickname.
-        /// </summary>
-        /// <param name="userId">The ID of the user who received friend requests.</param>
-        /// <param name="query">Search string (part of nickname).</param>
-        /// <returns>
-        /// 200: List of users (<see cref="UserDto"/>) who sent a friend request and match the query.<br/>
-        /// 400: If userId or query is not provided.<br/>
-        /// 500: If an internal error occurs.
-        /// </returns>
-        [HttpGet("incoming-requests/search")]
-        public async Task<IActionResult> SearchIncomingFriendRequestsByNickname([FromQuery] string userId, [FromQuery] string query)
-        {
-            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(query))
-                return BadRequest("User ID and search query are required.");
-
-            try
-            {
-                var result = await _userSearchService.SearchIncomingFriendRequestsByNicknameAsync(userId, query);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to search incoming friend requests by nickname for user {UserId}", userId);
-                return StatusCode(500, "Failed to search incoming friend requests by nickname.");
+                _logger.LogError(ex, "Failed to search incoming requests for user {UserId}", userId);
+                return StatusCode(500, "Failed to search incoming friend requests.");
             }
         }
     }

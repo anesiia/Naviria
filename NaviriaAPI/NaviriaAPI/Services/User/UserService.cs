@@ -13,6 +13,7 @@ using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.Helpers;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.IServices.ICleanupServices;
+using NaviriaAPI.Repositories;
 
 namespace NaviriaAPI.Services.User
 {
@@ -61,6 +62,12 @@ namespace NaviriaAPI.Services.User
         /// </summary>
         public async Task<string> CreateAsync(UserCreateDto userDto)
         {
+            var userByEmail = await _userRepository.GetByEmailAsync(userDto.Email);
+            var userByNickname = await _userRepository.GetByNicknameAsync(userDto.Nickname);
+
+            if (userByEmail != null || userByNickname != null)
+                throw new AlreadyExistException($"User with such email or nickname already exist");
+
             await _validation.ValidateAsync(userDto);
 
             var entity = UserMapper.ToEntity(userDto);
