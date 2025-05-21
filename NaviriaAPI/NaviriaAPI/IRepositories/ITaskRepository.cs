@@ -67,5 +67,12 @@ namespace NaviriaAPI.IRepositories
         /// <param name="categoryId">The identifier of the category.</param>
         /// <returns>A list of user IDs.</returns>
         Task<List<string>> GetUserIdsByCategoryAsync(string categoryId);
+
+        /// <summary>
+        /// Deletes all tasks belonging to a specific folder.
+        /// </summary>
+        /// <param name="folderId">The ID of the folder.</param>
+        Task DeleteManyByFolderIdAsync(string folderId);
+
     }
 }

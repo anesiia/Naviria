@@ -54,6 +54,12 @@ namespace NaviriaAPI.Repositories
             await _tasks.DeleteManyAsync(filter);
         }
 
+        public async Task DeleteManyByFolderIdAsync(string folderId)
+        {
+            var filter = Builders<TaskEntity>.Filter.Eq(t => t.FolderId, folderId);
+            await _tasks.DeleteManyAsync(filter);
+        }
+
         public async Task<IEnumerable<TaskEntity>> GetTasksWithDeadlineOnDateAsync(DateTime deadlineDate)
         {
             var from = deadlineDate.Date;
