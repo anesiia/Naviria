@@ -1,5 +1,4 @@
 ﻿using NaviriaAPI.DTOs;
-using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.Exceptions;
@@ -9,126 +8,132 @@ using NaviriaAPI.IServices.IUserServices;
 
 namespace NaviriaAPI.Services.User
 {
-    /// <summary>
-    /// Provides advanced user search operations, including search by task category,
-    /// nickname among friends, potential friends, and incoming friend requests.
-    /// </summary>
     public class UserSearchService : IUserSearchService
     {
         private readonly ITaskRepository _taskRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IUserService _userService;
         private readonly IFriendRequestRepository _friendRequestRepository;
+        private readonly IUserService _userService;
         private readonly IMessageSecurityService _messageSecurityService;
 
         public UserSearchService(
             ITaskRepository taskRepository,
             IUserRepository userRepository,
-            IUserService userService,
             IFriendRequestRepository friendRequestRepository,
+            IUserService userService,
             IMessageSecurityService messageSecurityService)
         {
             _taskRepository = taskRepository;
             _userRepository = userRepository;
-            _userService = userService;
             _friendRequestRepository = friendRequestRepository;
+            _userService = userService;
             _messageSecurityService = messageSecurityService;
         }
 
-        /// <summary>
-        /// Gets all users who have at least one task in the given category.
-        /// </summary>
-        /// <param name="categoryId">The ID of the category.</param>
-        /// <returns>List of users (UserDto) who have at least one task in this category.</returns>
-        /// <exception cref="NotFoundException">Thrown if no users are found for this category.</exception>
-        public async Task<List<UserDto>> GetUsersByTaskCategoryAsync(string categoryId)
+        /// <inheritdoc />
+        public async Task<List<UserDto>> SearchAllUsersAsync(string userId, string? categoryId, string? query)
         {
-            var userIds = await _taskRepository.GetUserIdsByCategoryAsync(categoryId);
+            return await UniversalSearchAsync(
+                userId,
+                categoryId,
+                query,
+                excludeSelf: true,
+                onlyFriends: false,
+                onlyIncomingRequests: false);
+        }
 
-            if (userIds == null || !userIds.Any())
-                throw new NotFoundException("No users found for this category.");
+        /// <inheritdoc />
+        public async Task<List<UserDto>> SearchFriendsAsync(string userId, string? categoryId, string? query)
+        {
+            return await UniversalSearchAsync(
+                userId,
+                categoryId,
+                query,
+                excludeSelf: true,
+                onlyFriends: true,
+                onlyIncomingRequests: false);
+        }
 
-            var usersByCategory = await _userRepository.GetManyByIdsAsync(userIds);
-
-            var userDtos = usersByCategory.Select(UserMapper.ToDto).ToList();
-
-            return userDtos;
+        /// <inheritdoc />
+        public async Task<List<UserDto>> SearchIncomingFriendRequestsAsync(string userId, string? categoryId, string? query)
+        {
+            return await UniversalSearchAsync(
+                userId,
+                categoryId,
+                query,
+                excludeSelf: true,
+                onlyFriends: false,
+                onlyIncomingRequests: true);
         }
 
         /// <summary>
-        /// Searches potential friends (users who are not yet friends and not the user themself) by nickname.
+        /// Universal filtering logic for searching users, friends, or incoming requests
+        /// based on category, name, and filter options.
         /// </summary>
-        /// <param name="userId">ID of the user performing the search.</param>
-        /// <param name="query">Search string (part of nickname).</param>
-        /// <returns>List of UserDto matching the search among potential friends.</returns>
-        public async Task<IEnumerable<UserDto>> SearchPotentialFriendsByNicknameAsync(string userId, string query)
+        private async Task<List<UserDto>> UniversalSearchAsync(
+            string userId,
+            string? categoryId,
+            string? query,
+            bool excludeSelf,
+            bool onlyFriends,
+            bool onlyIncomingRequests)
         {
-            var user = await _userService.GetUserOrThrowAsync(userId);
-            var excludedIds = user.Friends.Select(f => f.UserId).Append(userId).ToHashSet();
+            // Validate the query to prevent dangerous content
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                _messageSecurityService.Validate(userId, query);
+            }
 
-            _messageSecurityService.Validate(userId, query);
+            // Get the list of relevant user IDs
+            IEnumerable<string> userIds;
 
-            var allUsers = await _userRepository.GetAllAsync();
+            if (!string.IsNullOrWhiteSpace(categoryId))
+            {
+                userIds = await _taskRepository.GetUserIdsByCategoryAsync(categoryId);
+            }
+            else
+            {
+                userIds = (await _userRepository.GetAllAsync()).Select(u => u.Id);
+            }
 
-            var matched = allUsers
-                .Where(u => !excludedIds.Contains(u.Id))
-                .Where(u => u.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(u => u.Nickname)
-                .Select(UserMapper.ToDto);
+            // Exclude the current user if requested
+            if (excludeSelf)
+                userIds = userIds.Where(id => id != userId);
 
-            return matched;
-        }
+            // Filter to only friends if requested
+            if (onlyFriends)
+            {
+                var me = await _userService.GetUserOrThrowAsync(userId);
+                var friendIds = me.Friends.Select(f => f.UserId).ToHashSet();
+                userIds = userIds.Where(id => friendIds.Contains(id));
+            }
 
-        /// <summary>
-        /// Searches friends of the user by nickname.
-        /// </summary>
-        /// <param name="userId">ID of the user whose friends to search.</param>
-        /// <param name="query">Search string (part of nickname).</param>
-        /// <returns>List of UserDto matching the search among user's friends.</returns>
-        public async Task<IEnumerable<UserDto>> SearchFriendsByNicknameAsync(string userId, string query)
-        {
-            var user = await _userService.GetUserOrThrowAsync(userId);
-            var friendIds = user.Friends.Select(f => f.UserId).ToList();
+            // Filter to only users who sent a friend request, if requested
+            if (onlyIncomingRequests)
+            {
+                var incomingRequests = await _friendRequestRepository.GetByReceiverIdAsync(userId);
+                var requesterIds = incomingRequests.Select(r => r.FromUserId).ToHashSet();
+                userIds = userIds.Where(id => requesterIds.Contains(id));
+            }
 
-            _messageSecurityService.Validate(userId, query);
+            // Load user entities by filtered IDs
+            var users = await _userRepository.GetManyByIdsAsync(userIds.Distinct());
 
-            if (!friendIds.Any())
-                return Enumerable.Empty<UserDto>();
+            // Filter users by query (nickname or full name) if provided
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                users = users.Where(u =>
+                    (!string.IsNullOrWhiteSpace(u.Nickname) && u.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrWhiteSpace(u.FullName) && u.FullName.Contains(query, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+            }
 
-            var friends = await _userRepository.GetManyByIdsAsync(friendIds);
+            var dtos = users.Select(UserMapper.ToDto).ToList();
 
-            var matched = friends
-                .Where(u => u.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(u => u.Nickname)
-                .Select(UserMapper.ToDto);
+            if (!dtos.Any())
+                throw new NotFoundException("No users found.");
 
-            return matched;
-        }
-
-        /// <summary>
-        /// Searches among users who sent a friend request to the specified user, by nickname.
-        /// </summary>
-        /// <param name="userId">The ID of the user who received the friend requests.</param>
-        /// <param name="query">Search string (part of nickname).</param>
-        /// <returns>List of UserDto matching the search among users who sent incoming friend requests.</returns>
-        public async Task<IEnumerable<UserDto>> SearchIncomingFriendRequestsByNicknameAsync(string userId, string query)
-        {
-            _messageSecurityService.Validate(userId, query);
-
-            var incomingRequests = await _friendRequestRepository.GetByReceiverIdAsync(userId);
-            var requesterIds = incomingRequests.Select(r => r.FromUserId).Distinct().ToList();
-
-            if (!requesterIds.Any())
-                return Enumerable.Empty<UserDto>();
-
-            var requesters = await _userRepository.GetManyByIdsAsync(requesterIds);
-
-            var matched = requesters
-                .Where(u => u.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(u => u.Nickname)
-                .Select(UserMapper.ToDto);
-
-            return matched;
+            return dtos;
         }
     }
 }
