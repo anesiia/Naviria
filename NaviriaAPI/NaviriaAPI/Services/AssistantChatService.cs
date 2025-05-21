@@ -10,6 +10,7 @@ using NaviriaAPI.Helpers;
 using NaviriaAPI.Constants;
 using OpenAI.Chat;
 using NaviriaAPI.IServices.ISecurityService;
+using NaviriaAPI.IServices.IUserServices;
 
 namespace NaviriaAPI.Services
 {

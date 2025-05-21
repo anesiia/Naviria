@@ -7,6 +7,7 @@ using NaviriaAPI.IServices.ICloudStorage;
 using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.IServices.ISecurityService;
+using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.Services.Validation;
 
@@ -90,28 +91,6 @@ namespace NaviriaAPI.Services.User
 
             return matched;
         }
-
-        public async Task<IEnumerable<UserDto>> SearchFriendsByNicknameAsync(string userId, string query)
-        {
-            var user = await _userService.GetUserOrThrowAsync(userId);
-            var friendIds = user.Friends.Select(f => f.UserId).ToList();
-
-            _messageSecurityService.Validate(userId, query);
-
-            if (!friendIds.Any())
-                return Enumerable.Empty<UserDto>();
-
-            var friends = await _userRepository.GetManyByIdsAsync(friendIds);
-
-            var matchedFriends = friends
-                .Where(f => f.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(f => f.Nickname)
-                .Select(UserMapper.ToDto);
-
-            return matchedFriends;
-        }
-
-
 
     }
 }

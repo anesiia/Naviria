@@ -16,6 +16,7 @@ using NaviriaAPI.DependencyInjection;
 using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.Services.SecurityServices;
 using NaviriaAPI.Services.BackupService;
+using NaviriaAPI.Services.BackgroungServices;
 
 namespace NaviriaAPI.Extentions
 {
@@ -39,6 +40,7 @@ namespace NaviriaAPI.Extentions
             services.AddScoped<UserValidationService>();
             services.AddSingleton<BackupManager>();
             services.AddHostedService<WeeklyBackupService>();
+            services.AddHostedService<DeadlineNotificationService>();
 
 
             services.Configure<JwtOptions>(config.GetSection("Jwt"));

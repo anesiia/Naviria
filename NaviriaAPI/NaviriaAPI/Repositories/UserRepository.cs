@@ -67,5 +67,17 @@ namespace NaviriaAPI.Repositories
             return await _users.Find(filter).ToListAsync();
         }
 
+        public async Task RemoveAchievementFromAllUsersAsync(string achievementId)
+        {
+            var filter = Builders<UserEntity>.Filter.ElemMatch(
+                u => u.Achievements, a => a.AchievementId == achievementId);
+
+            var update = Builders<UserEntity>.Update.PullFilter(
+                u => u.Achievements, a => a.AchievementId == achievementId);
+
+            await _users.UpdateManyAsync(filter, update);
+        }
+
+
     }
 }

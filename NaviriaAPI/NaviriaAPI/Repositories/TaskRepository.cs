@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using NaviriaAPI.Data;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
@@ -46,5 +47,40 @@ namespace NaviriaAPI.Repositories
             var filter = Builders<TaskEntity>.Filter.Eq(t => t.UserId, userId);
             await _tasks.DeleteManyAsync(filter);
         }
+
+        public async Task DeleteManyByCategoryIdAsync(string categoryId)
+        {
+            var filter = Builders<TaskEntity>.Filter.Eq(t => t.CategoryId, categoryId);
+            await _tasks.DeleteManyAsync(filter);
+        }
+
+        public async Task DeleteManyByFolderIdAsync(string folderId)
+        {
+            var filter = Builders<TaskEntity>.Filter.Eq(t => t.FolderId, folderId);
+            await _tasks.DeleteManyAsync(filter);
+        }
+
+        public async Task<IEnumerable<TaskEntity>> GetTasksWithDeadlineOnDateAsync(DateTime deadlineDate)
+        {
+            var from = deadlineDate.Date;
+            var to = from.AddDays(1);
+
+            var filter = Builders<TaskEntity>.Filter.And(
+                Builders<TaskEntity>.Filter.Eq(t => t.IsDeadlineOn, true),
+                Builders<TaskEntity>.Filter.Eq(t => t.IsNotificationsOn, true),
+                Builders<TaskEntity>.Filter.Gte(t => t.Deadline, from),
+                Builders<TaskEntity>.Filter.Lt(t => t.Deadline, to)
+            );
+
+            return await _tasks.Find(filter).ToListAsync();
+        }
+        public async Task<List<string>> GetUserIdsByCategoryAsync(string categoryId)
+        {
+            var filter = Builders<TaskEntity>.Filter.Eq(t => t.CategoryId, categoryId);
+            var cursor = await _tasks.DistinctAsync<ObjectId>("user_id", filter);
+            var objectIds = await cursor.ToListAsync();
+            return objectIds.Select(x => x.ToString()).ToList();
+        }
+    
     }
 }
