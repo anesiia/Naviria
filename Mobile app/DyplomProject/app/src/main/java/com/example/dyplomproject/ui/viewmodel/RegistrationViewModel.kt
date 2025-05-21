@@ -70,6 +70,7 @@ class RegistrationViewModel(private val authRepository: AuthRepository) : ViewMo
 //            else -> null
 //        }
 //    }
+
     fun validateAndUpdateErrors(state: RegistrationUiState): Boolean {
         val errors = mutableMapOf<String, String>()
         val emailRegex = Regex("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")
@@ -79,8 +80,10 @@ class RegistrationViewModel(private val authRepository: AuthRepository) : ViewMo
         if (fullName.isBlank()) {
             errors["fullName"] = "Ім’я та прізвище обов’язкове."
         } else {
-            if (!fullName.contains(" ")) {
-                errors["fullName"] = "Ім’я та прізвище повинні містити пробіл."
+            val nameRegex = Regex("^[a-zA-Zа-яА-ЯіІїЇєЄґҐ]+\\s[a-zA-Zа-яА-ЯіІїЇєЄґҐ]+$")
+
+            if (!fullName.matches(nameRegex)) {
+                errors["fullName"] = "Ім’я та прізвище повинні складатися лише з літер і містити пробіл між ними."
             } else if (fullName.length < 3 || fullName.length > 20) {
                 errors["fullName"] = "Ім’я та прізвище повинні бути від 3 до 20 символів."
             }
@@ -101,8 +104,19 @@ class RegistrationViewModel(private val authRepository: AuthRepository) : ViewMo
             errors["email"] = "Неправильний формат пошти."
         }
 
-        if (state.password.length < 8) {
-            errors["password"] = "Пароль має містити щонайменше 8 символів."
+        if (state.password.isBlank()) {
+            errors["password"] = "Пароль обов’язковий."
+        } else {
+            if (state.password.length < 8) {
+                errors["password"] = "Пароль має містити щонайменше 8 символів, здається ви забули пароль трошки"
+            } else {
+                if (!state.password.any { it.isLowerCase() }) {
+                    errors["password"] = "Пароль повинен містити хоча б одну велику літеру, здається ви забули пароль трошки"
+                }
+                if (!state.password.any { it.isUpperCase() }) {
+                    errors["password"] = "Пароль повинен містити хоча б одну маленьку літеру, здається ви забули пароль трошки"
+                }
+            }
         }
 
         if (state.password != state.confirmPassword) {
@@ -144,22 +158,20 @@ class RegistrationViewModel(private val authRepository: AuthRepository) : ViewMo
         if (!validateAndUpdateErrors(state)) {
             return
         }
-//        val formattedDate = formatBirthDateToUtcString(state.birthDate)
         val request = UserRegistrationRequest(
             fullName = state.fullName,
             nickname = state.nickname,
             gender = state.gender,
-            //birthDate = formattedDate,
             birthDate = formatBirthDateToUtcString(state.birthDate!!),
             email = state.email,
             password = state.password,
             futureMessage = state.futureMessage
         )
 
-//        TEST DATA
+        //TEST DATA
 //        val requestTest = UserRegistrationRequest(
 //            fullName = "Мартін Час",
-//            nickname = "timetraveler",
+//            nickname = "bogdan17",
 //            gender = "m",
 //            birthDate = formatBirthDateToUtcString(LocalDate.parse("1993-04-22")!!),
 //            email = "martin.time@gmail.com",
@@ -175,7 +187,8 @@ class RegistrationViewModel(private val authRepository: AuthRepository) : ViewMo
                 authViewModel.onLoginSuccess(token)
                 Log.d("HTTPS", "Login successful: $token")
             }.onFailure { exception ->
-                showError("Login failed: ${exception.message}")
+                //showError("Login failed: ${exception.message}")
+                showError(exception.message ?: "Сталася невідома помилка")
                 Log.e("HTTPS", "Login error", exception)
             }
         }

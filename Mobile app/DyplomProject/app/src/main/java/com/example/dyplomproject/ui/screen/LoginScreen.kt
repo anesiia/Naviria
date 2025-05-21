@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -18,6 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,10 +44,6 @@ fun LoginScreen(
     loginViewModel: LoginViewModel,
     authViewModel: AuthViewModel
 ) {
-//    val email by loginViewModel.email.collectAsState()
-//    val password by loginViewModel.password.collectAsState()
-//    val error by loginViewModel.error.collectAsState()
-//    val rememberMe by viewModel.rememberMe.collectAsState()
     val uiState by loginViewModel.uiState.collectAsState()
     LaunchedEffect(authViewModel.isAuthenticated.collectAsState().value) {
         if (authViewModel.isAuthenticated.value) {
@@ -52,7 +52,7 @@ fun LoginScreen(
             }
         }
     }
-
+    var passwordVisible by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -91,23 +91,10 @@ fun LoginScreen(
                 placeholder = "*******",
                 fieldKey = "password",
                 fieldErrors = uiState.fieldErrors,
-                isPassword = true
+                isPassword = true,
+                isPasswordVisible = passwordVisible,
+                onPasswordToggleClick = { passwordVisible = !passwordVisible }
             )
-//            OutlinedTextField(
-//                value = uiState.email,
-//                onValueChange = loginViewModel::onEmailChanged,
-//                label = { Text("Email") },
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//            Spacer(modifier = Modifier.height(16.dp))
-//            OutlinedTextField(
-//                value = uiState.password,
-//                onValueChange = loginViewModel::onPasswordChanged,
-//                label = { Text("Password") },
-//                modifier = Modifier.fillMaxWidth(),
-//                visualTransformation = PasswordVisualTransformation()
-//            )
-//            Spacer(modifier = Modifier.height(16.dp))
             Spacer(modifier = Modifier.height(24.dp))
 
             PrimaryButton(
@@ -121,16 +108,22 @@ fun LoginScreen(
             Text(
                 text = "Вперше з нами? Зареєструватися!",
                 //color = Color.Blue,
-                modifier = Modifier.clickable {
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .clickable {
                     //viewModel.onForgotPasswordClicked()
                     navController.navigate("register")
                 }
             )
+
             if (uiState.isLoading) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
 
             if (uiState.error != null) {
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = uiState.error ?: "",
                     color = Color.Red,
@@ -198,10 +191,8 @@ fun LoginScreenPreview() {
                 //color = Color.Blue,
                 modifier = Modifier.clickable {
                     //viewModel.onForgotPasswordClicked()
-
                 }
             )
         }
     }
-
 }

@@ -23,19 +23,6 @@ data class LoginUiState(
 class LoginViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
-
-//    private val _email = MutableStateFlow("")
-//    val email: StateFlow<String> = _email
-//    private val _password = MutableStateFlow("")
-//    val password: StateFlow<String> = _password
-//    private val _error = MutableStateFlow<String?>(null)
-//    val error: StateFlow<String?> = _error
-//    fun onEmailChanged(newEmail: String) {
-//        _uiState.value = _uiState.value.copy(email = newEmail)
-//    }
-//    fun onPasswordChanged(newPassword: String) {
-//        _uiState.value = _uiState.value.copy(password = newPassword)
-//    }
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()//good practice to use asStateFlow()
 
@@ -51,11 +38,6 @@ class LoginViewModel(
 
     fun onLoginClicked(authViewModel: AuthViewModel) {
         val state = _uiState.value
-//        val error = validate(state)
-//        if (error != null) {
-//            showError(error)
-//            return
-//        }
         if (!validateAndUpdateErrors(state)) {
             return
         }
@@ -69,15 +51,12 @@ class LoginViewModel(
                 authViewModel.onLoginSuccess(token)
                 Log.d("HTTPS", "Login successful: $token")
             }.onFailure { exception ->
-                showError("Login failed: ${exception.message}")
+                showError(exception.message ?: "Сталася невідома помилка")
+                //showError("Login failed: ${exception.message}")
                 Log.e("HTTPS", "Login error", exception)
             }
         }
     }
-
-//    private fun validate(state: LoginUiState): String? {
-//        return null
-//    }
 
     fun validateAndUpdateErrors(state: LoginUiState): Boolean {
         val errors = mutableMapOf<String, String>()
@@ -103,9 +82,6 @@ class LoginViewModel(
                 }
             }
         }
-//        if (state.password.length < 8) {
-//            errors["password"] = "Пароль має містити щонайменше 8 символів."
-//        }
         _uiState.update { it.copy(fieldErrors = errors) }
         return errors.isEmpty()
     }

@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -62,8 +64,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
-
-
 @Composable
 fun RegistrationScreen(
     navController: NavHostController,
@@ -90,6 +90,8 @@ fun RegistrationScreen(
         }
     }
     val scrollState = rememberScrollState()
+    var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -119,37 +121,14 @@ fun RegistrationScreen(
                     .verticalScroll(scrollState)
                     .padding(end = 8.dp)
             ) {
-
-
-//                Text(
-//                    color = Color(0xFF1B2B3A),
-//                    text = "Ім’я та прізвище",
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                TextField(
-//                    value = uiState.fullName,
-//                    onValueChange = { registrationViewModel.updateField("fullName", it) },
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .clip(
-//                            RoundedCornerShape(10.dp)
-//                        ),
-//                    placeholder = {
-//                        Text("Микита Шевченко", style = additionalTypography.exampleText)
-//                    },
-//                    colors = primaryTextFieldColors()
-//                )
-//                Spacer(modifier = Modifier.height(16.dp))
-
                 LabeledTextField(
                     label = "Ім’я та прізвище",
                     value = uiState.fullName,
                     onValueChange = { registrationViewModel.updateField("fullName", it) },
                     placeholder = "Микита Шевченко",
                     fieldKey = "fullName",
-                    fieldErrors = uiState.fieldErrors
+                    fieldErrors = uiState.fieldErrors,
+                    isSingleLine = false
                 )
 
                 Text(
@@ -162,6 +141,7 @@ fun RegistrationScreen(
                     Log.d("RegistrationScreen", "Selected Date: $it")
                     registrationViewModel.updateBirthDate(it)
                 })
+
                 uiState.fieldErrors["birthDate"]?.let { error ->
                     Text(
                         text = error,
@@ -193,48 +173,6 @@ fun RegistrationScreen(
                     fieldErrors = uiState.fieldErrors
                 )
 
-//                Text(
-//                    color = Color(0xFF1B2B3A),
-//                    text = "Пароль",
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                TextField(
-//                    value = uiState.password,
-//                    onValueChange = { registrationViewModel.updateField("password", it) },
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .clip(
-//                            RoundedCornerShape(10.dp)
-//                        ),
-//                    placeholder = {
-//                        Text("*******", style = additionalTypography.exampleText)
-//                    },
-//                    colors = primaryTextFieldColors(),
-//                    visualTransformation = PasswordVisualTransformation()
-//                )
-//                Text(
-//                    color = Color(0xFF1B2B3A),
-//                    text = "Підтвердіть пароль",
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))
-//                TextField(
-//                    value = uiState.confirmPassword,
-//                    onValueChange = { registrationViewModel.updateField("confirmPassword", it) },
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .clip(
-//                            RoundedCornerShape(10.dp)
-//                        ),
-//                    placeholder = {
-//                        Text("*******", style = additionalTypography.exampleText)
-//                    },
-//                    colors = primaryTextFieldColors(),
-//                    visualTransformation = PasswordVisualTransformation()
-//                )
-//                Spacer(modifier = Modifier.height(16.dp))
                 LabeledTextField(
                     label = "Пароль",
                     value = uiState.password,
@@ -242,7 +180,9 @@ fun RegistrationScreen(
                     placeholder = "*******",
                     fieldKey = "password",
                     fieldErrors = uiState.fieldErrors,
-                    isPassword = true
+                    isPassword = true,
+                    isPasswordVisible = passwordVisible,
+                    onPasswordToggleClick = { passwordVisible = !passwordVisible }
                 )
 
                 LabeledTextField(
@@ -252,7 +192,9 @@ fun RegistrationScreen(
                     placeholder = "*******",
                     fieldKey = "confirmPassword",
                     fieldErrors = uiState.fieldErrors,
-                    isPassword = true
+                    isPassword = true,
+                    isPasswordVisible = confirmPasswordVisible,
+                    onPasswordToggleClick = { confirmPasswordVisible = !confirmPasswordVisible }
                 )
 
                 LabeledTextField(
@@ -264,27 +206,6 @@ fun RegistrationScreen(
                     fieldErrors = uiState.fieldErrors
                 )
 
-//                Text(
-//                    color = Color(0xFF1B2B3A),
-//                    text = "Придумай нікнейм",
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                TextField(
-//                    value = uiState.nickname,
-//                    onValueChange = { registrationViewModel.updateField("nickname", it) },
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .clip(
-//                            RoundedCornerShape(10.dp)
-//                        ),
-//                    placeholder = {
-//                        Text("Нікнейм", style = additionalTypography.exampleText)
-//                    },
-//                    colors = primaryTextFieldColors()
-//                )
-//                Spacer(modifier = Modifier.height(16.dp))
                 LabeledTextField(
                     label = "Придумай смс для Себе майбутнього!",
                     value = uiState.futureMessage,
@@ -293,28 +214,8 @@ fun RegistrationScreen(
                     fieldKey = "futureMessage",
                     fieldErrors = uiState.fieldErrors
                 )
-//                Text(
-//                    color = Color(0xFF1B2B3A),
-//                    text = "Придумай смс для Себе майбутнього!",
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                TextField(
-//                    value = uiState.futureMessage,
-//                    onValueChange = { registrationViewModel.updateField("futureMessage", it) },
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .clip(
-//                            RoundedCornerShape(10.dp)
-//                        ),
-//                    placeholder = {
-//                        Text("Текст смс", style = additionalTypography.exampleText)
-//                    },
-//                    colors = primaryTextFieldColors()
-//                )
-//                Spacer(modifier = Modifier.height(16.dp))
             }
+
             Spacer(modifier = Modifier.height(16.dp))
             PrimaryButton(
                 imageRes = R.drawable.default_button_bg,
@@ -332,11 +233,14 @@ fun RegistrationScreen(
                 }
             )
 
-//            if (uiState.isLoading) {
-//                CircularProgressIndicator()
-//            }
+            if (uiState.isSubmitting) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
 
             if (uiState.error != null) {
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = uiState.error ?: "",
                     color = Color.Red,
