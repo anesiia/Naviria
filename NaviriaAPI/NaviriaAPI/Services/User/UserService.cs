@@ -65,8 +65,11 @@ namespace NaviriaAPI.Services.User
             var userByEmail = await _userRepository.GetByEmailAsync(userDto.Email);
             var userByNickname = await _userRepository.GetByNicknameAsync(userDto.Nickname);
 
-            if (userByEmail != null || userByNickname != null)
-                throw new AlreadyExistException($"User with such email or nickname already exist");
+            if (userByEmail != null)
+                throw new EmailAlreadyExistException("User with such email already exists");
+            if (userByNickname != null)
+                throw new NicknameAlreadyExistException("User with such nickname already exists");
+
 
             await _validation.ValidateAsync(userDto);
 
