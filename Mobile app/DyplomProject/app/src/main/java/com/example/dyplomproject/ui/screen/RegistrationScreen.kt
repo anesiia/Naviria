@@ -5,10 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,25 +14,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.RadioButtonChecked
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,33 +34,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dyplomproject.R
 import androidx.navigation.NavHostController
-import com.example.dyplomproject.AuthViewModelFactory
 import com.example.dyplomproject.data.remote.AuthRepository
-import com.example.dyplomproject.data.remote.UserRepository
-import com.example.dyplomproject.data.utils.DataStoreManager
 import com.example.dyplomproject.data.utils.RetrofitInstance
 import com.example.dyplomproject.ui.components.GenderRadioButton
 import com.example.dyplomproject.ui.components.PrimaryButton
 import com.example.dyplomproject.ui.components.UnderlinedText
 import com.example.dyplomproject.ui.theme.DyplomProjectTheme
-import com.example.dyplomproject.ui.theme.addtionalTypography
+import com.example.dyplomproject.ui.theme.additionalTypography
 import com.example.dyplomproject.ui.viewmodel.AuthViewModel
-import com.example.dyplomproject.ui.viewmodel.FriendsViewModel
 import com.example.dyplomproject.ui.viewmodel.RegistrationViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -122,6 +104,7 @@ fun RegistrationScreen(
             }
         }
     }
+    val scrollState = rememberScrollState()
 
 
     Box(
@@ -145,164 +128,174 @@ fun RegistrationScreen(
                 text = "Реєстрація", useGradient = false
             )
             Spacer(modifier = Modifier.height(32.dp))
-
-            Text(
-                color = Color(0xFF1B2B3A),
-                text = "Ім’я та прізвище",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-
-            TextField(
-                value = uiState.fullName,
-                onValueChange = { registrationViewModel.updateField("fullName", it) },
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(
-                        RoundedCornerShape(10.dp)
-                    ),
-                placeholder = {
-                    Text("Микита Шевченко", style = addtionalTypography.exampleText)
-                },
-                colors = primaryTextFieldColors()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+                    .heightIn(max = 400.dp)  // limit max height as needed
+                    .verticalScroll(scrollState)
+                    .padding(end = 8.dp)
+            ) {
 
-            Text(
-                color = Color(0xFF1B2B3A),
-                text = "Дата народження",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.height(4.dp))
 
-            BirthDatePickerField(selectedDate = uiState.birthDate, onDateSelected = {
-                Log.d("RegistrationScreen", "Selected Date: $it")
-                registrationViewModel.updateBirthDate(it)
-            })
-            Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    color = Color(0xFF1B2B3A),
+                    text = "Ім’я та прізвище",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
 
-            Text("Стать", style = MaterialTheme.typography.bodyLarge)
-            Spacer(modifier = Modifier.height(4.dp))
+                TextField(
+                    value = uiState.fullName,
+                    onValueChange = { registrationViewModel.updateField("fullName", it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(
+                            RoundedCornerShape(10.dp)
+                        ),
+                    placeholder = {
+                        Text("Микита Шевченко", style = additionalTypography.exampleText)
+                    },
+                    colors = primaryTextFieldColors()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                GenderRadioButton(selected = uiState.gender == "f",
-                    text = "Жінка",
-                    onClick = { registrationViewModel.updateField("gender", "f") })
-                Spacer(modifier = Modifier.width(64.dp))
-                GenderRadioButton(selected = uiState.gender == "m",
-                    text = "Чоловік",
-                    onClick = { registrationViewModel.updateField("gender", "m") })
+                Text(
+                    color = Color(0xFF1B2B3A),
+                    text = "Дата народження",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                BirthDatePickerField(selectedDate = uiState.birthDate, onDateSelected = {
+                    Log.d("RegistrationScreen", "Selected Date: $it")
+                    registrationViewModel.updateBirthDate(it)
+                })
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text("Стать", style = MaterialTheme.typography.bodyLarge)
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    GenderRadioButton(selected = uiState.gender == "f",
+                        text = "Жінка",
+                        onClick = { registrationViewModel.updateField("gender", "f") })
+                    Spacer(modifier = Modifier.width(64.dp))
+                    GenderRadioButton(selected = uiState.gender == "m",
+                        text = "Чоловік",
+                        onClick = { registrationViewModel.updateField("gender", "m") })
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    color = Color(0xFF1B2B3A),
+                    text = "Пошта",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                TextField(
+                    value = uiState.email,
+                    onValueChange = { registrationViewModel.updateField("email", it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(
+                            RoundedCornerShape(10.dp)
+                        ),
+                    placeholder = {
+                        Text("example@gmail.com", style = additionalTypography.exampleText)
+                    },
+                    colors = primaryTextFieldColors()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    color = Color(0xFF1B2B3A),
+                    text = "Пароль",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                TextField(
+                    value = uiState.password,
+                    onValueChange = { registrationViewModel.updateField("password", it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(
+                            RoundedCornerShape(10.dp)
+                        ),
+                    placeholder = {
+                        Text("*******", style = additionalTypography.exampleText)
+                    },
+                    colors = primaryTextFieldColors(),
+                    visualTransformation = PasswordVisualTransformation()
+                )
+
+                Text(
+                    color = Color(0xFF1B2B3A),
+                    text = "Підтвердіть пароль",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                TextField(
+                    value = uiState.confirmPassword,
+                    onValueChange = { registrationViewModel.updateField("confirmPassword", it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(
+                            RoundedCornerShape(10.dp)
+                        ),
+                    placeholder = {
+                        Text("*******", style = additionalTypography.exampleText)
+                    },
+                    colors = primaryTextFieldColors(),
+                    visualTransformation = PasswordVisualTransformation()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    color = Color(0xFF1B2B3A),
+                    text = "Придумай нікнейм",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                TextField(
+                    value = uiState.nickname,
+                    onValueChange = { registrationViewModel.updateField("nickname", it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(
+                            RoundedCornerShape(10.dp)
+                        ),
+                    placeholder = {
+                        Text("Нікнейм", style = additionalTypography.exampleText)
+                    },
+                    colors = primaryTextFieldColors()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    color = Color(0xFF1B2B3A),
+                    text = "Придумай смс для Себе майбутнього!",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                TextField(
+                    value = uiState.futureMessage,
+                    onValueChange = { registrationViewModel.updateField("futureMessage", it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(
+                            RoundedCornerShape(10.dp)
+                        ),
+                    placeholder = {
+                        Text("Текст смс", style = additionalTypography.exampleText)
+                    },
+                    colors = primaryTextFieldColors()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
             }
-            Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                color = Color(0xFF1B2B3A),
-                text = "Пошта",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            TextField(
-                value = uiState.email,
-                onValueChange = { registrationViewModel.updateField("email", it) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(
-                        RoundedCornerShape(10.dp)
-                    ),
-                placeholder = {
-                    Text("example@gmail.com", style = addtionalTypography.exampleText)
-                },
-                colors = primaryTextFieldColors()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                color = Color(0xFF1B2B3A),
-                text = "Пароль",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-
-            TextField(
-                value = uiState.password,
-                onValueChange = { registrationViewModel.updateField("password", it) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(
-                        RoundedCornerShape(10.dp)
-                    ),
-                placeholder = {
-                    Text("*******", style = addtionalTypography.exampleText)
-                },
-                colors = primaryTextFieldColors(),
-                visualTransformation = PasswordVisualTransformation()
-            )
-
-            Text(
-                color = Color(0xFF1B2B3A),
-                text = "Підтвердіть пароль",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            TextField(
-                value = uiState.confirmPassword,
-                onValueChange = { registrationViewModel.updateField("confirmPassword", it) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(
-                        RoundedCornerShape(10.dp)
-                    ),
-                placeholder = {
-                    Text("*******", style = addtionalTypography.exampleText)
-                },
-                colors = primaryTextFieldColors(),
-                visualTransformation = PasswordVisualTransformation()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                color = Color(0xFF1B2B3A),
-                text = "Придумай нікнейм",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-
-            TextField(
-                value = uiState.nickname,
-                onValueChange = { registrationViewModel.updateField("nickname", it) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(
-                        RoundedCornerShape(10.dp)
-                    ),
-                placeholder = {
-                    Text("Нікнейм", style = addtionalTypography.exampleText)
-                },
-                colors = primaryTextFieldColors()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                color = Color(0xFF1B2B3A),
-                text = "Придумай смс для Себе майбутнього!",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-
-            TextField(
-                value = uiState.futureMessage,
-                onValueChange = { registrationViewModel.updateField("futureMessage", it) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(
-                        RoundedCornerShape(10.dp)
-                    ),
-                placeholder = {
-                    Text("Текст смс", style = addtionalTypography.exampleText)
-                },
-                colors = primaryTextFieldColors()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
 
             PrimaryButton(
                 imageRes = R.drawable.default_button_bg,
@@ -408,7 +401,7 @@ fun RegistrationScreenPreview() {
                         RoundedCornerShape(10.dp)
                     ),
                 placeholder = {
-                    Text("Микита Шевченко", style = addtionalTypography.exampleText)
+                    Text("Микита Шевченко", style = additionalTypography.exampleText)
                 },
                 colors = textFieldColor
             )
@@ -449,7 +442,7 @@ fun RegistrationScreenPreview() {
                         RoundedCornerShape(10.dp)
                     ),
                 placeholder = {
-                    Text("example@gmail.com", style = addtionalTypography.exampleText)
+                    Text("example@gmail.com", style = additionalTypography.exampleText)
                 },
                 colors = textFieldColor
             )
@@ -470,7 +463,7 @@ fun RegistrationScreenPreview() {
                         RoundedCornerShape(10.dp)
                     ),
                 placeholder = {
-                    Text("*******", style = addtionalTypography.exampleText)
+                    Text("*******", style = additionalTypography.exampleText)
                 },
                 colors = textFieldColor,
                 visualTransformation = PasswordVisualTransformation()
@@ -493,12 +486,12 @@ fun RegistrationScreenPreview() {
                         RoundedCornerShape(10.dp)
                     ),
                 placeholder = {
-                    Text("*******", style = addtionalTypography.exampleText)
+                    Text("*******", style = additionalTypography.exampleText)
                 },
                 colors = textFieldColor,
                 visualTransformation = PasswordVisualTransformation()
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             PrimaryButton(imageRes = R.drawable.default_button_bg,
                 text = "Зареєструватися",
@@ -565,7 +558,7 @@ fun BirthDatePickerField(
                 showDatePicker(context, selectedDate, onDateSelected)
             },
         placeholder = {
-            Text("дд/мм/рррр", style = addtionalTypography.exampleText)
+            Text("дд/мм/рррр", style = additionalTypography.exampleText)
         },
         readOnly = true,
         enabled = false,
