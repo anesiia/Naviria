@@ -70,7 +70,7 @@ namespace NaviriaAPI.Mappings
                 Achievements = new List<UserAchievementInfo>(),
                 Friends = new List<UserFriendInfo>(),
                 FutureMessage = dto.FutureMessage ?? string.Empty,
-                Points = 0,
+                Points = 60,
                 LevelInfo = new LevelProgressInfo(),
                 RegitseredAt = DateTime.UtcNow,
                 LastSeen = DateTime.UtcNow,
