@@ -3,6 +3,7 @@ using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.Exceptions;
 using Microsoft.Extensions.Logging;
 using NaviriaAPI.IServices;
+using NaviriaAPI.DTOs;
 
 namespace NaviriaAPI.Controllers
 {
@@ -25,7 +26,12 @@ namespace NaviriaAPI.Controllers
         /// Get all users who have at least one task in the given category.
         /// </summary>
         /// <param name="categoryId">The ID of the category.</param>
-        /// <returns>List of users (UserDto) who have at least one task in this category.</returns>
+        /// <returns>
+        /// 200: List of users (<see cref="UserDto"/>) who have at least one task in this category.<br/>
+        /// 400: If the categoryId is not provided.<br/>
+        /// 404: If no users are found for this category.<br/>
+        /// 500: If an internal error occurs.
+        /// </returns>
         [HttpGet("users/by-category/{categoryId}")]
         public async Task<IActionResult> GetUsersByTaskCategory(string categoryId)
         {
@@ -54,7 +60,11 @@ namespace NaviriaAPI.Controllers
         /// </summary>
         /// <param name="userId">The ID of the user who is searching.</param>
         /// <param name="query">Search string (part of nickname).</param>
-        /// <returns>List of users (UserDto) matching the query and not being friends with the user.</returns>
+        /// <returns>
+        /// 200: List of users (<see cref="UserDto"/>) matching the query and not being friends with the user.<br/>
+        /// 400: If userId or query is not provided.<br/>
+        /// 500: If an internal error occurs.
+        /// </returns>
         [HttpGet("potential-friends/search")]
         public async Task<IActionResult> SearchPotentialFriendsByNickname([FromQuery] string userId, [FromQuery] string query)
         {
@@ -78,7 +88,11 @@ namespace NaviriaAPI.Controllers
         /// </summary>
         /// <param name="userId">The ID of the user who is searching.</param>
         /// <param name="query">Search string (part of nickname).</param>
-        /// <returns>List of user's friends (UserDto) matching the query.</returns>
+        /// <returns>
+        /// 200: List of user's friends (<see cref="UserDto"/>) matching the query.<br/>
+        /// 400: If userId or query is not provided.<br/>
+        /// 500: If an internal error occurs.
+        /// </returns>
         [HttpGet("friends/search")]
         public async Task<IActionResult> SearchFriendsByNickname([FromQuery] string userId, [FromQuery] string query)
         {
@@ -102,7 +116,11 @@ namespace NaviriaAPI.Controllers
         /// </summary>
         /// <param name="userId">The ID of the user who received friend requests.</param>
         /// <param name="query">Search string (part of nickname).</param>
-        /// <returns>List of users (UserDto) who sent a friend request and match the query.</returns>
+        /// <returns>
+        /// 200: List of users (<see cref="UserDto"/>) who sent a friend request and match the query.<br/>
+        /// 400: If userId or query is not provided.<br/>
+        /// 500: If an internal error occurs.
+        /// </returns>
         [HttpGet("incoming-requests/search")]
         public async Task<IActionResult> SearchIncomingFriendRequestsByNickname([FromQuery] string userId, [FromQuery] string query)
         {
