@@ -94,5 +94,23 @@ namespace NaviriaAPI.Tests.Services.GamificationLogic
             // Assert
             _granterMock.Verify(g => g.GiveAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
         }
+
+        [Test]
+        public async Task TC004_EvaluateAsync_NoStrategyFound_DoesNothing()
+        {
+            // Arrange
+            var userId = "testUser";
+            var unknownTrigger = (AchievementTrigger)999; // тригер, для якого немає стратегії
+
+            // Act
+            await _achievementManager.EvaluateAsync(userId, unknownTrigger);
+
+            // Assert
+            _granterMock.Verify(g => g.GiveAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _loggerMock.VerifyNoOtherCalls(); // якщо немає логування у цьому випадку
+        }
+
+        
+
     }
 }

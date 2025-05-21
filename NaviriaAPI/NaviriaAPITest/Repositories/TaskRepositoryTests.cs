@@ -122,6 +122,89 @@ namespace NaviriaAPI.Tests.Repositories
             Assert.That(remaining, Is.Empty);
         }
 
+        [Test]
+        public async Task TC007_DeleteManyByCategoryIdAsync_ShouldDeleteTasksByCategory()
+        {
+            var categoryId = ObjectId.GenerateNewId().ToString();
+            var task1 = GetSampleTask(_testUserId);
+            task1.CategoryId = categoryId;
+            var task2 = GetSampleTask(_testUserId);
+            task2.CategoryId = categoryId;
+            var otherTask = GetSampleTask(_testUserId);
+
+            await Collection.InsertManyAsync(new[] { task1, task2, otherTask });
+
+            await _taskRepository.DeleteManyByCategoryIdAsync(categoryId);
+
+            var remaining = await Collection.Find(t => t.CategoryId == categoryId).ToListAsync();
+
+            Assert.That(remaining, Is.Empty);
+        }
+
+        [Test]
+        public async Task TC008_DeleteManyByFolderIdAsync_ShouldDeleteTasksByFolder()
+        {
+            var folderId = ObjectId.GenerateNewId().ToString();
+            var task1 = GetSampleTask(_testUserId);
+            task1.FolderId = folderId;
+            var task2 = GetSampleTask(_testUserId);
+            task2.FolderId = folderId;
+            var otherTask = GetSampleTask(_testUserId);
+
+            await Collection.InsertManyAsync(new[] { task1, task2, otherTask });
+
+            await _taskRepository.DeleteManyByFolderIdAsync(folderId);
+
+            var remaining = await Collection.Find(t => t.FolderId == folderId).ToListAsync();
+
+            Assert.That(remaining, Is.Empty);
+        }
+
+        [Test]
+        public async Task TC009_GetTasksWithDeadlineOnDateAsync_ShouldReturnTasksWithDeadlineOnDate()
+        {
+            var targetDate = DateTime.UtcNow.Date;
+            var task1 = GetSampleTask(_testUserId);
+            task1.Deadline = targetDate.AddHours(10);
+            task1.IsDeadlineOn = true;
+            task1.IsNotificationsOn = true;
+
+            var task2 = GetSampleTask(_testUserId);
+            task2.Deadline = targetDate.AddDays(1);
+            task2.IsDeadlineOn = true;
+            task2.IsNotificationsOn = true;
+
+            await Collection.InsertManyAsync(new[] { task1, task2 });
+
+            var result = await _taskRepository.GetTasksWithDeadlineOnDateAsync(targetDate);
+
+            Assert.That(result, Has.Exactly(1).Items);
+            Assert.That(result.First().Id, Is.EqualTo(task1.Id));
+        }
+
+        [Test]
+        public async Task TC010_GetUserIdsByCategoryAsync_ShouldReturnDistinctUserIds()
+        {
+            var categoryId = ObjectId.GenerateNewId().ToString();
+            var userId1 = ObjectId.GenerateNewId().ToString();
+            var userId2 = ObjectId.GenerateNewId().ToString();
+
+            var task1 = GetSampleTask(userId1);
+            task1.CategoryId = categoryId;
+            var task2 = GetSampleTask(userId2);
+            task2.CategoryId = categoryId;
+            var task3 = GetSampleTask(userId1);
+            task3.CategoryId = categoryId;
+
+            await Collection.InsertManyAsync(new[] { task1, task2, task3 });
+
+            var userIds = await _taskRepository.GetUserIdsByCategoryAsync(categoryId);
+
+            Assert.That(userIds, Contains.Item(userId1));
+            Assert.That(userIds, Contains.Item(userId2));
+            Assert.That(userIds.Count, Is.EqualTo(2));
+        }
+
         private TaskEntity GetSampleTask(string userId)
         {
             return new TaskEntity

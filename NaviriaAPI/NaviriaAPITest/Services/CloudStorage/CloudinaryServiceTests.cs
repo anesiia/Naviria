@@ -10,9 +10,8 @@ using System.IO;
 using System.Text;
 using System;
 using System.Threading.Tasks;
-using NaviriaAPI.Tests;
 
-namespace NaviriaAPI.Tests.Services
+namespace NaviriaAPI.Tests.Services.CloudStorage
 {
     public class CloudinaryServiceTests
     {

@@ -9,7 +9,7 @@ using System;
 using System.Threading.Tasks;
 using NaviriaAPI.Services.AuthServices;
 
-namespace NaviriaAPI.Tests.Services
+namespace NaviriaAPI.Tests.Services.AuthServices
 {
     [TestFixture]
     public class AuthServiceTests

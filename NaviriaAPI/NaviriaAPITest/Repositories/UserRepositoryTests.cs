@@ -267,6 +267,91 @@ namespace NaviriaAPI.Tests.Repositories
             Assert.That(result, Is.True);
             Assert.That(updatedUser.Photo, Is.EqualTo(newImageUrl));
         }
+
+        [Test]
+        public async Task TC010_GetManyByIdsAsync_ShouldReturnCorrectUsers()
+        {
+            // Arrange
+            var user1 = new UserEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                Email = "user1@example.com",
+                Nickname = "user1"
+            };
+
+            var user2 = new UserEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                Email = "user2@example.com",
+                Nickname = "user2"
+            };
+
+            await _userRepository.CreateAsync(user1);
+            await _userRepository.CreateAsync(user2);
+
+            var ids = new List<string> { user1.Id, user2.Id };
+
+            // Act
+            var users = await _userRepository.GetManyByIdsAsync(ids);
+
+            // Assert
+            Assert.That(users.Count, Is.EqualTo(2));
+            Assert.That(users.Any(u => u.Id == user1.Id), Is.True);
+            Assert.That(users.Any(u => u.Id == user2.Id), Is.True);
+        }
+
+        [Test]
+        public async Task TC011_UpdateAsync_ShouldReturnFalseForNonExistentUser()
+        {
+            // Arrange
+            var user = new UserEntity
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                Email = "nonexistent@example.com",
+                Nickname = "nonexistent"
+            };
+
+            // Act
+            var result = await _userRepository.UpdateAsync(user);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public async Task TC012_DeleteAsync_ShouldReturnFalseForNonExistentUser()
+        {
+            // Arrange
+            var nonExistentId = ObjectId.GenerateNewId().ToString();
+
+            // Act
+            var result = await _userRepository.DeleteAsync(nonExistentId);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public async Task TC013_GetByEmailAsync_ShouldReturnNullForNonExistentEmail()
+        {
+            // Act
+            var user = await _userRepository.GetByEmailAsync("nonexistent@example.com");
+
+            // Assert
+            Assert.That(user, Is.Null);
+        }
+
+        [Test]
+        public async Task TC014_GetByNicknameAsync_ShouldReturnNullForNonExistentNickname()
+        {
+            // Act
+            var user = await _userRepository.GetByNicknameAsync("nonexistentNickname");
+
+            // Assert
+            Assert.That(user, Is.Null);
+        }
+
+
     }
 }
 
