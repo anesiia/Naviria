@@ -11,8 +11,8 @@ data class User(
     val password: String,
     val points: Int,
     val levelInfo: LevelInfo,
-    val friends: List<FriendShortDto>,
-    val achievements: List<Achievement>,
+    val friends: List<FriendShortDto> = emptyList(),
+    val achievements: List<Achievement> = emptyList(),
     val futureMessage: String,
     val photo: String,
     val regitseredAt: String,
@@ -37,4 +37,21 @@ data class Achievement(
 data class FriendShortDto(
     val userId: String,
     val nickname: String
+)
+
+data class UserAchievementDto(
+    val id: String,
+    val name: String,
+    val description: String,
+    val points: Int,
+    val isRare: Boolean
+)
+data class UserAchievement(
+    val id: String,
+    val name: String,
+    val description: String,
+    val points: Int,
+    val isRare: Boolean,
+    val receivedAt: String?,
+    val isPointsReceived: Boolean?
 )
