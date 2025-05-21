@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace NaviriaAPI.Configurations
 {
@@ -34,6 +35,11 @@ namespace NaviriaAPI.Configurations
                     new string[] {}
                 }
             });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+
             });
         }
     }

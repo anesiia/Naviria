@@ -10,6 +10,9 @@ using NaviriaAPI.Services.GamificationLogic;
 using NaviriaAPI.Services.User;
 using NaviriaAPI.Services.AchievementStrategies;
 using NaviriaAPI.Services.EmbeddedServices;
+using NaviriaAPI.IServices.IUserServices;
+using NaviriaAPI.Services.CleanupServices;
+using NaviriaAPI.IServices.ICleanupServices;
 
 namespace NaviriaAPI.DependencyInjection
 {
@@ -50,8 +53,12 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<IAchievementStrategy, RegistrationAchievementStrategy>();
             services.AddScoped<IAchievementGranter, AchievementGranter>();
 
+            services.AddScoped<IAchievementCleanupService, AchievementCleanupService>();
             services.AddScoped<IUserCleanupService, UserCleanupService>();
+            services.AddScoped<ICategoryCleanupService, CategoryCleanupService>();
+
             services.AddScoped<ISupportService, SupportService>();
+            services.AddScoped<IUserSearchService, UserSearchService>();
 
         }
     }

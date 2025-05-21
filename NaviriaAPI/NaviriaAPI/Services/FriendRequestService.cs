@@ -7,6 +7,7 @@ using NaviriaAPI.Mappings;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Exceptions;
+using NaviriaAPI.IServices.IUserServices;
 
 namespace NaviriaAPI.Services
 {
