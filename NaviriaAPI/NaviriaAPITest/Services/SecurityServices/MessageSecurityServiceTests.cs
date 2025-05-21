@@ -88,5 +88,35 @@ namespace NaviriaAPI.Tests.Services.SecurityServices
             var ex = Assert.Throws<SuspiciousMessageException>(() => _service.Validate(userId, message));
             Assert.That(ex.Message, Does.Contain("suspicious content"));
         }
+
+        [Test]
+        public void TC007_Validate_DangerousMessage_LogsWarning()
+        {
+            var userId = "userLogTest";
+            var message = "DROP TABLE users";
+
+            Assert.Throws<SuspiciousMessageException>(() => _service.Validate(userId, message));
+
+            _loggerMock.Verify(
+                x => x.Log(
+                    LogLevel.Warning,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Suspicious message blocked")),
+                    null,
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+        }
+
+        [Test]
+        public void TC008_Validate_MessageContainingPartialKeyword_ThrowsIfContainsKeyword()
+        {
+            var userId = "userPartialKeyword";
+            var message = "description"; // містить 'script'
+
+            var ex = Assert.Throws<SuspiciousMessageException>(() => _service.Validate(userId, message));
+            Assert.That(ex.Message, Does.Contain("suspicious content"));
+        }
+
+
     }
 }

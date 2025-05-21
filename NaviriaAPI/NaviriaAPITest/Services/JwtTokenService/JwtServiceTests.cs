@@ -8,7 +8,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using NaviriaAPI.Options;
 
-namespace NaviriaAPI.Tests.Services
+namespace NaviriaAPI.Tests.Services.JwtTokenService
 {
     [TestFixture]
     public class JwtServiceTests
