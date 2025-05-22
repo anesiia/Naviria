@@ -61,6 +61,7 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<IFolderCleanupService, FolderCleanupService>();
 
             services.AddScoped<ISupportService, SupportService>();
+            services.AddScoped<ISubtaskService, SubtaskService>();
             services.AddScoped<IUserSearchService, UserSearchService>();
             services.AddScoped<ITaskRewardService, TaskRewardService>();
 
