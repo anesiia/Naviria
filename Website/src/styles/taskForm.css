@@ -1,0 +1,201 @@
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.task-form label {
+  font-weight: 500;
+}
+.task-form .title {
+  width: 30vw;
+  font-size: 16px;
+  color: #023047;
+  border: none;
+  border-bottom: 1px solid #023047;
+  padding: 0.5rem 0;
+}
+.task-form .description {
+  width: 30vw;
+  font-size: 14px;
+  border: none;
+  border-bottom: 1px solid #023047;
+  padding: 0.5rem 0;
+}
+.task-form .category {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+.task-form .category select {
+  border-radius: 10px;
+  background: rgba(5, 117, 173, 0.05);
+  border: none;
+  padding: 0.5rem;
+}
+.task-form .tags {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.task-form .tags .tag-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.task-form .tags .tag-wrapper .tag {
+  background-color: #f1f1f1;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+.task-form .tags .tag-wrapper .tag .remove {
+  margin-right: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.task-form .tags .tag-wrapper .tag .text {
+  color: #123c4a;
+}
+.task-form .tags .tag-wrapper .tag-input-box {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #123c4a;
+  border-radius: 12px;
+  padding: 6px 10px;
+  height: 36px;
+}
+.task-form .tags .tag-wrapper .tag-input-box .hash {
+  font-weight: bold;
+  color: #123c4a;
+  margin-right: 4px;
+}
+.task-form .tags .tag-wrapper .tag-input-box .tag-input {
+  border: none;
+  outline: none;
+  width: 100px;
+  font-size: 14px;
+  color: #123c4a;
+  background: transparent;
+}
+.task-form .tags .tag-wrapper .tag-input-box .add-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #123c4a;
+  margin-left: 8px;
+  cursor: pointer;
+}
+.task-form .toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.task-form .toggles .toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin: 10px 0;
+}
+.task-form .toggles .toggle-container input {
+  display: none;
+}
+.task-form .toggles .toggle-container .slider {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  background-color: #023047;
+  border-radius: 20px;
+  transition: background-color 0.2s ease-in-out;
+}
+.task-form .toggles .toggle-container .slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 2px;
+  left: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s ease-in-out;
+}
+.task-form .toggles .toggle-container input:checked + .slider {
+  background-color: #ff8f00;
+}
+.task-form .toggles .toggle-container input:checked + .slider::before {
+  transform: translateX(20px);
+}
+.task-form .toggles .toggle-container .label-text {
+  font-size: 14px;
+  color: #023047;
+  user-select: none;
+}
+.task-form .toggles input {
+  width: 7vw;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background: #f0f0f0;
+  font-style: italic;
+  border: none;
+}
+.task-form .toggles .date-reminder {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 12vw;
+  margin-bottom: 0.5rem;
+}
+.task-form .toggles .time-reminder {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 12vw;
+}
+.task-form .priority {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.task-form .priority select {
+  border-radius: 10px;
+  background: rgba(5, 117, 173, 0.05);
+  border: none;
+  padding: 0.5rem;
+}
+.task-form .task-type {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.task-form .task-type .types {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+.task-form .buttons {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 1rem;
+}
+.task-form .buttons .cancel {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  color: #023047;
+  border-color: #023047;
+}
+.task-form .buttons .save {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  background-color: #023047;
+  color: white;
+}

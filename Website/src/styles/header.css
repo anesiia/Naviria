@@ -5,6 +5,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  z-index: 10;
   padding: 2vh 5vw;
   background: linear-gradient(90deg, #ffd900 0%, #ff8f00 70.11%);
 }
