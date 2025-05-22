@@ -1,0 +1,176 @@
+.tasks-page {
+  display: flex;
+  justify-content: flex-start;
+  height: 100vh;
+}
+.tasks-page .side-bar {
+  display: flex;
+  flex-direction: column;
+  width: 30vw;
+  background: rgba(5, 117, 173, 0.05);
+}
+.tasks-page .side-bar .side-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  border-radius: 0px 2px 20px 20px;
+  background: #023047;
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+}
+.tasks-page .side-bar .side-header p {
+  color: white;
+}
+.tasks-page .side-bar .side-header .info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+.tasks-page .side-bar .add-folder {
+  margin-left: 2rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+.tasks-page .side-bar .add-folder .add-folder-btn {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  font-size: 2rem;
+  border: none;
+  color: white;
+  background-color: #ff8f00;
+}
+.tasks-page .side-bar .folders {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.tasks-page .side-bar .folders .folder {
+  display: flex;
+  flex-direction: column;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
+  margin-right: 2rem;
+  padding: 1rem 1.5rem;
+}
+.tasks-page .side-bar .folders .folder .head {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.tasks-page .side-bar .folders .folder .tasks {
+  display: flex;
+  flex-direction: column;
+  margin-left: 2.4rem;
+}
+.tasks-page .side-bar .folders .folder .tasks .task {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.tasks-page .content {
+  display: flex;
+  flex-direction: column;
+  margin: 3rem 10rem;
+}
+.tasks-page .content h1 {
+  margin-bottom: 1.5rem;
+}
+.tasks-page .content .add-task {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 4rem;
+  gap: 1rem;
+}
+.tasks-page .content .add-task .add-task-btn {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  font-size: 2.3rem;
+  color: #ff8f00;
+  border-color: #ff8f00;
+  background-color: transparent;
+}
+.tasks-page .content .in-progress {
+  display: flex;
+  flex-direction: column;
+}
+.tasks-page .content .in-progress h2 {
+  margin-bottom: 1.8rem;
+}
+.tasks-page .content .in-progress .tasks {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 3rem;
+}
+.tasks-page .content .in-progress .tasks .task {
+  display: flex;
+  width: 40vw;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(2, 48, 71, 0.5);
+  padding: 1rem 0;
+}
+.tasks-page .content .in-progress .tasks .task .name {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.tasks-page .content .in-progress .tasks .task .buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 3rem;
+}
+.tasks-page .content .in-progress .tasks .task .buttons button {
+  border: none;
+  background-color: transparent;
+}
+.tasks-page .content .done {
+  display: flex;
+  flex-direction: column;
+}
+.tasks-page .content .done h2 {
+  margin-bottom: 1.8rem;
+}
+.tasks-page .content .done .tasks {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 3rem;
+}
+.tasks-page .content .done .tasks .task {
+  display: flex;
+  width: 40vw;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(2, 48, 71, 0.5);
+  padding: 1rem 0;
+}
+.tasks-page .content .done .tasks .task .name {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.tasks-page .content .done .tasks .task .buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 3rem;
+}
+.tasks-page .content .done .tasks .task .buttons button {
+  border: none;
+  background-color: transparent;
+}
