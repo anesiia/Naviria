@@ -45,7 +45,6 @@ namespace NaviriaAPI.Tests.Services
                 _mockLevelService.Object);
         }
 
-        // TC-01
         [Test]
         public async Task TC01_CreateAchievement_ShouldReturnAchievementDto_WhenValidDataIsPassed()
         {
@@ -69,7 +68,6 @@ namespace NaviriaAPI.Tests.Services
             _mockRepository.Verify(repo => repo.CreateAsync(It.IsAny<AchievementEntity>()), Times.Once);
         }
 
-        // TC-02
         [Test]
         public async Task TC02_UpdateAchievement_ShouldReturnTrue_WhenValidDataIsPassed()
         {
@@ -88,7 +86,6 @@ namespace NaviriaAPI.Tests.Services
             _mockRepository.Verify(repo => repo.UpdateAsync(It.IsAny<AchievementEntity>()), Times.Once);
         }
 
-        // TC-03
         [Test]
         public async Task TC03_GetAchievement_ShouldReturnAchievementDto_WhenValidIdIsPassed()
         {
@@ -111,7 +108,6 @@ namespace NaviriaAPI.Tests.Services
             _mockRepository.Verify(repo => repo.GetByIdAsync("1"), Times.Once);
         }
 
-        // TC-04
         [Test]
         public async Task TC04_GetAchievement_ShouldReturnNull_WhenInvalidIdIsPassed()
         {
@@ -124,7 +120,6 @@ namespace NaviriaAPI.Tests.Services
             _mockRepository.Verify(repo => repo.GetByIdAsync("99999"), Times.Once);
         }
 
-        // TC-05
         [Test]
         public async Task TC05_DeleteAchievement_ShouldReturnTrue_WhenValidIdIsPassed()
         {
@@ -137,7 +132,6 @@ namespace NaviriaAPI.Tests.Services
             _mockRepository.Verify(repo => repo.DeleteAsync("1"), Times.Once);
         }
 
-        // TC-06
         [Test]
         public async Task TC06_DeleteAchievement_ShouldReturnFalse_WhenInvalidIdIsPassed()
         {
@@ -150,7 +144,6 @@ namespace NaviriaAPI.Tests.Services
             _mockRepository.Verify(repo => repo.DeleteAsync("99999"), Times.Once);
         }
 
-        // TC-07
         [Test]
         public async Task TC07_GetAllAchievements_ShouldReturnListOfAchievements()
         {
@@ -209,7 +202,7 @@ namespace NaviriaAPI.Tests.Services
 
             var achievement = new AchievementEntity
             {
-                Id = "ach1", // Переконайся, що тип — string
+                Id = "ach1", 
                 Points = 10
             };
 

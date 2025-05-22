@@ -1,5 +1,5 @@
 ﻿using Moq;
-using NaviriaAPI.DTOs; // Додайте це для CategoryDto
+using NaviriaAPI.DTOs; 
 using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities;
@@ -25,37 +25,36 @@ namespace NaviriaAPI.Tests.Services
             _categoryService = new CategoryService(_mockCategoryRepository.Object);
         }
 
-        // TC-01: Create Category with valid data
+        
         [Test]
         public async Task TC01_CreateCategory_WithValidData_ReturnsCategoryDto()
         {
             // Arrange
             var createDto = new CategoryCreateDto { Name = "Science" };
 
-            // Prepare the expected CategoryEntity with an Id
             var categoryEntity = new CategoryEntity
             {
-                Id = "1", // Ensure the Id is set for the created category
+                Id = "1", 
                 Name = createDto.Name
             };
 
-            // Mock the repository's CreateAsync method to set the Id when called
+            
             _mockCategoryRepository
-                .Setup(repo => repo.CreateAsync(It.IsAny<CategoryEntity>())) // Mock the method
-                .Callback<CategoryEntity>(entity => entity.Id = "1") // Set the Id on the entity
-                .Returns(Task.CompletedTask); // Return Task.CompletedTask since the method is void
+                .Setup(repo => repo.CreateAsync(It.IsAny<CategoryEntity>())) 
+                .Callback<CategoryEntity>(entity => entity.Id = "1") 
+                .Returns(Task.CompletedTask); 
 
             // Act
             var result = await _categoryService.CreateAsync(createDto);
 
             // Assert
-            _mockCategoryRepository.Verify(repo => repo.CreateAsync(It.IsAny<CategoryEntity>()), Times.Once); // Verify the method was called once
-            Assert.That(result, Is.Not.Null); // Ensure the result is not null
-            Assert.That(result.Name, Is.EqualTo("Science")); // Ensure Name is mapped correctly
-            Assert.That(result.Id, Is.EqualTo("1")); // Ensure Id is set correctly
+            _mockCategoryRepository.Verify(repo => repo.CreateAsync(It.IsAny<CategoryEntity>()), Times.Once); 
+            Assert.That(result, Is.Not.Null); 
+            Assert.That(result.Name, Is.EqualTo("Science")); 
+            Assert.That(result.Id, Is.EqualTo("1")); 
         }
 
-        // TC-02: Update Category with valid data
+      
         [Test]
         public async Task TC02_UpdateCategory_WithValidData_ReturnsTrue()
         {
@@ -74,7 +73,6 @@ namespace NaviriaAPI.Tests.Services
             Assert.That(result, Is.True);
         }
 
-        // TC-03: Get Category by valid ID
         [Test]
         public async Task TC03_GetCategory_ByValidId_ReturnsCategoryDto()
         {
@@ -83,7 +81,7 @@ namespace NaviriaAPI.Tests.Services
 
             _mockCategoryRepository
                 .Setup(repo => repo.GetByIdAsync("1"))
-                .ReturnsAsync(new CategoryEntity { Id = "1", Name = "Science" }); // CategoryEntity для репозиторію
+                .ReturnsAsync(new CategoryEntity { Id = "1", Name = "Science" }); 
 
             // Act
             var result = await _categoryService.GetByIdAsync("1");
@@ -94,7 +92,6 @@ namespace NaviriaAPI.Tests.Services
             Assert.That(result.Name, Is.EqualTo("Science"));
         }
 
-        // TC-04: Get Category by invalid ID
         [Test]
         public async Task TC04_GetCategory_ByInvalidId_ReturnsNull()
         {
@@ -110,7 +107,6 @@ namespace NaviriaAPI.Tests.Services
             Assert.That(result, Is.Null);
         }
 
-        // TC-05: Delete Category by valid ID
         [Test]
         public async Task TC05_DeleteCategory_ByValidId_ReturnsTrue()
         {
@@ -127,7 +123,6 @@ namespace NaviriaAPI.Tests.Services
             Assert.That(result, Is.True);
         }
 
-        // TC-06: Delete Category by invalid ID
         [Test]
         public async Task TC06_DeleteCategory_ByInvalidId_ReturnsFalse()
         {
@@ -143,7 +138,6 @@ namespace NaviriaAPI.Tests.Services
             Assert.That(result, Is.False);
         }
 
-        // TC-07: Get all Categories
         [Test]
         public async Task TC07_GetAllCategories_ReturnsCategoryList()
         {

@@ -60,7 +60,7 @@ namespace NaviriaAPI.Tests.Services
             _repositoryMock
                 .Setup(repo => repo.CreateAsync(It.IsAny<NotificationEntity>()))
                 .Returns(Task.CompletedTask)
-                .Callback<NotificationEntity>(n => n.Id = "notif001"); // simulate setting ID in DB
+                .Callback<NotificationEntity>(n => n.Id = "notif001"); 
 
             // Act
             var result = await _service.CreateAsync(createDto);
@@ -365,27 +365,7 @@ namespace NaviriaAPI.Tests.Services
         }
 
         [Test]
-        public async Task TC020_GetAllUserNotificationsAsync_UserNotFound_ThrowsNotFoundException()
-        {
-            //// Arrange
-            //var userId = "unknown";
-
-            //// Мок для перевірки, що користувач не існує
-            //_userServiceMock.Setup(u => u.UserExistsAsync(userId)).ReturnsAsync(false);
-
-            //// Act & Assert
-            //var ex = Assert.ThrowsAsync<NotFoundException>(async () =>
-            //    await _service.GetAllUserNotificationsAsync(userId));
-
-            //// Перевірка на правильне повідомлення про помилку
-            //Assert.That(ex.Message, Is.EqualTo("User notifications not found."));
-        }
-
-
-
-
-        [Test]
-        public async Task TC021_UpdateStatusAsync_ValidInput_UpdatesSuccessfully()
+        public async Task TC020_UpdateStatusAsync_ValidInput_UpdatesSuccessfully()
         {
             // Arrange
             var id = "notif001";
@@ -404,7 +384,7 @@ namespace NaviriaAPI.Tests.Services
         }
 
         [Test]
-        public void TC022_UpdateStatusAsync_NullDto_ThrowsArgumentNullException()
+        public void TC021_UpdateStatusAsync_NullDto_ThrowsArgumentNullException()
         {
             // Act & Assert
             var ex = Assert.ThrowsAsync<ArgumentNullException>(async () =>
@@ -413,7 +393,7 @@ namespace NaviriaAPI.Tests.Services
         }
 
         [Test]
-        public void TC023_UpdateStatusAsync_NotificationNotFound_ThrowsNotFoundException()
+        public void TC022_UpdateStatusAsync_NotificationNotFound_ThrowsNotFoundException()
         {
             // Arrange
             var id = "notif001";
@@ -425,7 +405,7 @@ namespace NaviriaAPI.Tests.Services
         }
 
         [Test]
-        public void TC024_UpdateStatusAsync_EmptyId_ThrowsArgumentException()
+        public void TC023_UpdateStatusAsync_EmptyId_ThrowsArgumentException()
         {
             // Act & Assert
             var ex = Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -435,7 +415,7 @@ namespace NaviriaAPI.Tests.Services
         }
 
         [Test]
-        public void TC025_UpdateStatusAsync_UpdateFails_ThrowsFailedToUpdateException()
+        public void TC024_UpdateStatusAsync_UpdateFails_ThrowsFailedToUpdateException()
         {
             // Arrange
             var id = "notif001";

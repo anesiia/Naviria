@@ -105,6 +105,8 @@ namespace NaviriaAPI.Tests.Services
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count(), Is.EqualTo(1));
             Assert.That(result.First().Message, Is.EqualTo("Hello"));
+            
+
         }
 
         [Test]
@@ -116,6 +118,7 @@ namespace NaviriaAPI.Tests.Services
             var ex = Assert.ThrowsAsync<NotFoundException>(() => _service.GetUserChatAsync(userId));
             Assert.That(ex.Message, Is.EqualTo($"User with ID {userId} does not exist."));
         }
+
 
     }
 }

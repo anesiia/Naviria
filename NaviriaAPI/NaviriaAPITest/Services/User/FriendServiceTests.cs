@@ -163,53 +163,5 @@ namespace NaviriaAPI.Tests.Services.User
             Assert.That(result.First().Nickname.Contains("Ali"));
         }
 
-        //[Test]
-        //public async Task TC06_SearchFriendsByNicknameAsync_ShouldReturnMatchingFriends()
-        //{
-        //    var userId = "user1";
-        //    var query = "Ann";
-
-        //    var user = new UserEntity
-        //    {
-        //        Id = userId,
-        //        Friends = new List<UserFriendInfo> { new UserFriendInfo { UserId = "f1" } }
-        //    };
-
-        //    var friends = new List<UserEntity>
-        //    {
-        //        new UserEntity { Id = "f1", Nickname = "Anna" },
-        //        new UserEntity { Id = "f2", Nickname = "Mark" }
-        //    };
-
-        //    _userServiceMock.Setup(s => s.GetUserOrThrowAsync(userId)).ReturnsAsync(user);
-        //    _userRepositoryMock.Setup(r => r.GetManyByIdsAsync(It.Is<List<string>>(ids => ids.Contains("f1"))))
-        //        .ReturnsAsync(friends);
-        //    _messageSecurityServiceMock.Setup(v => v.Validate(userId, query));
-
-        //    var result = (await _friendService.SearchFriendsByNicknameAsync(userId, query)).ToList();
-
-        //    Assert.That(result.Count, Is.EqualTo(1));
-        //    Assert.That(result.First().Nickname, Is.EqualTo("Anna"));
-        //}
-
-    //    [Test]
-    //    public async Task TC07_SearchFriendsByNicknameAsync_ShouldReturnEmpty_IfNoFriends()
-    //    {
-    //        var userId = "user1";
-    //        var query = "test";
-
-    //        var user = new UserEntity
-    //        {
-    //            Id = userId,
-    //            Friends = new List<UserFriendInfo>()
-    //        };
-
-    //        _userServiceMock.Setup(s => s.GetUserOrThrowAsync(userId)).ReturnsAsync(user);
-    //        _messageSecurityServiceMock.Setup(v => v.Validate(userId, query));
-
-    //        var result = await _friendService.SearchFriendsByNicknameAsync(userId, query);
-
-    //        Assert.That(result, Is.Empty);
-    //    }
     }
 }
