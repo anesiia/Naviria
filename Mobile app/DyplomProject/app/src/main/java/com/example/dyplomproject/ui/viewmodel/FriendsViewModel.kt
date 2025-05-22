@@ -1,5 +1,6 @@
 package com.example.dyplomproject.ui.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -86,6 +87,7 @@ class FriendsViewModel(
         } else {
             _uiState.value.copy(error = result.exceptionOrNull()?.message)
         }
+        Log.d("FriendList", "Friends size: ${uiState.value.friends.size}")
     }
 
     private fun loadAllUsers() = launchWithStateUpdate {
@@ -95,6 +97,7 @@ class FriendsViewModel(
         } else {
             _uiState.value.copy(error = result.exceptionOrNull()?.message)
         }
+        Log.d("FriendList", "Friends size: ${uiState.value.allUsers.size}")
     }
 
     fun onAddFriend(user: UserShortUiModel) {

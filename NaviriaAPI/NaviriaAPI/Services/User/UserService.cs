@@ -16,9 +16,6 @@ using NaviriaAPI.IServices.ICleanupServices;
 
 namespace NaviriaAPI.Services.User
 {
-    /// <summary>
-    /// Provides user management operations: CRUD, authentication, achievements, and level handling.
-    /// </summary>
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
@@ -31,9 +28,6 @@ namespace NaviriaAPI.Services.User
         private readonly IAchievementManager _achievementManager;
         private readonly IUserCleanupService _userCleanupService;
 
-        /// <summary>
-        /// Constructor for dependency injection.
-        /// </summary>
         public UserService(
             IUserRepository userRepository,
             IPasswordHasher<UserEntity> passwordHasher,
@@ -56,15 +50,23 @@ namespace NaviriaAPI.Services.User
             _userCleanupService = userCleanupService;
         }
 
-        /// <summary>
-        /// Registers a new user, hashes the password, and returns a JWT.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<string> CreateAsync(UserCreateDto userDto)
         {
+            var userByEmail = await _userRepository.GetByEmailAsync(userDto.Email);
+            var userByNickname = await _userRepository.GetByNicknameAsync(userDto.Nickname);
+
+            if (userByEmail != null)
+                throw new EmailAlreadyExistException("User with such email already exists");
+            if (userByNickname != null)
+                throw new NicknameAlreadyExistException("User with such nickname already exists");
+
+
             await _validation.ValidateAsync(userDto);
 
             var entity = UserMapper.ToEntity(userDto);
             entity.Password = _passwordHasher.HashPassword(entity, userDto.Password);
+            entity.LevelInfo = _levelService.CalculateFirstLevelProgress(50);
 
             await _userRepository.CreateAsync(entity);
             await _achievementManager.EvaluateAsync(entity.Id, AchievementTrigger.OnRegistration);
@@ -72,9 +74,7 @@ namespace NaviriaAPI.Services.User
             return _jwtService.GenerateUserToken(entity);
         }
 
-        /// <summary>
-        /// Updates a user and recalculates XP/level if needed.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<bool> UpdateAsync(string id, UserUpdateDto userDto)
         {
             UserValidationService.ValidateAsync(userDto);
@@ -99,9 +99,7 @@ namespace NaviriaAPI.Services.User
             return await _userRepository.UpdateAsync(UserMapper.ToEntity(id, userDto));
         }
 
-        /// <summary>
-        /// Gets user DTO by user ID.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<UserDto?> GetByIdAsync(string id)
         {
             var entity = await _userRepository.GetByIdAsync(id);
@@ -111,9 +109,7 @@ namespace NaviriaAPI.Services.User
             return UserMapper.ToDto(entity);
         }
 
-        /// <summary>
-        /// Checks if a user exists by their ID.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<bool> UserExistsAsync(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -123,9 +119,7 @@ namespace NaviriaAPI.Services.User
             return user != null;
         }
 
-        /// <summary>
-        /// Gets all users in the system as DTOs.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<IEnumerable<UserDto>> GetAllAsync()
         {
             var users = await _userRepository.GetAllAsync();
@@ -133,17 +127,13 @@ namespace NaviriaAPI.Services.User
             return users.Select(UserMapper.ToDto).ToList();
         }
 
-        /// <summary>
-        /// Deletes user and all related data.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<bool> DeleteAsync(string id)
         {
             return await _userCleanupService.DeleteUserAndRelatedDataAsync(id);
         }
 
-        /// <summary>
-        /// Gives an achievement to a user if not already present.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<bool> GiveAchievementAsync(string userId, string achievementId)
         {
             var user = await GetUserOrThrowAsync(userId);
@@ -171,9 +161,7 @@ namespace NaviriaAPI.Services.User
             return await _userRepository.UpdateAsync(user);
         }
 
-        /// <summary>
-        /// Gets user entity by ID or throws NotFoundException.
-        /// </summary>
+        /// <inheritdoc />
         public async Task<UserEntity> GetUserOrThrowAsync(string id)
         {
             var user = await _userRepository.GetByIdAsync(id);

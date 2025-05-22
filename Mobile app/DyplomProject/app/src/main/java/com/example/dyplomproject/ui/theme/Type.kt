@@ -45,7 +45,13 @@ val Typography = Typography(
     labelSmall = TextStyle(
         fontFamily = MonsterratAlternatesFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
+        fontSize = 12.sp,
+    ),
+
+    labelMedium = TextStyle(
+        fontFamily = MonsterratAlternatesFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
     ),
 
     labelLarge = TextStyle(
@@ -56,12 +62,19 @@ val Typography = Typography(
 )
 
 data class CustomTypography(
-    val exampleText: TextStyle
+    val exampleText: TextStyle,
+    val profileTitle: TextStyle
 )
-val addtionalTypography = CustomTypography(
+val additionalTypography = CustomTypography(
     exampleText = TextStyle(
         fontFamily = MonsterratAlternatesFamily,
         fontWeight = FontWeight.Light,
+        fontSize = 16.sp
+    ),
+
+    profileTitle = TextStyle(
+        fontFamily = MonsterratAlternatesFamily,
+        fontWeight = FontWeight.Bold,
         fontSize = 16.sp
     )
 )

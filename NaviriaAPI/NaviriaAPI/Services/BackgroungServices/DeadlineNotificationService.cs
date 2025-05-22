@@ -1,6 +1,7 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
+using NaviriaAPI.Helpers;
 
 namespace NaviriaAPI.Services.BackgroungServices
 {
@@ -24,9 +25,10 @@ namespace NaviriaAPI.Services.BackgroungServices
                     var now = DateTime.UtcNow;
                     var tomorrow = now.Date.AddDays(1);
 
-                    var tasks = await taskRepository.GetTasksWithDeadlineOnDateAsync(tomorrow);
+                    // Notification in one day before deadline
+                    var tasksTomorrow = await taskRepository.GetTasksWithDeadlineOnDateAsync(tomorrow);
 
-                    foreach (var task in tasks)
+                    foreach (var task in tasksTomorrow)
                     {
                         if (task.IsNotificationsOn && task.Deadline.HasValue && task.Deadline.Value.Date == tomorrow)
                         {
@@ -38,11 +40,29 @@ namespace NaviriaAPI.Services.BackgroungServices
                             });
                         }
                     }
+
+                    // Check for missed deadlines
+                    var overdueTasks = await taskRepository.GetOverdueTasksAsync(now);
+
+                    foreach (var task in overdueTasks)
+                    {
+                        if (task.IsNotificationsOn && task.Deadline.HasValue && task.Deadline.Value < now && task.Status == CurrentTaskStatus.InProgress)
+                        {
+                            await notificationService.CreateAsync(new NotificationCreateDto
+                            {
+                                UserId = task.UserId,
+                                Text = $"Дедлайн завдання \"{task.Title}\" ({task.Deadline:dd.MM.yyyy}) сплинув!",
+                                RecievedAt = DateTime.UtcNow
+                            });
+
+                            task.Status = CurrentTaskStatus.DeadlineMissed;
+                            await taskRepository.UpdateAsync(task);
+                        }
+                    }
                 }
 
                 await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             }
         }
     }
-
 }

@@ -1,5 +1,8 @@
-﻿using NaviriaAPI.Entities.EmbeddedEntities;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
+using NaviriaAPI.Helpers;
 
 namespace NaviriaAPI.DTOs.UpdateDTOs
 {
@@ -18,5 +21,7 @@ namespace NaviriaAPI.DTOs.UpdateDTOs
 
         public int Priority { get; set; }
         public List<SubtaskBase> Subtasks { get; set; } = new();
+
+        public CurrentTaskStatus Status { get; set; }
     }
 }

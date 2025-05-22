@@ -25,10 +25,11 @@ data class RegistrationUiState(
     val confirmPassword: String = "",
     val futureMessage: String = "",
     val isSubmitting: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val fieldErrors: Map<String, String> = emptyMap()
 )
 
-class RegistrationViewModel (private val authRepository: AuthRepository): ViewModel()   {
+class RegistrationViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState: StateFlow<RegistrationUiState> = _uiState.asStateFlow()
 
@@ -40,7 +41,7 @@ class RegistrationViewModel (private val authRepository: AuthRepository): ViewMo
                 "gender" -> it.copy(gender = value)
                 "email" -> it.copy(email = value)
                 "password" -> it.copy(password = value)
-                "confirmPassword" -> it.copy(password = value)
+                "confirmPassword" -> it.copy(confirmPassword = value)
                 "futureMessage" -> it.copy(futureMessage = value)
                 else -> it
             }
@@ -56,20 +57,84 @@ class RegistrationViewModel (private val authRepository: AuthRepository): ViewMo
         return startOfDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
     }
 
-    private fun validate(state: RegistrationUiState): String? {
-        val emailRegex = Regex("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")
+    //    private fun validate(state: RegistrationUiState): String? {
+//        val emailRegex = Regex("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")
+//
+//        return when {
+//            state.fullName.isBlank() -> "Full Name is required."
+//            state.email.isBlank() -> "Email is required."
+//            !emailRegex.matches(state.email) -> "Invalid email format."
+//            state.password.length < 8 -> "Password must be at least 8 characters."
+//            state.password != state.confirmPassword -> "Passwords do not match."
+//            //state.birthDate == null -> "Birth date is required."
+//            else -> null
+//        }
+//    }
 
-        return when {
-            state.fullName.isBlank() -> "Full Name is required."
-            state.email.isBlank() -> "Email is required."
-            !emailRegex.matches(state.email) -> "Invalid email format."
-            state.password.length < 8 -> "Password must be at least 8 characters."
-            state.password != state.confirmPassword -> "Passwords do not match."
-            //state.birthDate == null -> "Birth date is required."
-            else -> null
+    fun validateAndUpdateErrors(state: RegistrationUiState): Boolean {
+        val errors = mutableMapOf<String, String>()
+        val emailRegex = Regex("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")
+        val fullName = state.fullName.trim()
+        val today = LocalDate.now()
+
+        if (fullName.isBlank()) {
+            errors["fullName"] = "Ім’я та прізвище обов’язкове."
+        } else {
+            val nameRegex = Regex("^[a-zA-Zа-яА-ЯіІїЇєЄґҐ]+\\s[a-zA-Zа-яА-ЯіІїЇєЄґҐ]+$")
+
+            if (!fullName.matches(nameRegex)) {
+                errors["fullName"] = "Ім’я та прізвище повинні складатися лише з літер і містити пробіл між ними."
+            } else if (fullName.length < 3 || fullName.length > 20) {
+                errors["fullName"] = "Ім’я та прізвище повинні бути від 3 до 20 символів."
+            }
         }
+
+        if (state.birthDate == null) {
+            errors["birthDate"] = "Дата народження обов’язкова."
+        } else {
+            val age = java.time.Period.between(state.birthDate, today).years
+            if (age < 18) {
+                errors["birthDate"] = "Вам має бути щонайменше 18 років."
+            }
+        }
+
+        if (state.email.isBlank()) {
+            errors["email"] = "Пошта обов’язкова."
+        } else if (!emailRegex.matches(state.email)) {
+            errors["email"] = "Неправильний формат пошти."
+        }
+
+        if (state.password.isBlank()) {
+            errors["password"] = "Пароль обов’язковий."
+        } else {
+            if (state.password.length < 8) {
+                errors["password"] = "Пароль має містити щонайменше 8 символів, здається ви забули пароль трошки"
+            } else {
+                if (!state.password.any { it.isLowerCase() }) {
+                    errors["password"] = "Пароль повинен містити хоча б одну велику літеру, здається ви забули пароль трошки"
+                }
+                if (!state.password.any { it.isUpperCase() }) {
+                    errors["password"] = "Пароль повинен містити хоча б одну маленьку літеру, здається ви забули пароль трошки"
+                }
+            }
+        }
+
+        if (state.password != state.confirmPassword) {
+            errors["confirmPassword"] = "Паролі не співпадають."
+        }
+
+        if (state.nickname.isBlank()) {
+            errors["nickname"] = "Нікнейм обов’язковий."
+        } else if (!state.nickname.matches(Regex("^[a-zA-Z0-9]+$"))) {
+            errors["nickname"] = "Нікнейм повинен містити лише латинські букви та цифри."
+        }
+
+        _uiState.update { it.copy(fieldErrors = errors) }
+
+        return errors.isEmpty()
     }
-//Registration failed with code 400: {"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"One or more validation errors occurred.","status":400,"errors":{"Nickname":["Nickname can only contain Latin letters and digits."]}
+
+    //Registration failed with code 400: {"type":"https://tools.ietf.org/html/rfc9110#section-15.5.1","title":"One or more validation errors occurred.","status":400,"errors":{"Nickname":["Nickname can only contain Latin letters and digits."]}
     private fun showError(msg: String) {
         _uiState.update { it.copy(error = msg) }
     }
@@ -90,35 +155,26 @@ class RegistrationViewModel (private val authRepository: AuthRepository): ViewMo
     fun register(authViewModel: AuthViewModel) {
         val state = _uiState.value
 
-        val error = validate(state)
-        //VALIDATION
-//        if (error != null) {
-//            showError(error)
-//            return
-//        }
-        if (state.birthDate == null) {
-            _uiState.value = state.copy(error = "Birth date is required")
+        if (!validateAndUpdateErrors(state)) {
             return
         }
-//        val formattedDate = formatBirthDateToUtcString(state.birthDate)
         val request = UserRegistrationRequest(
             fullName = state.fullName,
             nickname = state.nickname,
             gender = state.gender,
-            //birthDate = formattedDate,
-            birthDate = formatBirthDateToUtcString(state.birthDate),
+            birthDate = formatBirthDateToUtcString(state.birthDate!!),
             email = state.email,
             password = state.password,
             futureMessage = state.futureMessage
         )
 
-//        TEST DATA
+        //TEST DATA
 //        val requestTest = UserRegistrationRequest(
 //            fullName = "Мартін Час",
-//            nickname = "timetraveler",
+//            nickname = "bogdan17",
 //            gender = "m",
 //            birthDate = formatBirthDateToUtcString(LocalDate.parse("1993-04-22")!!),
-//            email = "martin.time@gmail.com",
+//            email = "elison1@gmail.com",
 //            password = "BackToTheFuture34234",
 //            futureMessage = "Я вже тут, хоча ще не був."
 //        )
@@ -131,7 +187,8 @@ class RegistrationViewModel (private val authRepository: AuthRepository): ViewMo
                 authViewModel.onLoginSuccess(token)
                 Log.d("HTTPS", "Login successful: $token")
             }.onFailure { exception ->
-                showError("Login failed: ${exception.message}")
+                //showError("Login failed: ${exception.message}")
+                showError(exception.message ?: "Сталася невідома помилка")
                 Log.e("HTTPS", "Login error", exception)
             }
         }

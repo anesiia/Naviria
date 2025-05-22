@@ -16,18 +16,26 @@ class AuthRepository(private val apiService: ApiService) {
             if (response.isSuccessful) {
                 Result.success(response.body()!!)
             } else {
-                // Log the error details such as the response body or error message
-                val errorBody = response.errorBody()?.string() ?: "No error body"
-                Log.e(
-                    "AuthRepository",
-                    "Login failed with code: ${response.code()}, Error: $errorBody"
-                )
-                Result.failure(Exception("Login failed with code ${response.code()}: $errorBody"))
+                //val errorBody = response.errorBody()?.string() ?: "No error body"
+//                Log.e(
+//                    "AuthRepository",
+//                    "Login failed with code: ${response.code()}, Error: $errorBody"
+//                )
+//                Result.failure(Exception("Login failed with code ${response.code()}: $errorBody"))
+                val userMessage = when (response.code()) {
+                    400 -> "Некоректні дані. Перевірте заповнення полів."
+                    401 -> "Невірний email або пароль."
+                    403 -> "Доступ заборонено."
+                    404 -> "Сервер не знайдено."
+                    500 -> "Помилка сервера. Спробуйте пізніше."
+                    else -> "Невідома помилка: ${response.code()}"
+                }
+                Result.failure(Exception(userMessage))
             }
         } catch (e: Exception) {
-            // Log more detailed exception info
-            Log.e("AuthRepository", "Login exception: ${e.message}", e)
-            Result.failure(e)
+//            Log.e("AuthRepository", "Login exception: ${e.message}", e)
+//            Result.failure(e)
+            Result.failure(Exception("Не вдалось під'єднатися до сервера, перевірте підключення!"))
         }
     }
 
@@ -37,18 +45,24 @@ class AuthRepository(private val apiService: ApiService) {
             if (response.isSuccessful) {
                 Result.success(response.body()!!)
             } else {
-                // Log the error details such as the response body or error message
-                val errorBody = response.errorBody()?.string() ?: "No error body"
-                Log.e(
-                    "AuthRepository",
-                    "Registration failed with code: ${response.code()}, Error: $errorBody"
-                )
-                Result.failure(Exception("Registration failed with code ${response.code()}: $errorBody"))
+//                val errorBody = response.errorBody()?.string() ?: "No error body"
+//                Log.e(
+//                    "AuthRepository",
+//                    "Registration failed with code: ${response.code()}, Error: $errorBody"
+//                )
+//                Result.failure(Exception("Registration failed with code ${response.code()}: $errorBody"))
+                val userMessage = when (response.code()) {
+                    409 -> "Пошта вже використовується! Ввійдіть в вже створений акаунт або використайте іншу пошту для реєстрації"
+                    422 -> "Нікнейм зайнятий, вигадайте інший!"
+                    500 -> "Пошта або нікнейм вже використовуються! Використовуйте іншу пошту або змініть нік"
+                    else -> "Невідома помилка: ${response.code()}"
+                }
+                Result.failure(Exception(userMessage))
             }
         } catch (e: Exception) {
-            // Log more detailed exception info
-            Log.e("AuthRepository", "Registration exception: ${e.message}", e)
-            Result.failure(e)
+//            Log.e("AuthRepository", "Registration exception: ${e.message}", e)
+//            Result.failure(e)
+            Result.failure(Exception("Не вдалось під'єднатися до сервера, перевірте підключення!"))
         }
     }
 }
