@@ -65,6 +65,9 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<IUserSearchService, UserSearchService>();
             services.AddScoped<ITaskRewardService, TaskRewardService>();
 
+            services.AddScoped<IGeneralStatisticService, GeneralStatisticsService>();
+            services.AddScoped<IStatisticRepository, StatisticRepository>();
+
             services.AddScoped<ITaskStatisticService, TaskStatisticService>();
 
         }
