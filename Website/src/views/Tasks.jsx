@@ -1,7 +1,10 @@
 import "../styles/tasks.css";
+import { useState } from "react";
 import { Task } from "./Task";
 import { Subtasks } from "./Subtasks";
+import { TaskForm } from "./TaskForm";
 export function Tasks() {
+  const [showCreateForm, setShowCreateForm] = useState(false);
   return (
     <div className="tasks-page">
       <div className="side-bar">
@@ -46,12 +49,19 @@ export function Tasks() {
       <div className="content">
         <h1>Мої задачі</h1>
         <div className="add-task">
-          <button className="add-task-btn">+</button>
+          <button
+            className="add-task-btn"
+            onClick={() => setShowCreateForm(true)}
+          >
+            +
+          </button>
           <p>Створити нову задачу</p>
         </div>
         <div className="in-progress">
           <h2>В процесі</h2>
           <div className="tasks">
+            {showCreateForm && <TaskForm />}
+
             <Task />
             <div className="task">
               <div className="name">
