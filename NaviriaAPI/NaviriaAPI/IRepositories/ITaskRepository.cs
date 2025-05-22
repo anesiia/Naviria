@@ -1,4 +1,5 @@
 ﻿using NaviriaAPI.Entities;
+using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
 
 namespace NaviriaAPI.IRepositories
 {
@@ -73,6 +74,11 @@ namespace NaviriaAPI.IRepositories
         /// </summary>
         /// <param name="folderId">The ID of the folder.</param>
         Task DeleteManyByFolderIdAsync(string folderId);
+
+        Task<List<TaskEntity>> GetOverdueTasksAsync(DateTime now);
+
+        Task<List<SubtaskRepeatable>> GetAllRepeatableSubtasksByUserAsync(string userId);
+
 
     }
 }
