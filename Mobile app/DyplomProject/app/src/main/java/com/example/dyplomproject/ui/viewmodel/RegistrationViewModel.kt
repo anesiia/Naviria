@@ -174,7 +174,7 @@ class RegistrationViewModel(private val authRepository: AuthRepository) : ViewMo
 //            nickname = "bogdan17",
 //            gender = "m",
 //            birthDate = formatBirthDateToUtcString(LocalDate.parse("1993-04-22")!!),
-//            email = "martin.time@gmail.com",
+//            email = "elison1@gmail.com",
 //            password = "BackToTheFuture34234",
 //            futureMessage = "Я вже тут, хоча ще не був."
 //        )
