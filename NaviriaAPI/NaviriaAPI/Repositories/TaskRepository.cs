@@ -14,7 +14,7 @@ namespace NaviriaAPI.Repositories
 
         public TaskRepository(IMongoDbContext dbContext)
         {
-            _tasks = dbContext.GetDatabase().GetCollection<TaskEntity>("tasks");
+            _tasks = dbContext.Tasks;
         }
 
         public async Task<TaskEntity?> GetByIdAsync(string id)

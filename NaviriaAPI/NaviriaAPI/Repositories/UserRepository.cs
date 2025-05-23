@@ -78,6 +78,12 @@ namespace NaviriaAPI.Repositories
             await _users.UpdateManyAsync(filter, update);
         }
 
+        public async Task<List<UserEntity>> FindAllHavingFriendAsync(string friendId)
+        {
+            var filter = Builders<UserEntity>.Filter.ElemMatch(u => u.Friends, f => f.UserId == friendId);
+            return await _users.Find(filter).ToListAsync();
+        }
+
 
     }
 }

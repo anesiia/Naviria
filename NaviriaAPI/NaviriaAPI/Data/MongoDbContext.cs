@@ -23,6 +23,7 @@ namespace NaviriaAPI.Data
         public IMongoCollection<FriendRequestEntity> FriendsRequests => _database.GetCollection<FriendRequestEntity>("friends_requests");
         public IMongoCollection<NotificationEntity> Notifications => _database.GetCollection<NotificationEntity>("notifications");
         public IMongoCollection<QuoteEntity> Quotes => _database.GetCollection<QuoteEntity>("quotes");
+        public IMongoCollection<TaskEntity> Tasks => _database.GetCollection<TaskEntity>("tasks");
         public IMongoCollection<UserEntity> Users => _database.GetCollection<UserEntity>("users");
 
     }
