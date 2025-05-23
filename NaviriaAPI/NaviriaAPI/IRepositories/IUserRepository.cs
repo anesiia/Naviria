@@ -15,11 +15,8 @@ namespace NaviriaAPI.IRepositories
         Task<bool> UpdatePresenceAsync(string id, DateTime dateTime, bool isOnline);
         Task<bool> UpdateProfileImageAsync(string userId, string imageUrl);
         Task<List<UserEntity>> GetManyByIdsAsync(IEnumerable<string> ids);
-        /// <summary>
-        /// Removes a specific achievement from all users' achievement lists.
-        /// </summary>
-        /// <param name="achievementId">The identifier of the achievement to remove.</param>
         Task RemoveAchievementFromAllUsersAsync(string achievementId);
+        Task<List<UserEntity>> FindAllHavingFriendAsync(string friendId);
 
 
     }
