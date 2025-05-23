@@ -42,6 +42,13 @@ public class FriendRequestRepository : IFriendRequestRepository
         return await _friendsRequests.Find(filter).ToListAsync();
     }
 
+    public async Task<IEnumerable<FriendRequestEntity>> GetBySenderIdAsync(string fromUserId)
+    {
+        var filter = Builders<FriendRequestEntity>.Filter.Eq(r => r.FromUserId, fromUserId);
+        var results = await _friendsRequests.Find(filter).ToListAsync();
+        return results;
+    }
+
     public async Task DeleteManyByUserIdAsync(string userId)
     {
         var filter = Builders<FriendRequestEntity>.Filter.Or(
