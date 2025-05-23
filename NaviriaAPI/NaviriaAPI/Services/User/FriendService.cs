@@ -16,19 +16,22 @@ namespace NaviriaAPI.Services.User
         private readonly ITaskRepository _taskRepository;
         private readonly IMessageSecurityService _messageSecurityService;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IFriendRequestRepository _friendRequestRepository;
 
         public FriendService(
             IUserRepository userRepository,
             IUserService userService, 
             IMessageSecurityService messageSecurityService,
             ITaskRepository taskRepository,
-            ICategoryRepository categoryRepository)
+            ICategoryRepository categoryRepository,
+            IFriendRequestRepository friendRequestRepository)
         {
             _userRepository = userRepository;
             _userService = userService;
             _messageSecurityService = messageSecurityService;
             _taskRepository = taskRepository;
             _categoryRepository = categoryRepository;
+            _friendRequestRepository = friendRequestRepository;
         }
 
         public async Task<IEnumerable<UserDto>> GetUserFriendsAsync(string userId)
@@ -59,16 +62,20 @@ namespace NaviriaAPI.Services.User
 
         public async Task<IEnumerable<UserDto>> GetPotentialFriendsAsync(string userId)
         {
-            // get all system users
             var user = await _userService.GetUserOrThrowAsync(userId);
 
-            // remove users who are already friends of user
-            var exeptionUserIds = user.Friends.Select(f => f.UserId).ToList();
-
-            // remove user himself
+            // Exclude already friends and yourself
+            var exeptionUserIds = user.Friends.Select(f => f.UserId).ToHashSet();
             exeptionUserIds.Add(userId);
 
             var allUsers = await _userRepository.GetAllAsync();
+
+            // Exclude users with already sent requests
+            var outgoingRequests = await _friendRequestRepository.GetBySenderIdAsync(userId);
+            var requestedUserIds = outgoingRequests.Select(r => r.ToUserId).ToHashSet();
+
+            exeptionUserIds.UnionWith(requestedUserIds);
+
             var potentialFriends = allUsers
                 .Where(u => !exeptionUserIds.Contains(u.Id))
                 .Select(UserMapper.ToDto);
