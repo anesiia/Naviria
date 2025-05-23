@@ -10,5 +10,6 @@ namespace NaviriaAPI.IRepositories
         Task<bool> UpdateAsync(CategoryEntity category);
         Task<bool> DeleteAsync(string id);
         Task<CategoryEntity?> GetByNameAsync(string name);
+        Task<List<CategoryEntity>> GetManyByIdsAsync(IEnumerable<string> ids);
     }
 }
