@@ -1,6 +1,4 @@
-﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.DTOs;
+﻿using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Mappings;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +11,7 @@ using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.Helpers;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.IServices.ICleanupServices;
+using NaviriaAPI.DTOs.User;
 
 namespace NaviriaAPI.Services.User
 {

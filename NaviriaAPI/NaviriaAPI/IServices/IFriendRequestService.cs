@@ -1,8 +1,7 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.DTOs;
 using System;
 using NaviriaAPI.DTOs.FeaturesDTOs;
+using NaviriaAPI.DTOs.FriendRequest;
 
 namespace NaviriaAPI.IServices
 {

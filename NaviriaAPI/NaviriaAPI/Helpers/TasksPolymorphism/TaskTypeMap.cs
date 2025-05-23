@@ -1,8 +1,10 @@
 ﻿// TaskTypeMap.cs
 using NaviriaAPI.DTOs.TaskDtos;
 using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities.EmbeddedEntities.TaskTypes;
+using NaviriaAPI.DTOs.Task.Create;
+using NaviriaAPI.DTOs.Task.Update;
+using NaviriaAPI.DTOs.Task.View;
 
 namespace NaviriaAPI.Helpers.TasksPolymorphism
 {

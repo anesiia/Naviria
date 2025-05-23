@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using NaviriaAPI.IServices.IEmbeddedServices;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.IServices.ICleanupServices;
+using NaviriaAPI.DTOs.User;
 
 namespace NaviriaAPI.Controllers
 {

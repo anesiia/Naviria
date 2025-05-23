@@ -5,6 +5,9 @@ using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities.EmbeddedEntities.TaskTypes;
 using NaviriaAPI.Entities;
 using NaviriaAPI.Helpers;
+using NaviriaAPI.DTOs.Task.Create;
+using NaviriaAPI.DTOs.Task.Update;
+using NaviriaAPI.DTOs.Task.View;
 
 namespace NaviriaAPI.Mappings
 {
@@ -87,72 +90,102 @@ namespace NaviriaAPI.Mappings
             switch (entity.Type)
             {
                 case "repeatable":
-                    var rep = (TaskRepeatable)entity;
-                    return new TaskRepeatableDto
+                    if (entity is TaskRepeatable rep)
                     {
-                        Id = rep.Id,
-                        UserId = rep.UserId,
-                        FolderId = rep.FolderId,
-                        Title = rep.Title,
-                        Description = rep.Description,
-                        CategoryId = rep.CategoryId,
-                        Tags = rep.Tags,
-                        IsDeadlineOn = rep.IsDeadlineOn,
-                        Deadline = rep.Deadline,
-                        IsShownProgressOnPage = rep.IsShownProgressOnPage,
-                        IsNotificationsOn = rep.IsNotificationsOn,
-                        NotificationDate = rep.NotificationDate,
-                        Priority = rep.Priority,
-                        Subtasks = rep.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
-                        Status = rep.Status,
-                        RepeatDays = rep.RepeatDays,
-                        CheckedInDays = rep.CheckedInDays
-                    };
+                        return new TaskRepeatableDto
+                        {
+                            Id = rep.Id,
+                            UserId = rep.UserId,
+                            FolderId = rep.FolderId,
+                            Title = rep.Title,
+                            Description = rep.Description,
+                            CategoryId = rep.CategoryId,
+                            Tags = rep.Tags,
+                            IsDeadlineOn = rep.IsDeadlineOn,
+                            Deadline = rep.Deadline,
+                            IsShownProgressOnPage = rep.IsShownProgressOnPage,
+                            IsNotificationsOn = rep.IsNotificationsOn,
+                            NotificationDate = rep.NotificationDate,
+                            Priority = rep.Priority,
+                            Subtasks = rep.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
+                            Status = rep.Status,
+                            RepeatDays = rep.RepeatDays,
+                            CheckedInDays = rep.CheckedInDays
+                        };
+                    }
+                    break;
                 case "scale":
-                    var scale = (TaskScale)entity;
-                    return new TaskScaleDto
+                    if (entity is TaskScale scale)
                     {
-                        Id = scale.Id,
-                        UserId = scale.UserId,
-                        FolderId = scale.FolderId,
-                        Title = scale.Title,
-                        Description = scale.Description,
-                        CategoryId = scale.CategoryId,
-                        Tags = scale.Tags,
-                        IsDeadlineOn = scale.IsDeadlineOn,
-                        Deadline = scale.Deadline,
-                        IsShownProgressOnPage = scale.IsShownProgressOnPage,
-                        IsNotificationsOn = scale.IsNotificationsOn,
-                        NotificationDate = scale.NotificationDate,
-                        Priority = scale.Priority,
-                        Subtasks = scale.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
-                        Status = scale.Status,
-                        Unit = scale.Unit,
-                        CurrentValue = scale.CurrentValue,
-                        TargetValue = scale.TargetValue
-                    };
+                        return new TaskScaleDto
+                        {
+                            Id = scale.Id,
+                            UserId = scale.UserId,
+                            FolderId = scale.FolderId,
+                            Title = scale.Title,
+                            Description = scale.Description,
+                            CategoryId = scale.CategoryId,
+                            Tags = scale.Tags,
+                            IsDeadlineOn = scale.IsDeadlineOn,
+                            Deadline = scale.Deadline,
+                            IsShownProgressOnPage = scale.IsShownProgressOnPage,
+                            IsNotificationsOn = scale.IsNotificationsOn,
+                            NotificationDate = scale.NotificationDate,
+                            Priority = scale.Priority,
+                            Subtasks = scale.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
+                            Status = scale.Status,
+                            Unit = scale.Unit,
+                            CurrentValue = scale.CurrentValue,
+                            TargetValue = scale.TargetValue
+                        };
+                    }
+                    break;
+                case "standard":
                 default:
-                    var std = (TaskStandart)entity;
+                    if (entity is TaskStandart std)
+                    {
+                        return new TaskStandartDto
+                        {
+                            Id = std.Id,
+                            UserId = std.UserId,
+                            FolderId = std.FolderId,
+                            Title = std.Title,
+                            Description = std.Description,
+                            CategoryId = std.CategoryId,
+                            Tags = std.Tags,
+                            IsDeadlineOn = std.IsDeadlineOn,
+                            Deadline = std.Deadline,
+                            IsShownProgressOnPage = std.IsShownProgressOnPage,
+                            IsNotificationsOn = std.IsNotificationsOn,
+                            NotificationDate = std.NotificationDate,
+                            Priority = std.Priority,
+                            Subtasks = std.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
+                            Status = std.Status
+                        };
+                    }
+
                     return new TaskStandartDto
                     {
-                        Id = std.Id,
-                        UserId = std.UserId,
-                        FolderId = std.FolderId,
-                        Title = std.Title,
-                        Description = std.Description,
-                        CategoryId = std.CategoryId,
-                        Tags = std.Tags,
-                        IsDeadlineOn = std.IsDeadlineOn,
-                        Deadline = std.Deadline,
-                        IsShownProgressOnPage = std.IsShownProgressOnPage,
-                        IsNotificationsOn = std.IsNotificationsOn,
-                        NotificationDate = std.NotificationDate,
-                        Priority = std.Priority,
-                        Subtasks = std.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
-                        Status = std.Status
+                        Id = entity.Id,
+                        UserId = entity.UserId,
+                        FolderId = entity.FolderId,
+                        Title = entity.Title,
+                        Description = entity.Description,
+                        CategoryId = entity.CategoryId,
+                        Tags = entity.Tags,
+                        IsDeadlineOn = entity.IsDeadlineOn,
+                        Deadline = entity.Deadline,
+                        IsShownProgressOnPage = entity.IsShownProgressOnPage,
+                        IsNotificationsOn = entity.IsNotificationsOn,
+                        NotificationDate = entity.NotificationDate,
+                        Priority = entity.Priority,
+                        Subtasks = entity.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
+                        Status = entity.Status
                     };
             }
+            throw new InvalidOperationException($"Unknown or invalid task type: {entity.Type}");
         }
+
 
         public static TaskEntity UpdateEntity(TaskEntity entity, TaskUpdateDto dto)
         {

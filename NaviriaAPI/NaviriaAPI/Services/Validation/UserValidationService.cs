@@ -1,5 +1,5 @@
-﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
+﻿using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.DTOs.User;
 using NaviriaAPI.IRepositories;
 using System.ComponentModel.DataAnnotations;
 

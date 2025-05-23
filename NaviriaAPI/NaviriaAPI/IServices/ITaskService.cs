@@ -1,8 +1,8 @@
-﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
+﻿using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs.FeaturesDTOs;
-using NaviriaAPI.DTOs.TaskDtos;
 using NaviriaAPI.Exceptions;
+using NaviriaAPI.DTOs.Task.Create;
+using NaviriaAPI.DTOs.Task.View;
 
 namespace NaviriaAPI.IServices
 {

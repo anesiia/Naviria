@@ -1,9 +1,9 @@
 ﻿using NaviriaAPI.IRepositories;
 using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
 using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.IServices;
+using NaviriaAPI.DTOs.Task.Subtask.Update;
 
 namespace NaviriaAPI.Services
 {

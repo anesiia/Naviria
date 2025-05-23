@@ -1,4 +1,4 @@
-﻿using NaviriaAPI.DTOs;
+﻿using NaviriaAPI.DTOs.User;
 
 namespace NaviriaAPI.IServices
 {

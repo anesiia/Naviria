@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.Folder;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ICleanupServices;

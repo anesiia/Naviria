@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NaviriaAPI.IServices;
-using NaviriaAPI.DTOs;
 using NaviriaAPI.Exceptions;
 using Microsoft.Extensions.Logging;
+using NaviriaAPI.DTOs.User;
 
 namespace NaviriaAPI.Controllers
 {

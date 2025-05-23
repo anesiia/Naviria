@@ -1,5 +1,5 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.DTOs.Task.Subtask.Update;
 
 namespace NaviriaAPI.IServices
 {

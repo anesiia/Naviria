@@ -1,16 +1,16 @@
-﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
+﻿using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.DTOs.FeaturesDTOs;
-using NaviriaAPI.DTOs.TaskDtos;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.IServices.IGamificationLogic;
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Driver;
+using NaviriaAPI.DTOs.Task.Create;
+using NaviriaAPI.DTOs.Task.View;
 
 namespace NaviriaAPI.Services
 {

@@ -1,10 +1,10 @@
-﻿using NaviriaAPI.DTOs;
-using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
+﻿using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
 using NaviriaAPI.Entities;
 using NaviriaAPI.Helpers;
 using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.Mappings;
+using NaviriaAPI.DTOs.User;
 
 namespace NaviriaAPI.Services.GamificationLogic
 {

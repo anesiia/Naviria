@@ -1,13 +1,12 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs.FeaturesDTOs;
-using NaviriaAPI.DTOs;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.IUserServices;
+using NaviriaAPI.DTOs.FriendRequest;
 
 namespace NaviriaAPI.Services
 {

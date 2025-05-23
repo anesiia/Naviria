@@ -1,4 +1,4 @@
-﻿using NaviriaAPI.DTOs.TaskDtos;
+﻿using NaviriaAPI.DTOs.Task.View;
 
 namespace NaviriaAPI.DTOs.FeaturesDTOs
 {

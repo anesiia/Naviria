@@ -1,5 +1,5 @@
 ﻿using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.Folder;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;

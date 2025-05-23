@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Services;
 using NaviriaAPI.IServices;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.IServices.ICleanupServices;
+using NaviriaAPI.DTOs.Category;
 
 namespace NaviriaAPI.Controllers
 {

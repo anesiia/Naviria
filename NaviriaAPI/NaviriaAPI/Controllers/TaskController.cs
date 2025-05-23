@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
 using Microsoft.AspNetCore.Authorization;
+using NaviriaAPI.DTOs.Task.Create;
 
 namespace NaviriaAPI.Controllers
 {

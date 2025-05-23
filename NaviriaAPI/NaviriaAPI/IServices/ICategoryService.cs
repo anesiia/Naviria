@@ -1,7 +1,6 @@
-﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.DTOs;
+﻿using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities;
+using NaviriaAPI.DTOs.Category;
 
 namespace NaviriaAPI.IServices
 {
