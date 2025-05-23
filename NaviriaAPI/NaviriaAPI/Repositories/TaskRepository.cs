@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using NaviriaAPI.Data;
 using NaviriaAPI.Entities;
+using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
 using NaviriaAPI.Helpers;
 using NaviriaAPI.IRepositories;
 
@@ -91,6 +92,21 @@ namespace NaviriaAPI.Repositories
             );
 
             return await _tasks.Find(filter).ToListAsync();
+        }
+
+        public async Task<List<SubtaskRepeatable>> GetAllRepeatableSubtasksByUserAsync(string userId)
+        {
+            var filter = Builders<TaskEntity>.Filter.Eq(t => t.UserId, userId);
+            var projection = Builders<TaskEntity>.Projection.Include(t => t.Subtasks);
+
+            var tasks = await _tasks.Find(filter).Project<TaskEntity>(projection).ToListAsync();
+            var repeatable = new List<SubtaskRepeatable>();
+
+            foreach (var task in tasks)
+            {
+                repeatable.AddRange(task.Subtasks.OfType<SubtaskRepeatable>());
+            }
+            return repeatable;
         }
     }
 }

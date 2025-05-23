@@ -10,6 +10,9 @@ using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.IServices.IGamificationLogic;
 using System.ComponentModel.DataAnnotations;
+using MongoDB.Driver;
+using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
+using NaviriaAPI.Entities;
 
 namespace NaviriaAPI.Services
 {
@@ -179,6 +182,18 @@ namespace NaviriaAPI.Services
             }
 
             return tasks.Select(TaskMapper.ToDto);
+        }
+
+        public async Task<int> GetCheckedInDaysCountForSubtaskAsync(string userId, string subtaskId)
+        {
+            var repeatableSubtasks = await _taskRepository.GetAllRepeatableSubtasksByUserAsync(userId);
+            return repeatableSubtasks.FirstOrDefault(s => s.Id == subtaskId)?.CheckedInDays?.Count ?? 0;
+        }
+
+        public async Task<int> GetTotalCheckedInDaysCountForUserAsync(string userId)
+        {
+            var repeatableSubtasks = await _taskRepository.GetAllRepeatableSubtasksByUserAsync(userId);
+            return repeatableSubtasks.Sum(s => s.CheckedInDays?.Count ?? 0);
         }
 
         private void ValidateTaskFields(string userId, TaskUpdateDto dto)

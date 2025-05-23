@@ -13,6 +13,8 @@ using NaviriaAPI.Services.EmbeddedServices;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.Services.CleanupServices;
 using NaviriaAPI.IServices.ICleanupServices;
+using NaviriaAPI.Services.StatisticServices;
+using NaviriaAPI.IServices.IStatisticServices;
 
 namespace NaviriaAPI.DependencyInjection
 {
@@ -61,6 +63,8 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<ISupportService, SupportService>();
             services.AddScoped<IUserSearchService, UserSearchService>();
             services.AddScoped<ITaskRewardService, TaskRewardService>();
+
+            services.AddScoped<ITaskStatisticService, TaskStatisticService>();
 
         }
     }
