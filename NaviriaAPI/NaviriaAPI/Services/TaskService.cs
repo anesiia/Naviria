@@ -11,8 +11,6 @@ using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.IServices.IGamificationLogic;
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Driver;
-using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
-using NaviriaAPI.Entities;
 
 namespace NaviriaAPI.Services
 {
@@ -149,23 +147,16 @@ namespace NaviriaAPI.Services
             var tasks = (await _taskRepository.GetAllByUserAsync(userId)).ToList();
             var folders = (await _folderRepository.GetAllByUserIdAsync(userId)).ToList();
 
-            if (!tasks.Any())
-            {
-                throw new NotFoundException($"User with ID {userId} has no tasks.");
-            }
-
-            var grouped = tasks
-                .GroupBy(t => t.FolderId)
-                .Select(g =>
-                {
-                    var folderName = folders.FirstOrDefault(f => f.Id == g.Key)?.Name ?? "Unknown";
-                    return new FolderWithTasksDto
-                    {
-                        FolderId = g.Key,
-                        FolderName = folderName,
-                        Tasks = g.Select(TaskMapper.ToDto).ToList()
-                    };
-                });
+            var grouped = folders.Select(folder =>
+        new FolderWithTasksDto
+        {
+            FolderId = folder.Id,
+            FolderName = folder.Name,
+            Tasks = tasks
+                .Where(t => t.FolderId == folder.Id)
+                .Select(TaskMapper.ToDto)
+                .ToList()
+        });
 
             return grouped;
         }

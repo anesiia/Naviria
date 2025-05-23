@@ -23,6 +23,7 @@ namespace NaviriaAPI.DTOs.TaskDtos
         public DateTime? NotificationDate { get; set; }
 
         public int Priority { get; set; }
+        public string Type { get; set; } = string.Empty;
         public List<SubtaskDtoBase> Subtasks { get; set; } = new();
 
         public CurrentTaskStatus Status { get; set; }

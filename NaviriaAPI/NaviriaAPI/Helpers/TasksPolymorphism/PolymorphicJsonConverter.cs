@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace NaviriaAPI.Helpers
+namespace NaviriaAPI.Helpers.TasksPolymorphism
 {
     public class PolymorphicJsonConverter<TBase> : JsonConverter<TBase> where TBase : class
     {
