@@ -19,6 +19,9 @@ namespace NaviriaAPI.Tests.Services.User
         private Mock<IUserRepository> _userRepositoryMock;
         private Mock<IUserService> _userServiceMock;
         private Mock<IMessageSecurityService> _messageSecurityServiceMock;
+        private Mock<ITaskRepository> _taskRepositoryMock;
+        private Mock<ICategoryRepository> _categoryRepositoryMock;
+        private Mock<IFriendRequestRepository> _friendRequestRepositoryMock;
         private FriendService _friendService;
 
         [SetUp]
@@ -27,10 +30,17 @@ namespace NaviriaAPI.Tests.Services.User
             _userRepositoryMock = new Mock<IUserRepository>();
             _userServiceMock = new Mock<IUserService>();
             _messageSecurityServiceMock = new Mock<IMessageSecurityService>();
+            _taskRepositoryMock = new Mock<ITaskRepository>();
+            _categoryRepositoryMock = new Mock<ICategoryRepository>();
+            _friendRequestRepositoryMock = new Mock<IFriendRequestRepository>();
+
             _friendService = new FriendService(
                 _userRepositoryMock.Object,
                 _userServiceMock.Object,
-                _messageSecurityServiceMock.Object
+                _messageSecurityServiceMock.Object,
+                _taskRepositoryMock.Object,
+                _categoryRepositoryMock.Object,
+                _friendRequestRepositoryMock.Object
             );
         }
 
@@ -161,6 +171,84 @@ namespace NaviriaAPI.Tests.Services.User
 
             Assert.That(result.Count, Is.EqualTo(1));
             Assert.That(result.First().Nickname.Contains("Ali"));
+        }
+
+
+        [Test]
+        public async Task TC06_GetPotentialFriendsAsync_ShouldReturnEmptyList_IfAllAreFriends()
+        {
+            var userId = "user1";
+            var user = new UserEntity
+            {
+                Id = userId,
+                Friends = new List<UserFriendInfo>
+        {
+            new UserFriendInfo { UserId = "f1" },
+            new UserFriendInfo { UserId = "f2" }
+        }
+            };
+
+            var allUsers = new List<UserEntity>
+    {
+        user,
+        new UserEntity { Id = "f1" },
+        new UserEntity { Id = "f2" }
+    };
+
+            _userServiceMock.Setup(s => s.GetUserOrThrowAsync(userId)).ReturnsAsync(user);
+            _userRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(allUsers);
+
+            var result = await _friendService.GetPotentialFriendsAsync(userId);
+
+            Assert.That(result, Is.Empty);
+        }
+
+        [Test]
+        public async Task TC07_SearchUsersByNicknameAsync_ShouldReturnEmpty_IfNoMatches()
+        {
+            var userId = "user1";
+            var query = "Zzz";
+
+            var user = new UserEntity
+            {
+                Id = userId,
+                Friends = new List<UserFriendInfo>()
+            };
+
+            var allUsers = new List<UserEntity>
+    {
+        user,
+        new UserEntity { Id = "u1", Nickname = "Alice" },
+        new UserEntity { Id = "u2", Nickname = "Bob" }
+    };
+
+            _userServiceMock.Setup(s => s.GetUserOrThrowAsync(userId)).ReturnsAsync(user);
+            _userRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(allUsers);
+            _messageSecurityServiceMock.Setup(v => v.Validate(userId, query));
+
+            var result = await _friendService.SearchUsersByNicknameAsync(userId, query);
+
+            Assert.That(result, Is.Empty);
+        }
+
+        [Test]
+        public async Task TC09_DeleteFriendAsync_ShouldReturnTrue_IfFriendNotInList()
+        {
+            var userId = "user1";
+            var friendId = "user2";
+
+            var user = new UserEntity { Id = userId, Friends = new List<UserFriendInfo>() };
+            var friend = new UserEntity { Id = friendId, Friends = new List<UserFriendInfo>() };
+
+            _userServiceMock.Setup(s => s.GetUserOrThrowAsync(userId)).ReturnsAsync(user);
+            _userServiceMock.Setup(s => s.GetUserOrThrowAsync(friendId)).ReturnsAsync(friend);
+
+            _userRepositoryMock.Setup(r => r.UpdateAsync(user)).ReturnsAsync(true);
+            _userRepositoryMock.Setup(r => r.UpdateAsync(friend)).ReturnsAsync(true);
+
+            var result = await _friendService.DeleteFriendAsync(userId, friendId);
+
+            Assert.That(result, Is.True);
         }
 
     }

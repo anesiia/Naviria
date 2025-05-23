@@ -62,6 +62,8 @@ namespace NaviriaAPI.Tests.Services.CleanupServices
             var user = new UserEntity { Id = userId, FullName = "Test User" };
 
             _userRepoMock.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
+            _userRepoMock.Setup(r => r.FindAllHavingFriendAsync(userId))
+                .ReturnsAsync(new List<UserEntity>());
             _folderRepoMock.Setup(r => r.DeleteManyByUserIdAsync(userId)).Returns(Task.CompletedTask);
             _notificationRepoMock.Setup(r => r.DeleteManyByUserIdAsync(userId)).Returns(Task.CompletedTask);
             _friendRequestRepoMock.Setup(r => r.DeleteManyByUserIdAsync(userId)).Returns(Task.CompletedTask);
@@ -81,6 +83,7 @@ namespace NaviriaAPI.Tests.Services.CleanupServices
             _taskRepoMock.Verify(r => r.DeleteManyByUserIdAsync(userId), Times.Once);
             _userRepoMock.Verify(r => r.DeleteAsync(userId), Times.Once);
         }
+
 
         [Test]
         public async Task TC003_DeleteUserAndRelatedDataAsync_ShouldReturnFalse_WhenUserDeletionFails()
