@@ -1,15 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using NaviriaAPI.DTOs;
+﻿using NaviriaAPI.DTOs;
+using NaviriaAPI.DTOs.FeaturesDTOs;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
-using NaviriaAPI.IServices.ICloudStorage;
-using NaviriaAPI.IServices.IGamificationLogic;
-using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.Mappings;
-using NaviriaAPI.Services.Validation;
 
 namespace NaviriaAPI.Services.User
 {
@@ -17,16 +13,25 @@ namespace NaviriaAPI.Services.User
     {
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
+        private readonly ITaskRepository _taskRepository;
         private readonly IMessageSecurityService _messageSecurityService;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IFriendRequestRepository _friendRequestRepository;
 
         public FriendService(
             IUserRepository userRepository,
             IUserService userService, 
-            IMessageSecurityService messageSecurityService)
+            IMessageSecurityService messageSecurityService,
+            ITaskRepository taskRepository,
+            ICategoryRepository categoryRepository,
+            IFriendRequestRepository friendRequestRepository)
         {
             _userRepository = userRepository;
             _userService = userService;
             _messageSecurityService = messageSecurityService;
+            _taskRepository = taskRepository;
+            _categoryRepository = categoryRepository;
+            _friendRequestRepository = friendRequestRepository;
         }
 
         public async Task<IEnumerable<UserDto>> GetUserFriendsAsync(string userId)
@@ -57,16 +62,20 @@ namespace NaviriaAPI.Services.User
 
         public async Task<IEnumerable<UserDto>> GetPotentialFriendsAsync(string userId)
         {
-            // get all system users
             var user = await _userService.GetUserOrThrowAsync(userId);
 
-            // remove users who are already friends of user
-            var exeptionUserIds = user.Friends.Select(f => f.UserId).ToList();
-
-            // remove user himself
+            // Exclude already friends and yourself
+            var exeptionUserIds = user.Friends.Select(f => f.UserId).ToHashSet();
             exeptionUserIds.Add(userId);
 
             var allUsers = await _userRepository.GetAllAsync();
+
+            // Exclude users with already sent requests
+            var outgoingRequests = await _friendRequestRepository.GetBySenderIdAsync(userId);
+            var requestedUserIds = outgoingRequests.Select(r => r.ToUserId).ToHashSet();
+
+            exeptionUserIds.UnionWith(requestedUserIds);
+
             var potentialFriends = allUsers
                 .Where(u => !exeptionUserIds.Contains(u.Id))
                 .Select(UserMapper.ToDto);
@@ -90,6 +99,47 @@ namespace NaviriaAPI.Services.User
                 .Select(UserMapper.ToDto);
 
             return matched;
+        }
+
+        public async Task<SharedInterestsDto> GetSharedInterestsAsync(string userId1, string userId2)
+        {
+            var user1Tasks = await GetUserTasksAsync(userId1);
+            var user2Tasks = await GetUserTasksAsync(userId2);
+
+            var sharedCategoryNames = await GetSharedCategoryNamesAsync(user1Tasks, user2Tasks);
+            var sharedTagNames = GetSharedTagNames(user1Tasks, user2Tasks);
+
+            return new SharedInterestsDto
+            {
+                SharedCategoryNames = sharedCategoryNames,
+                SharedTagNames = sharedTagNames
+            };
+        }
+
+        private async Task<List<TaskEntity>> GetUserTasksAsync(string userId)
+        {
+            return (await _taskRepository.GetAllByUserAsync(userId)).ToList();
+        }
+
+        private async Task<List<string>> GetSharedCategoryNamesAsync(
+            List<TaskEntity> user1Tasks, List<TaskEntity> user2Tasks)
+        {
+            var user1CategoryIds = user1Tasks.Select(t => t.CategoryId).Where(x => !string.IsNullOrEmpty(x)).ToHashSet();
+            var user2CategoryIds = user2Tasks.Select(t => t.CategoryId).Where(x => !string.IsNullOrEmpty(x)).ToHashSet();
+            var sharedCategoryIds = user1CategoryIds.Intersect(user2CategoryIds).ToList();
+
+            if (sharedCategoryIds.Count == 0)
+                return new List<string>();
+
+            var categories = await _categoryRepository.GetManyByIdsAsync(sharedCategoryIds);
+            return categories.Select(c => c.Name).ToList();
+        }
+
+        private List<string> GetSharedTagNames(List<TaskEntity> user1Tasks, List<TaskEntity> user2Tasks)
+        {
+            var user1Tags = user1Tasks.SelectMany(t => t.Tags).Select(t => t.TagName).ToHashSet();
+            var user2Tags = user2Tasks.SelectMany(t => t.Tags).Select(t => t.TagName).ToHashSet();
+            return user1Tags.Intersect(user2Tags).ToList();
         }
 
     }

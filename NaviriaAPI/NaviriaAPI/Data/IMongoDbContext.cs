@@ -13,6 +13,7 @@ namespace NaviriaAPI.Data
         IMongoCollection<FriendRequestEntity> FriendsRequests { get; }
         IMongoCollection<NotificationEntity> Notifications { get; }
         IMongoCollection<QuoteEntity> Quotes { get; }
+        IMongoCollection<TaskEntity> Tasks { get; }
         IMongoCollection<UserEntity> Users { get; }
 
     }

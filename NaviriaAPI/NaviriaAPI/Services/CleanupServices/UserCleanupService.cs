@@ -36,6 +36,14 @@ namespace NaviriaAPI.Services.CleanupServices
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
                 throw new NotFoundException($"User with ID {userId} not found.");
+            
+            // delete user from other users' friends
+            var usersWithFriend = await _userRepository.FindAllHavingFriendAsync(userId);
+            foreach (var u in usersWithFriend)
+            {
+                u.Friends.RemoveAll(f => f.UserId == userId);
+                await _userRepository.UpdateAsync(u);
+            }
 
             await _folderRepository.DeleteManyByUserIdAsync(userId);
             await _notificationRepository.DeleteManyByUserIdAsync(userId);

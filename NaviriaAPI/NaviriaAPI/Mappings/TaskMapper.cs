@@ -34,28 +34,6 @@ namespace NaviriaAPI.Mappings
             };
         }
 
-        public static TaskEntity ToEntity(string id, TaskUpdateDto dto)
-        {
-            return new TaskEntity
-            {
-                Id = id,
-                Title = dto.Title,
-                Description = dto.Description,
-                Tags = dto.Tags,
-                IsDeadlineOn = dto.IsDeadlineOn,
-                Deadline = dto.Deadline,
-                IsShownProgressOnPage = dto.IsShownProgressOnPage,
-                IsNotificationsOn = dto.IsNotificationsOn,
-                NotificationDate = dto.NotificationDate,
-                Priority = dto.Priority,
-                Subtasks = dto.Subtasks
-                    .Select(SubtaskMapper.FromUpdateDto)
-                    .ToList(),
-                Status = dto.Status
-
-            };
-        }
-
         public static TaskDto ToDto(TaskEntity entity)
         {
             return new TaskDto

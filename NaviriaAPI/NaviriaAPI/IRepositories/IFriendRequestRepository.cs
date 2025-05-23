@@ -11,6 +11,7 @@ namespace NaviriaAPI.IRepositories
         Task<bool> UpdateAsync(FriendRequestEntity quote);
         Task<bool> DeleteAsync(string id);
         Task<IEnumerable<FriendRequestEntity>> GetByReceiverIdAsync(string toUserId);
+        Task<IEnumerable<FriendRequestEntity>> GetBySenderIdAsync(string fromUserId);
         Task DeleteManyByUserIdAsync(string userId);
     }
 }

@@ -45,13 +45,13 @@ namespace NaviriaAPI.Mappings
             };
         }
 
-        public static SubtaskBase FromUpdateDto(object dto)
+        public static SubtaskBase FromUpdateDto(string id, object dto)
         {
             return dto switch
             {
                 SubtaskStandardUpdateDto s => new SubtaskStandard
                 {
-                    Id = s.Id,
+                    Id = id,
                     Title = s.Title,
                     Description = s.Description,
                     IsCompleted = s.IsCompleted,
@@ -60,7 +60,7 @@ namespace NaviriaAPI.Mappings
 
                 SubtaskRepeatableUpdateDto r => new SubtaskRepeatable
                 {
-                    Id = r.Id,
+                    Id = id,
                     Title = r.Title,
                     Description = r.Description,
                     RepeatDays = r.RepeatDays,
@@ -69,7 +69,7 @@ namespace NaviriaAPI.Mappings
 
                 ScaleSubtaskUpdateDto sc => new ScaleSubtask
                 {
-                    Id = sc.Id,
+                    Id = id,
                     Title = sc.Title,
                     Description = sc.Description,
                     Unit = sc.Unit,

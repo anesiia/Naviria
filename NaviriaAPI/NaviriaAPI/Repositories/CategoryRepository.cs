@@ -38,5 +38,17 @@ namespace NaviriaAPI.Repositories
         {
             return await _categories.Find(c => c.Name == name).FirstOrDefaultAsync();
         }
+
+        public async Task<List<CategoryEntity>> GetManyByIdsAsync(IEnumerable<string> ids)
+        {
+            var objectIdList = ids
+                .Where(id => !string.IsNullOrEmpty(id))
+                .Select(id => MongoDB.Bson.ObjectId.Parse(id))
+                .ToList();
+
+            var filter = Builders<CategoryEntity>.Filter.In(c => c.Id, objectIdList.Select(x => x.ToString()));
+
+            return await _categories.Find(filter).ToListAsync();
+        }
     }
 }
