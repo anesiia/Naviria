@@ -184,18 +184,6 @@ namespace NaviriaAPI.Services
             return tasks.Select(TaskMapper.ToDto);
         }
 
-        public async Task<int> GetCheckedInDaysCountForSubtaskAsync(string userId, string subtaskId)
-        {
-            var repeatableSubtasks = await _taskRepository.GetAllRepeatableSubtasksByUserAsync(userId);
-            return repeatableSubtasks.FirstOrDefault(s => s.Id == subtaskId)?.CheckedInDays?.Count ?? 0;
-        }
-
-        public async Task<int> GetTotalCheckedInDaysCountForUserAsync(string userId)
-        {
-            var repeatableSubtasks = await _taskRepository.GetAllRepeatableSubtasksByUserAsync(userId);
-            return repeatableSubtasks.Sum(s => s.CheckedInDays?.Count ?? 0);
-        }
-
         private void ValidateTaskFields(string userId, TaskUpdateDto dto)
         {
             if (!string.IsNullOrWhiteSpace(dto.Title))
