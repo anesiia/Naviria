@@ -48,6 +48,9 @@ namespace NaviriaAPI.Entities
         [BsonElement("priority"), BsonRepresentation(BsonType.Int32)]
         public int Priority { get; set; } // from 1 to 10
 
+        [BsonElement("task_type")]
+        public string Type { get; set; } = string.Empty;
+
         [BsonElement("subtasks")]
         public List<SubtaskBase> Subtasks { get; set; } = new();
 

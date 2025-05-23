@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization;
 using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
 
-namespace NaviriaAPI.Helpers
+namespace NaviriaAPI.Helpers.TasksPolymorphism
 {
     public static class MongoSubtaskMapping
     {

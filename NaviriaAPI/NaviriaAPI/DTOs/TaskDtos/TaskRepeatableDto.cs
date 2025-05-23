@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace NaviriaAPI.DTOs.UpdateDTOs
+﻿namespace NaviriaAPI.DTOs.TaskDtos
 {
-    public class SubtaskRepeatableUpdateDto : SubtaskUpdateDtoBase
+    public class TaskRepeatableDto : TaskDto
     {
         public List<DayOfWeek> RepeatDays { get; set; } = new();
         public List<DateTime> CheckedInDays { get; set; } = new();
 
-        public SubtaskRepeatableUpdateDto()
+        public TaskRepeatableDto()
         {
             Type = "repeatable";
         }
