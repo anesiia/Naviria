@@ -11,7 +11,8 @@ namespace NaviriaAPI.Mappings
             {
                 UserId = dto.UserId,
                 Role = role,
-                Content = dto.Message
+                Content = dto.Message,
+                CreatedAt = DateTime.UtcNow
             };
         }
 
@@ -20,7 +21,10 @@ namespace NaviriaAPI.Mappings
             return new AssistantChatMessageDto
             {
                 UserId = entity.UserId,
-                Message = entity.Content
+                Message = entity.Content,
+                Role = entity.Role,
+                CreatedAt = entity.CreatedAt
+                
             };
         }
     }
