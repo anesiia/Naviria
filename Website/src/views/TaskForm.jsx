@@ -8,6 +8,49 @@ export function TaskForm({ onCancel, onSave }) {
   const [showProgress, setShowProgress] = useState(false);
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState("");
+  const [days, setDays] = useState([]);
+  const [scaleGoal, setScaleGoal] = useState("");
+  const [scaleUnit, setScaleUnit] = useState("");
+  const [subtasks, setSubtasks] = useState([
+    {
+      title: "",
+      description: "",
+      deadline: false,
+      reminder: false,
+      reminderDate: "",
+      reminderTime: "",
+      deadlineDate: "",
+      type: "simple",
+    },
+  ]);
+
+  const toggleDay = (day) => {
+    setDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
+  };
+
+  const updateSubtask = (index, key, value) => {
+    const updated = [...subtasks];
+    updated[index][key] = value;
+    setSubtasks(updated);
+  };
+
+  const removeSubtask = (index) => {
+    if (subtasks.length === 1) {
+      setSubtasks([
+        {
+          title: "",
+          description: "",
+          deadline: false,
+          reminder: false,
+          type: "simple",
+        },
+      ]);
+    } else {
+      setSubtasks(subtasks.filter((_, i) => i !== index));
+    }
+  };
 
   const addTag = () => {
     if (
@@ -157,6 +200,136 @@ export function TaskForm({ onCancel, onSave }) {
           </label>
         </div>
       </div>
+
+      {type === "repeat" && (
+        <div className="repeat-days">
+          <label>Дні для занять</label>
+          <div className="days">
+            {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"].map((day) => (
+              <div
+                key={day}
+                className={`day ${days.includes(day) ? "selected" : ""}`}
+                onClick={() => toggleDay(day)}
+              >
+                <p>{day}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {type === "scale" && (
+        <div className="scale-inputs">
+          <div className="input-number">
+            <label>Ціль</label>
+            <input
+              type="number"
+              placeholder="Введіть число"
+              value={scaleGoal}
+              onChange={(e) => setScaleGoal(e.target.value)}
+            />
+          </div>
+          <div className="unit">
+            <label>Одиниця вимірювання</label>
+            <input
+              type="text"
+              placeholder="Введіть символ або назву"
+              value={scaleUnit}
+              onChange={(e) => setScaleUnit(e.target.value)}
+            />
+          </div>
+        </div>
+      )}
+
+      {type === "list" && (
+        <div className="subtasks-block">
+          {subtasks.map((subtask, index) => (
+            <div className="subtask" key={index}>
+              <label>{index + 1}.</label>
+              <input
+                type="text"
+                placeholder="Введіть назву"
+                className="title"
+                value={subtask.title}
+                onChange={(e) => updateSubtask(index, "title", e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Опис"
+                className="description"
+                value={subtask.description}
+                onChange={(e) =>
+                  updateSubtask(index, "description", e.target.value)
+                }
+              />
+
+              <div className="subtask-type">
+                <label>Тип підзадачі</label>
+                <div className="types">
+                  <label>
+                    <input
+                      type="radio"
+                      name={`subtask-type-${index}`}
+                      value="simple"
+                      checked={subtask.type === "simple"}
+                      onChange={() => updateSubtask(index, "type", "simple")}
+                    />{" "}
+                    Звичайна
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name={`subtask-type-${index}`}
+                      value="repeat"
+                      checked={subtask.type === "repeat"}
+                      onChange={() => updateSubtask(index, "type", "repeat")}
+                    />{" "}
+                    Повторювана
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name={`subtask-type-${index}`}
+                      value="scale"
+                      checked={subtask.type === "scale"}
+                      onChange={() => updateSubtask(index, "type", "scale")}
+                    />{" "}
+                    Шкала
+                  </label>
+                </div>
+              </div>
+
+              <button
+                className="delete-subtask"
+                onClick={() => removeSubtask(index)}
+              >
+                Видалити
+              </button>
+            </div>
+          ))}
+          <button
+            className="add-subtask"
+            onClick={() =>
+              setSubtasks([
+                ...subtasks,
+                {
+                  title: "",
+                  description: "",
+                  deadline: false,
+                  reminder: false,
+                  reminderDate: "",
+                  reminderTime: "",
+                  deadlineDate: "",
+                  type: "simple",
+                },
+              ])
+            }
+          >
+            <span className="circle">+</span>
+            <span className="text">Додати підзадачу</span>
+          </button>
+        </div>
+      )}
 
       <div className="buttons">
         <button onClick={onCancel} className="cancel">
