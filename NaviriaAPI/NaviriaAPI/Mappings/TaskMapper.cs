@@ -4,6 +4,7 @@ using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs.TaskDtos;
+using NaviriaAPI.Helpers;
 
 namespace NaviriaAPI.Mappings
 {
@@ -28,7 +29,8 @@ namespace NaviriaAPI.Mappings
                 Priority = dto.Priority,
                 Subtasks = dto.Subtasks
                     .Select(SubtaskMapper.FromCreateDto)
-                    .ToList()
+                    .ToList(),
+                Status = CurrentTaskStatus.InProgress
             };
         }
 
@@ -48,8 +50,8 @@ namespace NaviriaAPI.Mappings
                 Priority = dto.Priority,
                 Subtasks = dto.Subtasks
                     .Select(SubtaskMapper.FromUpdateDto)
-                    .ToList()
-
+                    .ToList(),
+                Status = dto.Status
 
             };
         }
@@ -71,7 +73,8 @@ namespace NaviriaAPI.Mappings
                 IsNotificationsOn = entity.IsNotificationsOn,
                 NotificationDate = entity.NotificationDate,
                 Priority = entity.Priority,
-                Subtasks = entity.Subtasks.Select(SubtaskMapper.ToDto).ToList()
+                Subtasks = entity.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
+                Status = entity.Status
             };
         }
 
@@ -86,6 +89,7 @@ namespace NaviriaAPI.Mappings
             entity.NotificationDate = dto.NotificationDate;
             entity.Priority = dto.Priority;
             entity.Subtasks = dto.Subtasks;
+            entity.Status = dto.Status;
 
             return entity;
         }

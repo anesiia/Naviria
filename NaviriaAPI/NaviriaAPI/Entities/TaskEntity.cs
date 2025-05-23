@@ -2,6 +2,7 @@
 using MongoDB.Bson;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
+using NaviriaAPI.Helpers;
 
 namespace NaviriaAPI.Entities
 {
@@ -49,6 +50,10 @@ namespace NaviriaAPI.Entities
 
         [BsonElement("subtasks")]
         public List<SubtaskBase> Subtasks { get; set; } = new();
+
+        [BsonElement("status"), BsonRepresentation(BsonType.String)]
+        public CurrentTaskStatus Status { get; set; }
+
     }
 
 }

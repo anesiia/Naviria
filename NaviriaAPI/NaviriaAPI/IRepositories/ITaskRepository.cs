@@ -74,5 +74,8 @@ namespace NaviriaAPI.IRepositories
         /// <param name="folderId">The ID of the folder.</param>
         Task DeleteManyByFolderIdAsync(string folderId);
 
+        Task<List<TaskEntity>> GetOverdueTasksAsync(DateTime now);
+
+
     }
 }

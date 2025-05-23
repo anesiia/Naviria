@@ -60,6 +60,7 @@ namespace NaviriaAPI.DependencyInjection
 
             services.AddScoped<ISupportService, SupportService>();
             services.AddScoped<IUserSearchService, UserSearchService>();
+            services.AddScoped<ITaskRewardService, TaskRewardService>();
 
         }
     }

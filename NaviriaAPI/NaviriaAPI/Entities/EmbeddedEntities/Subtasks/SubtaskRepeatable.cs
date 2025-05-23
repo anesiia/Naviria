@@ -8,6 +8,9 @@ namespace NaviriaAPI.Entities.EmbeddedEntities.Subtasks
         [BsonElement("repeat_days")]
         public List<DayOfWeek> RepeatDays { get; set; } = new();
 
+        [BsonElement("chechked_in_days")]
+        public List<DateTime> CheckedInDays { get; set; } = new();
+
         public SubtaskRepeatable()
         {
             Type = "repeatable";

@@ -8,6 +8,7 @@ using NaviriaAPI.DTOs.TaskDtos;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.IServices.IUserServices;
+using NaviriaAPI.IServices.IGamificationLogic;
 
 namespace NaviriaAPI.Services
 {
@@ -18,19 +19,22 @@ namespace NaviriaAPI.Services
         private readonly ILogger<TaskService> _logger;
         private readonly IUserService _userService;
         private readonly IMessageSecurityService _messageSecurityService;
+        private readonly ITaskRewardService _taskRewardService;
 
         public TaskService(
             ITaskRepository taskRepository,
             ILogger<TaskService> logger,
             IFolderRepository folderRepository,
             IUserService userService,
-            IMessageSecurityService messageSecurityService)
+            IMessageSecurityService messageSecurityService,
+            ITaskRewardService taskRewardService)
         {
             _taskRepository = taskRepository;
             _logger = logger;
             _folderRepository = folderRepository;
             _userService = userService;
             _messageSecurityService = messageSecurityService;
+            _taskRewardService = taskRewardService;
         }
 
         /// <inheritdoc />
@@ -82,23 +86,32 @@ namespace NaviriaAPI.Services
         /// <inheritdoc />
         public async Task<bool> UpdateAsync(string id, TaskUpdateDto dto)
         {
-            var existing = await _taskRepository.GetByIdAsync(id);
-            if (existing == null)
-            {
-                throw new NotFoundException($"Task with ID {id} not found.");
-            }
+            var existing = await _taskRepository.GetByIdAsync(id)
+                ?? throw new NotFoundException($"Task with ID {id} not found.");
 
-            // Validate updated title/description if provided
-            if (!string.IsNullOrWhiteSpace(dto.Title))
-                _messageSecurityService.Validate(existing.UserId, dto.Title);
-            if (!string.IsNullOrWhiteSpace(dto.Description))
-                _messageSecurityService.Validate(existing.UserId, dto.Description);
+            ValidateTaskFields(existing.UserId, dto);
+
+            var prevStatus = existing.Status;
+            var newStatus = dto.Status;
+            bool isStatusChanged = prevStatus != newStatus;
+
+            if (isStatusChanged)
+            {
+
+                var user = await _userService.GetByIdAsync(existing.UserId);
+
+                if (user == null)
+                    throw new NotFoundException($"User with ID {existing.UserId} not found.");
+
+                await _taskRewardService.GrantTaskCompletionRewardsAsync(existing, user, prevStatus, newStatus);
+            }
 
             existing = TaskMapper.UpdateEntity(existing, dto);
 
             var result = await _taskRepository.UpdateAsync(existing);
             return result;
         }
+
 
         /// <inheritdoc />
         public async Task<bool> DeleteAsync(string id)
@@ -160,5 +173,14 @@ namespace NaviriaAPI.Services
 
             return tasks.Select(TaskMapper.ToDto);
         }
+
+        private void ValidateTaskFields(string userId, TaskUpdateDto dto)
+        {
+            if (!string.IsNullOrWhiteSpace(dto.Title))
+                _messageSecurityService.Validate(userId, dto.Title);
+            if (!string.IsNullOrWhiteSpace(dto.Description))
+                _messageSecurityService.Validate(userId, dto.Description);
+        }
+
     }
 }
