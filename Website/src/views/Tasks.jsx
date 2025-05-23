@@ -5,6 +5,62 @@ import { Subtasks } from "./Subtasks";
 import { TaskForm } from "./TaskForm";
 export function Tasks() {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [folders, setFolders] = useState([
+    {
+      id: 1,
+      name: "Особисте",
+      tasks: [
+        { id: 101, name: "Купити продукти", type: "simple", completed: false },
+        { id: 102, name: "Спорт", type: "list", completed: true },
+      ],
+    },
+    {
+      id: 2,
+      name: "Робота",
+      tasks: [
+        { id: 201, name: "Написати звіт", type: "repeat", completed: false },
+      ],
+    },
+  ]);
+  const [creatingFolder, setCreatingFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [selectedFolderId, setSelectedFolderId] = useState(null);
+
+  const handleAddFolder = () => {
+    if (newFolderName.trim() !== "") {
+      const newFolder = {
+        id: Date.now(),
+        name: newFolderName.trim(),
+        tasks: [],
+      };
+      setFolders([...folders, newFolder]);
+    }
+    setCreatingFolder(false);
+    setNewFolderName("");
+  };
+
+  const handleDeleteFolder = (folderId) => {
+    setFolders((prev) => prev.filter((folder) => folder.id !== folderId));
+  };
+  const handleToggleTask = (folderId, taskId) => {
+    setFolders((prev) =>
+      prev.map((folder) =>
+        folder.id !== folderId
+          ? folder
+          : {
+              ...folder,
+              tasks: folder.tasks.map((task) =>
+                task.id !== taskId
+                  ? task
+                  : { ...task, completed: !task.completed }
+              ),
+            }
+      )
+    );
+  };
+
+  const selectedFolder = folders.find((f) => f.id === selectedFolderId);
+
   return (
     <div className="tasks-page">
       <div className="side-bar">
@@ -16,38 +72,79 @@ export function Tasks() {
           <img src="fi-rr-menu-burger.svg" />
         </div>
         <div className="add-folder">
-          <button className="add-folder-btn">+</button>
-          <p>Створити папку</p>
+          {!creatingFolder ? (
+            <>
+              <button
+                className="add-folder-btn"
+                onClick={() => setCreatingFolder(true)}
+              >
+                +
+              </button>
+              <p>Створити папку</p>
+            </>
+          ) : (
+            <div className="create-folder-form">
+              <input
+                type="text"
+                placeholder="Назва папки"
+                value={newFolderName}
+                onChange={(e) => setNewFolderName(e.target.value)}
+              />
+              <div className="buttons">
+                <button
+                  className="cancel"
+                  onClick={() => setCreatingFolder(false)}
+                >
+                  Скасувати
+                </button>
+                <button className="save" onClick={handleAddFolder}>
+                  Зберегти
+                </button>
+              </div>
+            </div>
+          )}
         </div>
         <div className="folders">
-          <div className="folder">
-            <div className="head">
-              <img src="fi-rr-thumbtack.svg" />
-              <p> Folder name</p>
-            </div>
-            <div className="tasks">
-              <div className="task">
-                <input type="checkbox" id="tasks" name="tasks"></input>
-                <label for="tasks">Task</label>
+          {folders.map((folder) => (
+            <div
+              className={`folder ${
+                folder.id === selectedFolderId ? "selected-folder" : ""
+              }`}
+              key={folder.id}
+              onClick={() => setSelectedFolderId(folder.id)}
+            >
+              <div className="head">
+                <img src="fi-rr-thumbtack.svg" />
+                <p>{folder.name}</p>
+                <button onClick={() => handleDeleteFolder(folder.id)}>
+                  <img src="Group 174.svg" />
+                </button>
+              </div>
+              <div className="tasks">
+                {folder.tasks.map((task) => (
+                  <label
+                    key={task.id}
+                    className={`task-label ${
+                      task.completed ? "completed" : ""
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={task.completed}
+                      onChange={() => handleToggleTask(folder.id, task.id)}
+                    />
+                    {task.name}
+                  </label>
+                ))}
               </div>
             </div>
-          </div>
-          <div className="folder">
-            <div className="head">
-              <img src="fi-rr-thumbtack.svg" />
-              <p> Folder name</p>
-            </div>
-            <div className="tasks">
-              <div className="task">
-                <input type="checkbox" id="tasks" name="tasks"></input>
-                <label for="tasks">Task</label>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
       <div className="content">
-        <h1>Мої задачі</h1>
+        <h1>
+          {selectedFolder ? `Мої ${selectedFolder.name}` : "Оберіть папку"}
+        </h1>
         <div className="add-task">
           <button
             className="add-task-btn"
@@ -60,27 +157,15 @@ export function Tasks() {
         <div className="in-progress">
           <h2>В процесі</h2>
           <div className="tasks">
-            {showCreateForm && <TaskForm />}
-
-            <Task />
-            <div className="task">
-              <div className="name">
-                <input type="checkbox" id="tasks" name="tasks"></input>
-                <label for="tasks">Task</label>
-              </div>
-
-              <div className="buttons">
-                <button className="delete">
-                  <img src="Group 174.svg" />
-                </button>
-                <button className="edit">
-                  <img src="fi-rr-pencil.svg" />
-                </button>
-                <button className="open">
-                  <img src="fi-rr-caret-down.svg" />
-                </button>
-              </div>
-            </div>
+            {showCreateForm && (
+              <TaskForm
+                onCancel={() => setShowCreateForm(false)}
+                onSave={() => setShowCreateForm(false)}
+              />
+            )}
+            {selectedFolder?.tasks?.map((task) => (
+              <Task key={task.id} {...task} />
+            ))}
           </div>
         </div>
         <div className="done">

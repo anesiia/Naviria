@@ -133,7 +133,9 @@ export function Task(props) {
               </div>
             </div>
             <div className="main-list">
-              <Subtasks />
+              {props.subtasks?.map((subtask, index) => (
+                <Subtasks key={index} {...subtask} />
+              ))}
             </div>
           </div>
         )}

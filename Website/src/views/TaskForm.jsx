@@ -298,7 +298,57 @@ export function TaskForm({ onCancel, onSave }) {
                   </label>
                 </div>
               </div>
+              {subtask.type === "repeat" && (
+                <div className="repeat-days">
+                  <label>Дні для занять</label>
+                  <div className="days">
+                    {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"].map((day) => (
+                      <div
+                        key={day}
+                        className={`day ${
+                          subtask.days?.includes(day) ? "selected" : ""
+                        }`}
+                        onClick={() => {
+                          const currentDays = subtask.days || [];
+                          const updatedDays = currentDays.includes(day)
+                            ? currentDays.filter((d) => d !== day)
+                            : [...currentDays, day];
+                          updateSubtask(index, "days", updatedDays);
+                        }}
+                      >
+                        <p>{day}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
+              {subtask.type === "scale" && (
+                <div className="scale-inputs">
+                  <div className="input-number">
+                    <label>Ціль</label>
+                    <input
+                      type="number"
+                      placeholder="Введіть число"
+                      value={subtask.scaleGoal || ""}
+                      onChange={(e) =>
+                        updateSubtask(index, "scaleGoal", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="unit">
+                    <label>Одиниця вимірювання</label>
+                    <input
+                      type="text"
+                      placeholder="Введіть символ або назву"
+                      value={subtask.scaleUnit || ""}
+                      onChange={(e) =>
+                        updateSubtask(index, "scaleUnit", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              )}
               <button
                 className="delete-subtask"
                 onClick={() => removeSubtask(index)}

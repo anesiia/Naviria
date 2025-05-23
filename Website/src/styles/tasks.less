@@ -38,6 +38,36 @@
       flex-direction: row;
       align-items: center;
       gap: 1rem;
+      .create-folder-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        input {
+          padding: 0.5rem;
+          border-radius: 10px;
+          border-color: rgba(2, 48, 71, 0.5);
+        }
+        .buttons {
+          display: flex;
+          flex-direction: row;
+          gap: 1rem;
+          .cancel {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            color: @dark-blue;
+            background-color: white;
+            border-color: @dark-blue;
+            cursor: pointer;
+          }
+          .save {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            background-color: @dark-blue;
+            color: white;
+            cursor: pointer;
+          }
+        }
+      }
       .add-folder-btn {
         width: 3rem;
         height: 3rem;
@@ -64,17 +94,44 @@
         .head {
           display: flex;
           flex-direction: row;
+          align-items: center;
           gap: 1rem;
           margin-bottom: 1rem;
+          p {
+            font-size: @def_text;
+            font-weight: 600;
+            color: rgba(2, 48, 71, 0.5);
+          }
+          button {
+            margin-left: 2rem;
+            background-color: transparent;
+            border: none;
+          }
         }
         .tasks {
           display: flex;
           flex-direction: column;
           margin-left: 2.4rem;
-          .task {
+          .task-label {
             display: flex;
-            flex-direction: row;
-            gap: 1rem;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: @orange;
+            cursor: pointer;
+            margin-bottom: 6px;
+
+            input[type="checkbox"] {
+              cursor: pointer;
+            }
+
+            &.completed {
+              color: rgba(2, 48, 71, 0.7);
+              text-decoration: line-through;
+              text-decoration-thickness: 1.2px;
+              text-decoration-color: rgba(2, 48, 71, 0.7);
+            }
           }
         }
       }

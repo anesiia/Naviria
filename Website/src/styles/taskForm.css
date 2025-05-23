@@ -332,10 +332,12 @@
   color: #023047;
   background-color: white;
   border-color: #023047;
+  cursor: pointer;
 }
 .task-form .buttons .save {
   padding: 0.5rem 1rem;
   border-radius: 5px;
   background-color: #023047;
   color: white;
+  cursor: pointer;
 }
