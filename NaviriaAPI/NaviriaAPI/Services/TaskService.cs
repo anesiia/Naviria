@@ -9,6 +9,7 @@ using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.IServices.IGamificationLogic;
+using System.ComponentModel.DataAnnotations;
 
 namespace NaviriaAPI.Services
 {
@@ -77,6 +78,9 @@ namespace NaviriaAPI.Services
             _messageSecurityService.Validate(dto.UserId, dto.Title);
             _messageSecurityService.Validate(dto.UserId, dto.Description);
 
+            if (dto.Tags?.Count > 10)
+                throw new ValidationException("A task can have no more than 10 tags.");
+
             var entity = TaskMapper.ToEntity(dto);
             await _taskRepository.CreateAsync(entity);
 
@@ -90,6 +94,9 @@ namespace NaviriaAPI.Services
                 ?? throw new NotFoundException($"Task with ID {id} not found.");
 
             ValidateTaskFields(existing.UserId, dto);
+
+            if (dto.Tags?.Count > 10)
+                throw new ValidationException("A task can have no more than 10 tags.");
 
             var prevStatus = existing.Status;
             var newStatus = dto.Status;
