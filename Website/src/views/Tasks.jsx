@@ -1,62 +1,131 @@
 import "../styles/tasks.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { updateTask } from "../services/TasksServices";
+import {
+  fetchGroupedTasksByUser,
+  createFolder,
+  deleteFolder,
+} from "../services/FoldersServices";
 import { Task } from "./Task";
 import { Subtasks } from "./Subtasks";
 import { TaskForm } from "./TaskForm";
 export function Tasks() {
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [folders, setFolders] = useState([
-    {
-      id: 1,
-      name: "Особисте",
-      tasks: [
-        { id: 101, name: "Купити продукти", type: "simple", completed: false },
-        { id: 102, name: "Спорт", type: "list", completed: true },
-      ],
-    },
-    {
-      id: 2,
-      name: "Робота",
-      tasks: [
-        { id: 201, name: "Написати звіт", type: "repeat", completed: false },
-      ],
-    },
-  ]);
+  const [folders, setFolders] = useState([]);
   const [creatingFolder, setCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [selectedFolderId, setSelectedFolderId] = useState(null);
+  // 1. Завантаження папок із задачами з сервера + сортування
+  useEffect(() => {
+    fetchGroupedTasksByUser()
+      .then((data) => {
+        // адаптуємо структуру під старий рендер і забираємо createdAt
+        const mapped = data
+          .map((folder) => ({
+            id: folder.folderId,
+            name: folder.folderName,
+            createdAt: folder.createdAt, // важливо!
+            tasks: folder.tasks.map((task) => ({
+              id: task.id,
+              name: task.title,
+              completed: task.status === "Completed",
+              ...task,
+            })),
+          }))
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setFolders(mapped);
+      })
+      .catch((err) => console.error("Помилка при завантаженні задач:", err));
+  }, []);
 
-  const handleAddFolder = () => {
+  // 2. Створення нової папки (і вона одразу згори)
+  const handleAddFolder = async () => {
     if (newFolderName.trim() !== "") {
-      const newFolder = {
-        id: Date.now(),
-        name: newFolderName.trim(),
-        tasks: [],
-      };
-      setFolders([...folders, newFolder]);
+      try {
+        const res = await createFolder(newFolderName.trim());
+        const folder = res.folder; // API повертає саме так
+
+        // додаємо нову папку і сортуємо ще раз (на випадок різних дат)
+        setFolders((prev) =>
+          [
+            {
+              id: folder.id,
+              name: folder.name,
+              createdAt: folder.createdAt,
+              tasks: [],
+            },
+            ...prev,
+          ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        );
+      } catch (err) {
+        console.error("Помилка при створенні папки:", err);
+      }
     }
     setCreatingFolder(false);
     setNewFolderName("");
   };
 
-  const handleDeleteFolder = (folderId) => {
-    setFolders((prev) => prev.filter((folder) => folder.id !== folderId));
+  const handleDeleteFolder = async (folderId) => {
+    try {
+      await deleteFolder(folderId);
+      setFolders((prev) => prev.filter((folder) => folder.id !== folderId));
+      if (selectedFolderId === folderId) setSelectedFolderId(null); // якщо видалена була вибрана
+    } catch (err) {
+      console.error("Помилка при видаленні папки:", err);
+      // можеш показати повідомлення користувачу
+    }
   };
-  const handleToggleTask = (folderId, taskId) => {
-    setFolders((prev) =>
-      prev.map((folder) =>
-        folder.id !== folderId
-          ? folder
-          : {
-              ...folder,
-              tasks: folder.tasks.map((task) =>
-                task.id !== taskId
-                  ? task
-                  : { ...task, completed: !task.completed }
-              ),
-            }
-      )
-    );
+
+  const handleToggleTask = async (folderId, taskId) => {
+    // Знаходимо задачу
+    const folder = folders.find((f) => f.id === folderId);
+    const task = folder?.tasks.find((t) => t.id === taskId);
+    if (!task || task.completed) return; // Якщо вже виконано - нічого не робимо
+
+    // Формуємо оновлений об'єкт для PUT (копіюємо всі потрібні поля!)
+    const updatedTask = {
+      ...task,
+      status: "Completed",
+      // Додати тут усі поля, які очікує сервер!
+      // Наприклад:
+      title: task.title,
+      description: task.description,
+      tags: task.tags,
+      isDeadlineOn: task.isDeadlineOn,
+      deadline: task.deadline,
+      isShownProgressOnPage: task.isShownProgressOnPage,
+      isNotificationsOn: task.isNotificationsOn,
+      notificationDate: task.notificationDate,
+      priority: task.priority,
+      type: task.type,
+      repeatDays: task.repeatDays,
+      checkedInDays: task.checkedInDays,
+      subtasks: task.subtasks,
+      // тощо (додай усе, що повертає бекенд у GET)
+    };
+
+    try {
+      await updateTask(taskId, updatedTask);
+
+      // Локально оновлюємо статус
+      setFolders((prev) =>
+        prev.map((folder) =>
+          folder.id !== folderId
+            ? folder
+            : {
+                ...folder,
+                tasks: folder.tasks.map((t) =>
+                  t.id !== taskId
+                    ? t
+                    : { ...t, completed: true, status: "Completed" }
+                ),
+              }
+        )
+      );
+    } catch (err) {
+      console.error("Помилка при оновленні задачі:", err);
+      // Можна показати повідомлення про помилку
+    }
   };
 
   const selectedFolder = folders.find((f) => f.id === selectedFolderId);
@@ -121,21 +190,29 @@ export function Tasks() {
                 </button>
               </div>
               <div className="tasks">
-                {folder.tasks.map((task) => (
-                  <label
-                    key={task.id}
-                    className={`task-label ${
-                      task.completed ? "completed" : ""
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={task.completed}
-                      onChange={() => handleToggleTask(folder.id, task.id)}
-                    />
-                    {task.name}
-                  </label>
-                ))}
+                {[...folder.tasks]
+                  .sort((a, b) => {
+                    // Completed повинні бути внизу
+                    if (a.completed && !b.completed) return 1;
+                    if (!a.completed && b.completed) return -1;
+                    return 0;
+                  })
+                  .map((task) => (
+                    <label
+                      key={task.id}
+                      className={`task-label ${
+                        task.completed ? "completed" : ""
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={task.completed}
+                        disabled={task.completed}
+                        onChange={() => handleToggleTask(folder.id, task.id)}
+                      />
+                      {task.name}
+                    </label>
+                  ))}
               </div>
             </div>
           ))}
@@ -174,7 +251,7 @@ export function Tasks() {
             <div className="task">
               <div className="name">
                 <input type="checkbox" id="tasks" name="tasks"></input>
-                <label for="tasks">Task</label>
+                <label htmlFor="tasks">Task</label>
               </div>
               <div className="buttons">
                 <button className="delete">

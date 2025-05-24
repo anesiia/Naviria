@@ -9,7 +9,7 @@ export function Task(props) {
       <div className="main-task-info">
         <div className="name">
           <input type="checkbox" id="tasks" name="tasks"></input>
-          <label for="tasks">Task</label>
+          <label htmlFor="tasks">Task</label>
         </div>
         <div className="buttons">
           <button className="delete">
