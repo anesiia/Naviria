@@ -13,6 +13,8 @@ using NaviriaAPI.DTOs.Task.Create;
 using NaviriaAPI.DTOs.Task.View;
 using NaviriaAPI.DTOs.Task.Subtask.Update;
 using NaviriaAPI.DTOs.Task.Subtask.Create;
+using NaviriaAPI.DTOs.TaskDtos;
+using NaviriaAPI.Entities.EmbeddedEntities.TaskTypes;
 
 namespace NaviriaAPI.Services
 {
@@ -186,6 +188,25 @@ namespace NaviriaAPI.Services
             }
 
             return tasks.Select(TaskMapper.ToDto);
+        }
+
+        /// <inheritdoc />
+        public async Task<TaskRepeatableDto> MarkRepeatableTaskCheckedInAsync(string taskId, DateTime date)
+        {
+            var entity = await _taskRepository.GetByIdAsync(taskId);
+            if (entity is not TaskRepeatable repTask)
+                throw new ValidationException("Task is not repeatable type!");
+
+            if (!repTask.RepeatDays.Contains(date.DayOfWeek))
+                throw new ValidationException($"This date does not match allowed repeat days! Allowed: {string.Join(", ", repTask.RepeatDays)}");
+
+            if (!repTask.CheckedInDays.Any(d => d.Date == date.Date))
+            {
+                repTask.CheckedInDays.Add(date.Date);
+                await _taskRepository.UpdateAsync(repTask);
+            }
+
+            return (TaskRepeatableDto)TaskMapper.ToDto(repTask);
         }
 
         private void ValidateTaskFields(string userId, TaskUpdateDto dto)
