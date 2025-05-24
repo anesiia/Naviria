@@ -3,6 +3,7 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.DTOs.Task.Subtask.Create;
 using Microsoft.AspNetCore.Authorization;
 using NaviriaAPI.DTOs.Task.Subtask.Update;
+using NaviriaAPI.DTOs.FeaturesDTOs;
 
 namespace NaviriaAPI.Controllers
 {
@@ -120,5 +121,42 @@ namespace NaviriaAPI.Controllers
                 return StatusCode(500, $"Failed to remove subtask {subtaskId} from task {taskId}");
             }
         }
+
+        /// <summary>
+        /// Marks a repeatable subtask as checked-in for the specified date.
+        /// </summary>
+        /// <param name="taskId">The ID of the parent task.</param>
+        /// <param name="subtaskId">The ID of the repeatable subtask.</param>
+        /// <param name="dto">The DTO containing the check-in date.</param>
+        /// <returns>The updated repeatable subtask with the checked-in dates.</returns>
+        /// <response code="200">Returns the updated repeatable subtask.</response>
+        /// <response code="400">If the request is invalid.</response>
+        /// <response code="404">If the task or subtask is not found.</response>
+        /// <response code="500">If an internal error occurs.</response>
+        [HttpPost("{subtaskId}/checkin")]
+        [AllowAnonymous]
+        public async Task<IActionResult> MarkRepeatableSubtaskCheckedIn(
+            string taskId,
+            string subtaskId,
+            [FromBody] RepeatableSubtaskCheckinDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(taskId) || string.IsNullOrWhiteSpace(subtaskId))
+                return BadRequest("Task ID and subtask ID are required.");
+
+            if (dto == null || dto.Date == default)
+                return BadRequest("A valid date must be provided.");
+
+            try
+            {
+                var updatedSubtask = await _subtaskService.MarkRepeatableSubtaskCheckedInAsync(taskId, subtaskId, dto.Date);
+                return Ok(updatedSubtask);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to mark repeatable subtask {SubtaskId} as checked-in in task {TaskId}", subtaskId, taskId);
+                return StatusCode(500, $"Failed to mark repeatable subtask {subtaskId} as checked-in in task {taskId}");
+            }
+        }
+
     }
 }

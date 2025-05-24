@@ -3,6 +3,9 @@ using NaviriaAPI.DTOs.Task.Update;
 using NaviriaAPI.IServices;
 using Microsoft.AspNetCore.Authorization;
 using NaviriaAPI.DTOs.Task.Create;
+using NaviriaAPI.DTOs.TaskDtos;
+using NaviriaAPI.Exceptions;
+using NaviriaAPI.DTOs.FeaturesDTOs;
 
 namespace NaviriaAPI.Controllers
 {
@@ -177,5 +180,42 @@ namespace NaviriaAPI.Controllers
                 return StatusCode(500, $"Failed to get grouped tasks for user with ID {userId}");
             }
         }
+
+        /// <summary>
+        /// Marks a repeatable task as checked in for the specified date.
+        /// Adds date to <c>CheckedInDays</c> tasks, if it matches with one from <c>RepeatDays</c>.
+        /// </summary>
+        /// <param name="taskId">The task ID.</param>
+        /// <param name="date">The date to check in (e.g., <c>DateTime.Today</c>).</param>
+        /// <returns>The updated repeatable task with the new check-in date.</returns>
+        /// <response code="200">Returns the updated repeatable task.</response>
+        /// <response code="400">If the task ID is missing, or the date is invalid/not allowed.</response>
+        /// <response code="404">If the task is not found or is not a repeatable task.</response>
+        /// <response code="500">If an error occurs.</response>
+        [HttpPost("{taskId}/checkin")]
+        public async Task<ActionResult<TaskRepeatableDto>> MarkRepeatableTaskCheckedIn(
+            string taskId,
+            [FromBody] RepeatableSubtaskCheckinDto checkinDto)
+        {
+            if (string.IsNullOrWhiteSpace(taskId))
+                return BadRequest("Task ID is required.");
+
+            try
+            {
+                var result = await _taskService.MarkRepeatableTaskCheckedInAsync(taskId, checkinDto.Date);
+                return Ok(result);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogError(ex, "Task not found or not repeatable. TaskId={TaskId}", taskId);
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to check in repeatable task with ID {TaskId}", taskId);
+                return StatusCode(500, $"Failed to check in repeatable task with ID {taskId}");
+            }
+        }
+
     }
 }
