@@ -1,4 +1,4 @@
-﻿namespace NaviriaAPI.DTOs.CreateDTOs
+﻿namespace NaviriaAPI.DTOs.Task.Subtask.Create
 {
     public class SubtaskStandardCreateDto : SubtaskCreateDtoBase
     {

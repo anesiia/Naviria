@@ -1,7 +1,9 @@
 ﻿using MongoDB.Bson;
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.Task.Subtask.Create;
+using NaviriaAPI.DTOs.Task.Subtask.Update;
+using NaviriaAPI.DTOs.Task.Subtask;
+using NaviriaAPI.DTOs.Task.Subtask.View;
 using NaviriaAPI.DTOs.TaskDtos;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities.EmbeddedEntities.TaskTypes;
 using NaviriaAPI.Entities;
 using NaviriaAPI.Helpers;
@@ -17,6 +19,26 @@ namespace NaviriaAPI.Mappings
         {
             switch (dto.Type)
             {
+                case "with_subtasks":
+                    var withSub = (TaskWithSubtasksCreateDto)dto;
+                    return new TaskWithSubtasks
+                    {
+                        Id = ObjectId.GenerateNewId().ToString(),
+                        UserId = withSub.UserId,
+                        FolderId = withSub.FolderId,
+                        Title = withSub.Title,
+                        Description = withSub.Description,
+                        CategoryId = withSub.CategoryId,
+                        Tags = withSub.Tags,
+                        IsDeadlineOn = withSub.IsDeadlineOn,
+                        Deadline = withSub.Deadline,
+                        IsShownProgressOnPage = withSub.IsShownProgressOnPage,
+                        IsNotificationsOn = withSub.IsNotificationsOn,
+                        NotificationDate = withSub.NotificationDate,
+                        Priority = withSub.Priority,
+                        Subtasks = withSub.Subtasks.Select(x => SubtaskMapper.FromCreateDto(x)).ToList(),
+                        Status = CurrentTaskStatus.InProgress
+                    };
                 case "repeatable":
                     var rep = (TaskRepeatableCreateDto)dto;
                     return new TaskRepeatable
@@ -34,7 +56,8 @@ namespace NaviriaAPI.Mappings
                         IsNotificationsOn = rep.IsNotificationsOn,
                         NotificationDate = rep.NotificationDate,
                         Priority = rep.Priority,
-                        Subtasks = rep.Subtasks.Select(SubtaskMapper.FromCreateDto).ToList(),
+                        Subtasks = rep.Subtasks.Select(x => SubtaskMapper.FromCreateDto(x)).ToList(),
+
                         Status = CurrentTaskStatus.InProgress,
                         RepeatDays = rep.RepeatDays,
                         CheckedInDays = []
@@ -56,7 +79,7 @@ namespace NaviriaAPI.Mappings
                         IsNotificationsOn = scale.IsNotificationsOn,
                         NotificationDate = scale.NotificationDate,
                         Priority = scale.Priority,
-                        Subtasks = scale.Subtasks.Select(SubtaskMapper.FromCreateDto).ToList(),
+                        Subtasks = scale.Subtasks.Select(x => SubtaskMapper.FromCreateDto(x)).ToList(),
                         Status = CurrentTaskStatus.InProgress,
                         Unit = scale.Unit,
                         CurrentValue = scale.CurrentValue,
@@ -79,7 +102,7 @@ namespace NaviriaAPI.Mappings
                         IsNotificationsOn = std.IsNotificationsOn,
                         NotificationDate = std.NotificationDate,
                         Priority = std.Priority,
-                        Subtasks = std.Subtasks.Select(SubtaskMapper.FromCreateDto).ToList(),
+                        Subtasks = std.Subtasks.Select(x => SubtaskMapper.FromCreateDto(x)).ToList(),
                         Status = CurrentTaskStatus.InProgress
                     };
             }
@@ -89,6 +112,29 @@ namespace NaviriaAPI.Mappings
         {
             switch (entity.Type)
             {
+                case "with_subtasks":
+                    if (entity is TaskWithSubtasks withSub)
+                    {
+                        return new TaskWithSubtasksDto
+                        {
+                            Id = withSub.Id,
+                            UserId = withSub.UserId,
+                            FolderId = withSub.FolderId,
+                            Title = withSub.Title,
+                            Description = withSub.Description,
+                            CategoryId = withSub.CategoryId,
+                            Tags = withSub.Tags,
+                            IsDeadlineOn = withSub.IsDeadlineOn,
+                            Deadline = withSub.Deadline,
+                            IsShownProgressOnPage = withSub.IsShownProgressOnPage,
+                            IsNotificationsOn = withSub.IsNotificationsOn,
+                            NotificationDate = withSub.NotificationDate,
+                            Priority = withSub.Priority,
+                            Subtasks = withSub.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
+                            Status = withSub.Status
+                        };
+                    }
+                    break;
                 case "repeatable":
                     if (entity is TaskRepeatable rep)
                     {
@@ -140,7 +186,6 @@ namespace NaviriaAPI.Mappings
                         };
                     }
                     break;
-                case "standard":
                 default:
                     if (entity is TaskStandart std)
                     {

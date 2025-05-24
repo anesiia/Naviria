@@ -1,6 +1,4 @@
-﻿using NaviriaAPI.DTOs.Task.Create;
-
-namespace NaviriaAPI.DTOs.CreateDTOs
+﻿namespace NaviriaAPI.DTOs.Task.Create
 {
     public class TaskRepeatableCreateDto : TaskCreateDto
     {

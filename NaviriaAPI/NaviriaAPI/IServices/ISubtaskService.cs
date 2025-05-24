@@ -1,4 +1,4 @@
-﻿using NaviriaAPI.DTOs.CreateDTOs;
+﻿using NaviriaAPI.DTOs.Task.Subtask.Create;
 using NaviriaAPI.DTOs.Task.Subtask.Update;
 
 namespace NaviriaAPI.IServices

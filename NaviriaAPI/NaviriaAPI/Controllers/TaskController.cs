@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.DTOs.Task.Update;
 using NaviriaAPI.IServices;
 using Microsoft.AspNetCore.Authorization;
 using NaviriaAPI.DTOs.Task.Create;

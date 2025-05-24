@@ -1,8 +1,6 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-using NaviriaAPI.Entities.EmbeddedEntities;
+﻿using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.Helpers;
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.Task.Subtask.Create;
 
 namespace NaviriaAPI.DTOs.Task.Create
 {

@@ -1,6 +1,4 @@
-﻿using NaviriaAPI.DTOs.Task.Subtask.Update;
-
-namespace NaviriaAPI.DTOs.UpdateDTOs
+﻿namespace NaviriaAPI.DTOs.Task.Subtask.Update
 {
     public class SubtaskScaleUpdateDto : SubtaskUpdateDtoBase
     {

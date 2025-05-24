@@ -1,6 +1,4 @@
-﻿using NaviriaAPI.Helpers;
-
-namespace NaviriaAPI.DTOs.Task.Subtask.Update
+﻿namespace NaviriaAPI.DTOs.Task.Subtask.Update
 {
     public class SubtaskUpdateDtoBase
     {

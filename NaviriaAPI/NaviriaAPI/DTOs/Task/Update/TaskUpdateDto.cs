@@ -1,11 +1,8 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-using NaviriaAPI.Entities.EmbeddedEntities;
-using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
+﻿using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.Helpers;
 using NaviriaAPI.DTOs.Task.Subtask.Update;
 
-namespace NaviriaAPI.DTOs.UpdateDTOs
+namespace NaviriaAPI.DTOs.Task.Update
 {
     public class TaskUpdateDto
     {

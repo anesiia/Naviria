@@ -1,4 +1,4 @@
-﻿using NaviriaAPI.DTOs.UpdateDTOs;
+﻿using NaviriaAPI.DTOs.Task.Update;
 using NaviriaAPI.DTOs.FeaturesDTOs;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.DTOs.Task.Create;

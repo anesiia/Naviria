@@ -1,6 +1,4 @@
-﻿using NaviriaAPI.DTOs.UpdateDTOs;
-
-namespace NaviriaAPI.DTOs.Task.Update
+﻿namespace NaviriaAPI.DTOs.Task.Update
 {
     public class TaskRepeatableUpdateDto : TaskUpdateDto
     {

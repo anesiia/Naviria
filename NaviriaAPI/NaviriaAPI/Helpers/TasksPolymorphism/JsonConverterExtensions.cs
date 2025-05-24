@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
-using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
 using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs.Task.Create;
 using NaviriaAPI.DTOs.Task.Subtask.View;
 using NaviriaAPI.DTOs.Task.Subtask.Update;
 using NaviriaAPI.DTOs.Task.View;
+using NaviriaAPI.DTOs.Task.Update;
+using NaviriaAPI.DTOs.Task.Subtask.Create;
 
 namespace NaviriaAPI.Helpers.TasksPolymorphism
 {

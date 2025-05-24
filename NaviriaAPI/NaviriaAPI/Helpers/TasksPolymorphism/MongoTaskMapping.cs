@@ -46,6 +46,14 @@ namespace NaviriaAPI.Helpers.TasksPolymorphism
                     cm.SetDiscriminator("repeatable");
                 });
             }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(TaskWithSubtasks)))
+            {
+                BsonClassMap.RegisterClassMap<TaskWithSubtasks>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.SetDiscriminator("with_subtasks");
+                });
+            }
 
             _registered = true;
         }

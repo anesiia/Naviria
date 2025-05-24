@@ -1,4 +1,4 @@
-﻿using NaviriaAPI.DTOs.UpdateDTOs;
+﻿using NaviriaAPI.DTOs.Task.Update;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
@@ -11,6 +11,8 @@ using System.ComponentModel.DataAnnotations;
 using MongoDB.Driver;
 using NaviriaAPI.DTOs.Task.Create;
 using NaviriaAPI.DTOs.Task.View;
+using NaviriaAPI.DTOs.Task.Subtask.Update;
+using NaviriaAPI.DTOs.Task.Subtask.Create;
 
 namespace NaviriaAPI.Services
 {
@@ -75,6 +77,12 @@ namespace NaviriaAPI.Services
                 throw new NotFoundException($"User with ID {dto.UserId} not found.");
             }
 
+            if (dto.Type != "with_subtasks" && dto.Subtasks != null && dto.Subtasks.Any())
+                throw new ValidationException("Only tasks with TYPE 'with_subtasks' can have subtasks");
+
+            if (dto.Type != "with_subtasks")
+                dto.Subtasks = new List<SubtaskCreateDtoBase>();
+
             // Validate title and description for security
             _messageSecurityService.Validate(dto.UserId, dto.Title);
             _messageSecurityService.Validate(dto.UserId, dto.Description);
@@ -98,6 +106,11 @@ namespace NaviriaAPI.Services
 
             if (dto.Tags?.Count > 10)
                 throw new ValidationException("A task can have no more than 10 tags.");
+            if (dto.Type != "with_subtasks" && dto.Subtasks != null && dto.Subtasks.Any())
+                throw new ValidationException("Only tasks with TYPE 'with_subtasks' can have subtasks");
+
+            if (dto.Type != "with_subtasks")
+                dto.Subtasks = new List<SubtaskUpdateDtoBase>();
 
             var prevStatus = existing.Status;
             var newStatus = dto.Status;
