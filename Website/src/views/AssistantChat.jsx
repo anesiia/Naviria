@@ -27,7 +27,10 @@ export function AssistantChat() {
         newMessage.trim(),
         createTaskEnabled
       );
-      setMessages((prev) => [...prev, { from: "assistant", text: reply.text }]);
+      setMessages((prev) => [
+        ...prev,
+        { from: "assistant", text: reply.response },
+      ]);
     } catch (error) {
       console.error("Send message error:", error);
     }
