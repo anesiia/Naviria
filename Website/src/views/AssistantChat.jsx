@@ -12,7 +12,14 @@ export function AssistantChat() {
 
   useEffect(() => {
     fetchChatHistory()
-      .then(setMessages)
+      .then((msgs) =>
+        setMessages(
+          msgs.map((msg) => ({
+            from: msg.role || (msg.from ?? "user"),
+            text: msg.message || msg.text,
+          }))
+        )
+      )
       .catch((err) => console.error("Fetch messages error:", err));
   }, []);
 

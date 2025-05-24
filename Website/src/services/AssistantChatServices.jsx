@@ -18,7 +18,7 @@ export async function fetchChatHistory() {
   }
 
   return data.map((msg) => ({
-    from: msg.userId === id ? "user" : "assistant",
+    from: msg.role === "assistant" ? "assistant" : "user",
     text: msg.message,
   }));
 }
