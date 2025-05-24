@@ -130,6 +130,28 @@ export function Tasks() {
 
   const selectedFolder = folders.find((f) => f.id === selectedFolderId);
 
+  const fetchTasks = async () => {
+    const data = await fetchGroupedTasksByUser();
+    const mapped = data
+      .map((folder) => ({
+        id: folder.folderId,
+        name: folder.folderName,
+        createdAt: folder.createdAt,
+        tasks: folder.tasks.map((task) => ({
+          id: task.id,
+          name: task.title,
+          completed: task.status === "Completed",
+          ...task,
+        })),
+      }))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    setFolders(mapped);
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
   return (
     <div className="tasks-page">
       <div className="side-bar">
@@ -251,6 +273,8 @@ export function Tasks() {
                   {...task}
                   folderId={selectedFolder.id}
                   onToggleTask={handleToggleTask}
+                  fetchTasks={fetchTasks}
+                  onDelete={fetchTasks} // або свій метод для оновлення
                 />
               ))}
           </div>
@@ -265,7 +289,9 @@ export function Tasks() {
                   key={task.id}
                   {...task}
                   folderId={selectedFolder.id}
+                  fetchTasks={fetchTasks}
                   onToggleTask={handleToggleTask}
+                  onDelete={fetchTasks}
                 />
               ))}
           </div>

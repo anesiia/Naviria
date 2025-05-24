@@ -22,7 +22,7 @@ export async function fetchGroupedTasksByUser() {
 
 export async function createFolder(name) {
   const userId = localStorage.getItem("id");
-  const res = await fetch("http://localhost:5186/api/Folder", {
+  const res = await fetch(`${API_URL}/api/Folder`, {
     method: "POST",
     headers: {
       ...authHeaders(),
@@ -42,7 +42,7 @@ export async function createFolder(name) {
 }
 
 export async function deleteFolder(id) {
-  const res = await fetch(`http://localhost:5186/api/Folder/${id}`, {
+  const res = await fetch(`${API_URL}/api/Folder/${id}`, {
     method: "DELETE",
     headers: {
       ...authHeaders(),

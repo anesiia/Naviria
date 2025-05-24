@@ -1,9 +1,16 @@
 import "../styles/task.css";
 import { useState } from "react";
 import { Subtasks } from "./Subtasks";
+import {
+  checkinRepeatableTask,
+  updateTask,
+  deleteTask,
+} from "../services/TasksServices";
 
 export function Task(props) {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   let taskType;
   switch (props.type) {
@@ -33,11 +40,65 @@ export function Task(props) {
     { short: "Нд", eng: "Sunday" },
   ];
 
+  const today = new Date();
+  const weekDayEng =
+    weekDays[today.getDay() === 0 ? 6 : today.getDay() - 1].eng; // js: 0-неділя
+  const todayISO = today.toISOString().split("T")[0];
+  const canCheckin =
+    Array.isArray(props.repeatDays) && props.repeatDays.includes(weekDayEng);
+  const alreadyChecked =
+    Array.isArray(props.checkedInDays) &&
+    props.checkedInDays.some((d) => d.startsWith(todayISO));
+
+  const handleCheckin = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      await checkinRepeatableTask(props.id, new Date().toISOString());
+      // Тут можна оновити локальний state, або оновити задачі через props.onCheckinSuccess
+      await props.fetchTasks(); // або краще через onCheckinSuccess, якщо ти прокидаєш пропс зверху
+    } catch {
+      setError("Помилка при фіксації прогресу.");
+    }
+    setLoading(false);
+  };
+
   function formatDate(dateStr) {
     if (!dateStr) return "-";
     const date = new Date(dateStr);
     return date.toLocaleDateString("uk-UA");
   }
+
+  const [addValue, setAddValue] = useState("");
+  const [adding, setAdding] = useState(false);
+
+  const handleAddValue = async () => {
+    if (!addValue || isNaN(addValue)) return;
+
+    setAdding(true);
+    try {
+      const updatedTask = {
+        ...props, // копіюємо всі поточні дані
+        currentValue: (props.currentValue || 0) + Number(addValue),
+      };
+      await updateTask(props.id, updatedTask);
+      await props.fetchTasks(); // або зробити оновлення стану без reload
+    } catch {
+      setError("Не вдалося додати значення");
+    }
+    setAdding(false);
+    setAddValue(""); // очистити поле
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Ви точно хочете видалити цю задачу?")) return;
+    try {
+      await deleteTask(props.id);
+      if (props.onDelete) props.onDelete(); // Оновити список задач після видалення
+    } catch {
+      alert("Не вдалося видалити задачу");
+    }
+  };
 
   return (
     <div className="main-task">
@@ -56,7 +117,7 @@ export function Task(props) {
           <label>{props.title}</label>
         </div>
         <div className="buttons">
-          <button className="delete">
+          <button className="delete" onClick={handleDelete}>
             <img src="Group 174.svg" alt="delete" />
           </button>
           <button className="edit">
@@ -117,7 +178,17 @@ export function Task(props) {
                   })}
                 </div>
               </div>
-              <button className="done-btn">Готово</button>
+              {canCheckin && (
+                <button
+                  className="done-btn"
+                  onClick={handleCheckin}
+                  disabled={!canCheckin || alreadyChecked || loading}
+                >
+                  {alreadyChecked ? "Вже відмічено!" : "Відмітити"}
+                </button>
+              )}
+
+              {error && <p className="error">{error}</p>}
             </div>
           </div>
         ) : taskType === "scale" ? (
@@ -159,8 +230,20 @@ export function Task(props) {
             <div className="add-value">
               <p>Додати значення</p>
               <div className="add-action">
-                <input placeholder="Введіть значення" type="number"></input>
-                <button className="add-value-btn">Додати</button>
+                <input
+                  placeholder="Введіть значення"
+                  type="number"
+                  value={addValue}
+                  onChange={(e) => setAddValue(e.target.value)}
+                  min={1}
+                />
+                <button
+                  className="add-value-btn"
+                  onClick={handleAddValue}
+                  disabled={!addValue || isNaN(addValue) || adding}
+                >
+                  Додати
+                </button>
               </div>
             </div>
           </div>
@@ -182,7 +265,12 @@ export function Task(props) {
             <div className="main-list">
               {Array.isArray(props.subtasks) && props.subtasks.length > 0 ? (
                 props.subtasks.map((subtask, idx) => (
-                  <Subtasks key={subtask.id || idx} {...subtask} />
+                  <Subtasks
+                    key={subtask.id || idx}
+                    {...subtask}
+                    taskId={props.id}
+                    fetchTasks={props.fetchTasks}
+                  />
                 ))
               ) : (
                 <p>Підзадач немає</p>

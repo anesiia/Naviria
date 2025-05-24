@@ -1,5 +1,30 @@
 import "../styles/subtask.css";
+import {
+  checkinRepeatableSubtask,
+  updateSubtask,
+} from "../services/TasksServices";
+import { useState } from "react";
 export function Subtasks(props) {
+  const [addValue, setAddValue] = useState("");
+  const [adding, setAdding] = useState(false);
+
+  const handleAddValue = async () => {
+    if (!addValue || isNaN(addValue)) return;
+    setAdding(true);
+    try {
+      const updatedSubtask = {
+        ...props,
+        currentValue: (props.currentValue || 0) + Number(addValue),
+      };
+      await updateSubtask(props.taskId, props.id, updatedSubtask);
+      await props.fetchTasks();
+    } catch {
+      setError("Не вдалося додати значення");
+    }
+    setAdding(false);
+    setAddValue("");
+  };
+
   let subtaskType;
   switch (props.type) {
     case "standard":
@@ -26,6 +51,19 @@ export function Subtasks(props) {
     { short: "Сб", eng: "Saturday" },
     { short: "Нд", eng: "Sunday" },
   ];
+
+  const today = new Date();
+  const weekDayEng =
+    weekDays[today.getDay() === 0 ? 6 : today.getDay() - 1].eng;
+  const todayISO = today.toISOString().split("T")[0];
+
+  const canCheckin =
+    Array.isArray(props.repeatDays) && props.repeatDays.includes(weekDayEng);
+  const alreadyChecked =
+    Array.isArray(props.checkedInDays) &&
+    props.checkedInDays.some((d) => d.startsWith(todayISO));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   return (
     <div className="subtask">
@@ -58,7 +96,30 @@ export function Subtasks(props) {
                 })}
               </div>
             </div>
-            <button className="done-btn">Готово</button>
+            {canCheckin && (
+              <button
+                className="done-btn"
+                onClick={async () => {
+                  setError("");
+                  setLoading(true);
+                  try {
+                    await checkinRepeatableSubtask(
+                      props.taskId,
+                      props.id,
+                      new Date().toISOString()
+                    );
+                    await props.fetchTasks();
+                  } catch {
+                    setError("Помилка при фіксації прогресу.");
+                  }
+                  setLoading(false);
+                }}
+                disabled={alreadyChecked || loading}
+              >
+                {alreadyChecked ? "Вже відмічено" : "Відмітити"}
+              </button>
+            )}
+            {error && <p className="error">{error}</p>}
           </div>
         </div>
       ) : (
@@ -72,10 +133,23 @@ export function Subtasks(props) {
             <div className="add-value">
               <p>Додати значення</p>
               <div className="add-action">
-                <input type="number" placeholder="Введіть значення"></input>
-                <button className="add-value-btn">Додати</button>
+                <input
+                  placeholder="Введіть значення"
+                  type="number"
+                  value={addValue}
+                  onChange={(e) => setAddValue(e.target.value)}
+                  min={1}
+                />
+                <button
+                  className="add-value-btn"
+                  onClick={handleAddValue}
+                  disabled={!addValue || isNaN(addValue) || adding}
+                >
+                  Додати
+                </button>
               </div>
             </div>
+
             <div className="scale-info">
               <div className="scale">
                 <div
@@ -91,6 +165,13 @@ export function Subtasks(props) {
               </div>
               <p className="points">
                 {props.currentValue || 0}/{props.targetValue || 0}
+                {props.unit ? (
+                  <>
+                    {" "}
+                    <br />
+                    {props.unit}
+                  </>
+                ) : null}
               </p>
             </div>
           </div>

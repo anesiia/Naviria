@@ -61,6 +61,7 @@
   margin-bottom: 0.5rem;
 }
 .subtask .info-subtask-scale .values .add-value .add-action {
+  margin-top: 1rem;
   display: flex;
   flex-direction: row;
   gap: 1rem;
