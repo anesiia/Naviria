@@ -246,7 +246,12 @@ export function Tasks() {
             {selectedFolder?.tasks
               ?.filter((task) => task.status !== "Completed")
               .map((task) => (
-                <Task key={task.id} {...task} />
+                <Task
+                  key={task.id}
+                  {...task}
+                  folderId={selectedFolder.id}
+                  onToggleTask={handleToggleTask}
+                />
               ))}
           </div>
         </div>
@@ -256,7 +261,12 @@ export function Tasks() {
             {selectedFolder?.tasks
               ?.filter((task) => task.status === "Completed")
               .map((task) => (
-                <Task key={task.id} {...task} />
+                <Task
+                  key={task.id}
+                  {...task}
+                  folderId={selectedFolder.id}
+                  onToggleTask={handleToggleTask}
+                />
               ))}
           </div>
         </div>

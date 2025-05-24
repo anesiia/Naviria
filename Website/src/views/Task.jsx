@@ -46,7 +46,12 @@ export function Task(props) {
           <input
             type="checkbox"
             checked={props.status === "Completed"}
-            disabled
+            disabled={props.status === "Completed"}
+            onChange={() => {
+              if (props.status !== "Completed" && props.onToggleTask) {
+                props.onToggleTask(props.folderId, props.id);
+              }
+            }}
           />
           <label>{props.title}</label>
         </div>
@@ -135,6 +140,8 @@ export function Task(props) {
                   </div>
                   <p className="points">
                     {props.currentValue || 0}/{props.targetValue || 0}
+                    <br />
+                    {props.unit}
                   </p>
                 </div>
               </div>
