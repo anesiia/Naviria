@@ -183,8 +183,11 @@ export function Tasks() {
               onClick={() => setSelectedFolderId(folder.id)}
             >
               <div className="head">
-                <img src="fi-rr-thumbtack.svg" />
-                <p>{folder.name}</p>
+                <div className="head-info">
+                  <img src="fi-rr-thumbtack.svg" />
+                  <p>{folder.name}</p>
+                </div>
+
                 <button onClick={() => handleDeleteFolder(folder.id)}>
                   <img src="Group 174.svg" />
                 </button>
@@ -240,27 +243,24 @@ export function Tasks() {
                 onSave={() => setShowCreateForm(false)}
               />
             )}
-            {selectedFolder?.tasks?.map((task) => (
-              <Task key={task.id} {...task} />
-            ))}
+            {selectedFolder?.tasks
+              ?.filter((task) => task.status !== "Completed")
+              .map((task) => (
+                <Task key={task.id} {...task} />
+              ))}
           </div>
         </div>
         <div className="done">
           <h2>Виконано</h2>
           <div className="tasks">
-            <div className="task">
-              <div className="name">
-                <input type="checkbox" id="tasks" name="tasks"></input>
-                <label htmlFor="tasks">Task</label>
-              </div>
-              <div className="buttons">
-                <button className="delete">
-                  <img src="Group 174.svg" />
-                </button>
-              </div>
-            </div>
+            {selectedFolder?.tasks
+              ?.filter((task) => task.status === "Completed")
+              .map((task) => (
+                <Task key={task.id} {...task} />
+              ))}
           </div>
         </div>
+
         <h1>Превʼю всіх типів задач</h1>
 
         <h2>Simple Task</h2>

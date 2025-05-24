@@ -95,10 +95,14 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  justify-content: space-between;
 }
-.tasks-page .side-bar .folders .folder .head p {
+.tasks-page .side-bar .folders .folder .head .head-info {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.tasks-page .side-bar .folders .folder .head .head-info p {
   font-size: 16px;
   font-weight: 600;
   color: rgba(2, 48, 71, 0.5);
@@ -112,6 +116,7 @@
   display: flex;
   flex-direction: column;
   margin-left: 2.4rem;
+  margin-top: 0.5rem;
 }
 .tasks-page .side-bar .folders .folder .tasks .task-label {
   display: flex;

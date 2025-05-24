@@ -1,45 +1,61 @@
 import "../styles/subtask.css";
 export function Subtasks(props) {
+  let subtaskType;
+  switch (props.type) {
+    case "standard":
+      subtaskType = "simple";
+      break;
+    case "repeatable":
+      subtaskType = "repeat";
+      break;
+    case "scale":
+      subtaskType = "scale";
+      break;
+    case "with_subtasks":
+      subtaskType = "list";
+      break;
+    default:
+      subtaskType = "simple";
+  }
+  const weekDays = [
+    { short: "Пн", eng: "Monday" },
+    { short: "Вт", eng: "Tuesday" },
+    { short: "Ср", eng: "Wednesday" },
+    { short: "Чт", eng: "Thursday" },
+    { short: "Пт", eng: "Friday" },
+    { short: "Сб", eng: "Saturday" },
+    { short: "Нд", eng: "Sunday" },
+  ];
+
   return (
     <div className="subtask">
-      {props.type === "simple" ? (
+      {subtaskType === "simple" ? (
         <div className="info-subtask-simple">
           <div className="subtask-name">
-            <input type="checkbox" id="subtask" name="subtask"></input>
-            <label for="subtask">Task</label>
+            <input type="checkbox" checked={props.isCompleted} disabled />
+            <label>{props.title}</label>
           </div>
+          <div className="desc">{props.description}</div>
         </div>
-      ) : props.type === "repeat" ? (
+      ) : subtaskType === "repeat" ? (
         <div className="info-subtask-repeat">
           <div className="subtask-name">
-            <input type="checkbox" id="subtask" name="subtask"></input>
-            <label for="subtask">Task</label>
+            <input type="checkbox" checked={props.isCompleted} disabled />
+            <label>{props.title}</label>
           </div>
+          <div className="desc">{props.description}</div>
           <div className="values-repeat">
             <div className="naming">
               <p>Дні для занять</p>
               <div className="days">
-                <div className="day">
-                  <p>Пн</p>
-                </div>
-                <div className="day">
-                  <p>Вт</p>
-                </div>
-                <div className="day">
-                  <p>Ср</p>
-                </div>
-                <div className="day">
-                  <p>Чт</p>
-                </div>
-                <div className="day">
-                  <p>Пт</p>
-                </div>
-                <div className="day">
-                  <p>Сб</p>
-                </div>
-                <div className="day">
-                  <p>Нд</p>
-                </div>
+                {weekDays.map((day, i) => {
+                  const isActive = props.repeatDays?.includes(day.eng);
+                  return (
+                    <div className={`day${isActive ? " active" : ""}`} key={i}>
+                      <p>{day.short}</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
             <button className="done-btn">Готово</button>
@@ -48,9 +64,10 @@ export function Subtasks(props) {
       ) : (
         <div className="info-subtask-scale">
           <div className="subtask-name">
-            <input type="checkbox" id="subtask" name="subtask"></input>
-            <label for="subtask">Task</label>
+            <input type="checkbox" checked={props.isCompleted} disabled />
+            <label>{props.title}</label>
           </div>
+          <div className="desc">{props.description}</div>
           <div className="values">
             <div className="add-value">
               <p>Додати значення</p>
@@ -61,9 +78,20 @@ export function Subtasks(props) {
             </div>
             <div className="scale-info">
               <div className="scale">
-                <div className="color-scale" style={{ width: "60%" }}></div>
+                <div
+                  className="color-scale"
+                  style={{
+                    width: props.targetValue
+                      ? `${Math.round(
+                          (props.currentValue / props.targetValue) * 100
+                        )}%`
+                      : "0%",
+                  }}
+                ></div>
               </div>
-              <p className="points">1488/3469</p>
+              <p className="points">
+                {props.currentValue || 0}/{props.targetValue || 0}
+              </p>
             </div>
           </div>
         </div>
