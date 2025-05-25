@@ -9,14 +9,14 @@ namespace NaviriaAPI.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class StatisticController : ControllerBase
+    public class StatisticTaskCheckInController : ControllerBase
     {
         private readonly ITaskStatisticService _taskStatisticsService;
-        private readonly ILogger<StatisticController> _logger;
+        private readonly ILogger<StatisticTaskCheckInController> _logger;
 
-        public StatisticController(
+        public StatisticTaskCheckInController(
             ITaskStatisticService taskStatisticsService,
-            ILogger<StatisticController> logger)
+            ILogger<StatisticTaskCheckInController> logger)
         {
             _taskStatisticsService = taskStatisticsService;
             _logger = logger;
