@@ -2,8 +2,6 @@
 using NaviriaAPI.Mappings;
 using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using System;
 
 namespace NaviriaAPI.Tests.Mappings

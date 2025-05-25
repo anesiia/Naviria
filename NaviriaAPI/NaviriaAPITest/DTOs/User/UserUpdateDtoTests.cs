@@ -1,4 +1,4 @@
-﻿using NaviriaAPI.DTOs.UpdateDTOs;
+﻿using NaviriaAPI.DTOs.User;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
+namespace NaviriaAPI.Tests.DTOs.User
 {
     public class UserUpdateDtoTests
     {

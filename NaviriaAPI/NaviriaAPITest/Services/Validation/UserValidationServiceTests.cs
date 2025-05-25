@@ -1,12 +1,11 @@
 ﻿using Moq;
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.User;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Services.Validation;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
-using NaviriaAPI.DTOs.UpdateDTOs;
 
 namespace NaviriaAPI.Tests.Services.Validation
 {

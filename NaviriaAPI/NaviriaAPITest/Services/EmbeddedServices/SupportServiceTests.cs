@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Services.EmbeddedServices;

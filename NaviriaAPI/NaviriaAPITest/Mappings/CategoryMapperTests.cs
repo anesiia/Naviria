@@ -1,8 +1,7 @@
 ﻿using NUnit.Framework;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
+
 using NaviriaAPI.Entities;
 
 namespace NaviriaAPI.Tests.Mappings

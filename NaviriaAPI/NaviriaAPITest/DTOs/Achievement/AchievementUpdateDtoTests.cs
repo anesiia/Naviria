@@ -1,8 +1,8 @@
-﻿using NaviriaAPI.DTOs.UpdateDTOs;
+﻿using NaviriaAPI.DTOs.Achievement;
 using NUnit.Framework;
 using System.ComponentModel.DataAnnotations;
 
-namespace NaviriaAPI.Tests.DTOs.UpdateDTOs
+namespace NaviriaAPI.Tests.DTOs.Achievement
 {
     [TestFixture]
     public class AchievementUpdateDtoTests

@@ -1,8 +1,8 @@
 ﻿using Moq;
 using NaviriaAPI.Services;
 using NaviriaAPI.IServices;
-using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.User;
+using NaviriaAPI.DTOs.Notification;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NUnit.Framework;
 using NaviriaAPI.Exceptions;

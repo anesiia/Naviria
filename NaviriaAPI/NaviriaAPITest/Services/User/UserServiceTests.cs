@@ -1,26 +1,22 @@
-﻿using Moq; // For mocking objects
-using NaviriaAPI.Entities; // For entities like UserEntity, etc.
-using NaviriaAPI.Entities.EmbeddedEntities; // For embedded entities (if needed)
-using NUnit.Framework; // For writing NUnit tests
-using NaviriaAPI.DTOs.CreateDTOs; // For CreateDTOs (if used in your test)
-using NaviriaAPI.DTOs.UpdateDTOs; // For UpdateDTOs (if used in your test)
-using NaviriaAPI.IServices; // For services that you are mocking (like IUserRepository, IJwtService)
-using NaviriaAPI.Exceptions; // For exceptions (if you're testing exception handling)
-using NaviriaAPI.Mappings; // For any mapping services
-using Microsoft.Extensions.Configuration; // For IConfiguration
-using NaviriaAPI.Services; // For actual service classes like UserService
-using NaviriaAPI.IServices.ICloudStorage; // For cloud storage services (if used)
-using NaviriaAPI.IServices.IGamificationLogic; // For gamification services (if used)
-using NaviriaAPI.IServices.IJwtService; // For JWT services (if used)
+﻿using Moq; 
+using NaviriaAPI.Entities; 
+using NaviriaAPI.Entities.EmbeddedEntities; 
+using NUnit.Framework; 
+using NaviriaAPI.DTOs.User; 
+using NaviriaAPI.Exceptions;
+using Microsoft.Extensions.Configuration; 
+using NaviriaAPI.Services;
+using NaviriaAPI.IServices.ICloudStorage; 
+using NaviriaAPI.IServices.IGamificationLogic; 
+using NaviriaAPI.IServices.IJwtService;
 using NaviriaAPI.IServices.ICleanupServices;
-using NaviriaAPI.Services.Validation; // For validation services (like UserValidationService)
-using System; // For basic system types like exceptions
-using System.Threading.Tasks; // For async tasks in tests
-using Microsoft.AspNetCore.Identity; // For Identity-related services like IPasswordHasher
-using NaviriaAPI.IRepositories; // For repositories like IUserRepository
-using OpenAI.Chat; // For OpenAI integration (if used in the service)
-using NaviriaAPI.Services.User; // For UserService and related classes
-using Microsoft.Extensions.Logging; // For ILogger<UserService>
+using NaviriaAPI.Services.Validation; 
+using System; 
+using System.Threading.Tasks; 
+using Microsoft.AspNetCore.Identity; 
+using NaviriaAPI.IRepositories; 
+using NaviriaAPI.Services.User;
+using Microsoft.Extensions.Logging; 
 
 
 namespace NaviriaAPI.Tests.Services.User
@@ -61,9 +57,7 @@ namespace NaviriaAPI.Tests.Services.User
             _userService = new UserService(
                 _userRepoMock.Object,
                 _hasherMock.Object,
-               // _configMock.Object,
                 validation,
-                //_cloudinaryServiceMock.Object,
                 _achievementRepoMock.Object,
                 _levelServiceMock.Object,
                 _jwtServiceMock.Object,
@@ -74,30 +68,30 @@ namespace NaviriaAPI.Tests.Services.User
             );
         }
 
-        private UserEntity GetTestUser(string id = "123")
-        {
-            return new UserEntity
-            {
-                Id = id,
-                FullName = "Test User",
-                Nickname = "testuser",
-                Gender = "Male",  // або інше значення, яке вам потрібно
-                BirthDate = new DateTime(1990, 1, 1),
-                Description = "Test description",
-                Email = "test@example.com",
-                Password = "hashedpass",
-                Points = 0,
-                LevelInfo = new LevelProgressInfo(),  // Якщо потрібні значення, додайте їх
-                Friends = new List<UserFriendInfo>(),  // Якщо потрібні значення, додайте їх
-                Achievements = new List<UserAchievementInfo>(),  // За потреби додайте ачивки
-                FutureMessage = "Test future message",
-                Photo = "https://example.com/photo.jpg",
-                RegitseredAt = DateTime.UtcNow,
-                LastSeen = DateTime.UtcNow,  // Можна налаштувати конвертацію часу при необхідності
-                IsOnline = true,
-                IsProUser = false
-            };
-        }
+        //private UserEntity GetTestUser(string id = "123")
+        //{
+        //    return new UserEntity
+        //    {
+        //        Id = id,
+        //        FullName = "Test User",
+        //        Nickname = "testuser",
+        //        Gender = "Male",  // або інше значення, яке вам потрібно
+        //        BirthDate = new DateTime(1990, 1, 1),
+        //        Description = "Test description",
+        //        Email = "test@example.com",
+        //        Password = "hashedpass",
+        //        Points = 0,
+        //        LevelInfo = new LevelProgressInfo(),  // Якщо потрібні значення, додайте їх
+        //        Friends = new List<UserFriendInfo>(),  // Якщо потрібні значення, додайте їх
+        //        Achievements = new List<UserAchievementInfo>(),  // За потреби додайте ачивки
+        //        FutureMessage = "Test future message",
+        //        Photo = "https://example.com/photo.jpg",
+        //        RegitseredAt = DateTime.UtcNow,
+        //        LastSeen = DateTime.UtcNow,  // Можна налаштувати конвертацію часу при необхідності
+        //        IsOnline = true,
+        //        IsProUser = false
+        //    };
+        //}
 
 
 

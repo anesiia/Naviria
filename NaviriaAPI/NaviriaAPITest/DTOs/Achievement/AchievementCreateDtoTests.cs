@@ -1,11 +1,11 @@
-﻿using NaviriaAPI.DTOs.CreateDTOs;
+﻿using NaviriaAPI.DTOs.Achievement;
 using NaviriaAPI.Tests.helper;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace NaviriaAPI.Tests.DTOs.CreateDTOs
+namespace NaviriaAPI.Tests.DTOs.Achievement
 {
     public class AchievementCreateDtoTests
     {

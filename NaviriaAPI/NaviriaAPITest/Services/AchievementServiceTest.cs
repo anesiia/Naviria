@@ -1,8 +1,8 @@
 ﻿using Moq;
 using NUnit.Framework;
 using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.DTOs.Achievement;
+using NaviriaAPI.DTOs.User;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.IGamificationLogic;

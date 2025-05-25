@@ -1,6 +1,5 @@
 ﻿using Moq;
-using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.DTOs.FriendRequest;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.Entities;

@@ -3,14 +3,13 @@ using NUnit.Framework;
 using Microsoft.Extensions.Logging;
 using NaviriaAPI.Services;
 
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.Notification;
 using NaviriaAPI.DTOs;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using System;
 using System.Threading.Tasks;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Entities;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.IUserServices;
 

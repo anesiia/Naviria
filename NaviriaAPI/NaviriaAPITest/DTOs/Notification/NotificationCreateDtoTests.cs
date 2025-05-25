@@ -1,10 +1,10 @@
 ﻿using NUnit.Framework;
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.Notification;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace NaviriaAPI.Tests.DTOs.CreateDTOs
+namespace NaviriaAPI.Tests.DTOs.Notification
 {
     [TestFixture]
     public class NotificationCreateDtoTests

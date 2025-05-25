@@ -1,7 +1,6 @@
 ﻿using Moq;
 using NaviriaAPI.DTOs; 
-using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.DTOs.Category;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.Services;

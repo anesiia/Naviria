@@ -1,5 +1,5 @@
-describe('Achievements Page', () => {
-    it('displays achievements for Alex (authorized user with achievements)', () => {
+describe('Сторінка "Досягнення"', () => {
+    it('відображає досягнення для Алекса (авторизований користувач із досягненнями)', () => {
         cy.loginAsAlex();
         cy.visit('/achievements');
 
@@ -8,7 +8,7 @@ describe('Achievements Page', () => {
         cy.get('.gift-btn').first().should('contain', 'Подарунок');
     });
 
-    it('displays no achievements for Maria (authorized user without achievements)', () => {
+    it('не відображає досягнень для Марії (авторизований користувач без досягнень)', () => {
         cy.loginAsMaria();
         cy.visit('/achievements');
 

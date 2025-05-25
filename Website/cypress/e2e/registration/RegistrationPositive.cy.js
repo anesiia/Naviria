@@ -1,6 +1,6 @@
 
-describe('Registration Page', () => {
-  it('successfully registers a new user from the login page', () => {
+describe('Сторінка "Реєстрація"', () => {
+  it('успішно реєструє нового користувача зі сторінки входу', () => {
     cy.visit('http://localhost:5173/login');
 
     // Перехід на сторінку реєстрації
@@ -22,6 +22,6 @@ describe('Registration Page', () => {
 
     // Очікується редірект або повідомлення про успішну реєстрацію
     cy.url().should('include', '/profile');
-    cy.contains('Особистий прогрес').should('exist'); // або інший унікальний контент
+    cy.contains('Особистий прогрес').should('exist');
   });
 });

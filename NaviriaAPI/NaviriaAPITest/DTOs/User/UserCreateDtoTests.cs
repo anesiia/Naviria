@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.User;
 using System.ComponentModel.DataAnnotations;
 using NaviriaAPI.Entities.EmbeddedEntities;
 
-namespace NaviriaAPI.Tests.DTOs.CreateDTOs
+namespace NaviriaAPI.Tests.DTOs.User
 {
     [TestFixture]
     public class UserCreateDtoTests

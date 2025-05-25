@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities;
 using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
