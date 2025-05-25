@@ -1,6 +1,10 @@
 .task-form {
   display: flex;
   flex-direction: column;
+  width: 45vw;
+  border-radius: 10px;
+  border: 0.5px solid #023047;
+  padding: 1.2rem;
   gap: 1rem;
 }
 .task-form label {
@@ -9,6 +13,7 @@
 .task-form .title {
   width: 30vw;
   font-size: 16px;
+  font-weight: 600;
   color: #023047;
   border: none;
   border-bottom: 1px solid rgba(2, 48, 71, 0.5);
@@ -33,66 +38,86 @@
   border: none;
   padding: 0.5rem;
 }
-.task-form .tags {
+.task-form .tags-block {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.task-form .tags-block .tags {
+  display: flex;
   gap: 0.5rem;
 }
-.task-form .tags .tag-wrapper {
+.task-form .tags-block .tags .tag {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
   align-items: center;
-}
-.task-form .tags .tag-wrapper .tag {
-  background-color: #f1f1f1;
+  background: #f4f4f4;
+  color: #023047;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  padding: 6px 10px;
+  padding: 0.2rem 0.5rem;
   font-size: 14px;
 }
-.task-form .tags .tag-wrapper .tag .remove {
+.task-form .tags-block .tags .tag .tag__remove {
+  border: none;
+  background: none;
+  color: #023047;
+  font-size: 26px;
   margin-right: 6px;
   cursor: pointer;
-  font-weight: bold;
+  transition: color 0.2s;
 }
-.task-form .tags .tag-wrapper .tag .text {
-  color: #123c4a;
+.task-form .tags-block .tags .tag .tag__remove:hover {
+  color: #c82333;
 }
-.task-form .tags .tag-wrapper .tag-input-box {
+.task-form .tags-block .tags .tag .tag__text {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+.task-form .tags-block .tag-input-wrap {
   display: flex;
   align-items: center;
-  border: 1.5px solid #123c4a;
+  border: 2px solid #023047;
   border-radius: 12px;
-  padding: 6px 10px;
-  height: 36px;
+  padding: 0 8px 0 6px;
+  height: 40px;
+  background: #fff;
 }
-.task-form .tags .tag-wrapper .tag-input-box .hash {
-  font-weight: bold;
-  color: #123c4a;
-  margin-right: 4px;
+.task-form .tags-block .tag-input-wrap .tag-hash {
+  font-size: 14px;
+  color: #023047;
+  margin-right: 2px;
+  user-select: none;
 }
-.task-form .tags .tag-wrapper .tag-input-box .tag-input {
+.task-form .tags-block .tag-input-wrap .tag-input {
   border: none;
   outline: none;
-  width: 100px;
   font-size: 14px;
-  color: #123c4a;
+  color: #023047;
   background: transparent;
+  min-width: 4rem;
+  max-width: 6rem;
+  padding: 0 4px;
 }
-.task-form .tags .tag-wrapper .tag-input-box .add-button {
-  background: none;
+.task-form .tags-block .tag-input-wrap .tag-input::placeholder {
+  color: #bbb;
+}
+.task-form .tags-block .tag-input-wrap .tag-add-btn {
   border: none;
-  font-size: 20px;
-  color: #123c4a;
-  margin-left: 8px;
+  background: none;
+  color: #023047;
+  font-size: 26px;
   cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.2s;
+}
+.task-form .tags-block .tag-input-wrap .tag-add-btn:hover {
+  color: #229ed9;
 }
 .task-form .toggles {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.5rem;
 }
 .task-form .toggles .toggle-container {
   display: flex;
@@ -130,12 +155,12 @@
   transform: translateX(20px);
 }
 .task-form .toggles .toggle-container .label-text {
-  font-size: 14px;
+  font-size: 16px;
   color: #023047;
   user-select: none;
 }
 .task-form .toggles input {
-  width: 8vw;
+  min-width: 7vw;
   padding: 0.5rem;
   border-radius: 10px;
   background: #f0f0f0;
@@ -162,10 +187,10 @@
   align-items: center;
   gap: 1rem;
 }
-.task-form .priority select {
+.task-form .priority input {
   border-radius: 10px;
   background: rgba(5, 117, 173, 0.05);
-  border: none;
+  border: 1px solid #023047;
   padding: 0.5rem;
 }
 .task-form .task-type {
@@ -174,7 +199,7 @@
   gap: 0.5rem;
 }
 .task-form .task-type .types {
-  font-size: 14px;
+  font-size: 16px;
   display: flex;
   flex-direction: row;
   gap: 1rem;
@@ -185,7 +210,7 @@
   flex-direction: column;
 }
 .task-form .repeat-days label {
-  font-size: 500;
+  font-weight: 500;
   font-size: 14px;
 }
 .task-form .repeat-days .days {
@@ -211,19 +236,19 @@
 .task-form .repeat-days .days .day:hover {
   background: #e6f0f5;
 }
-.task-form .repeat-days .days .day.selected {
+.task-form .repeat-days .days .day.active {
   background: #023047;
   color: white;
 }
-.task-form .repeat-days .days .day.selected p {
+.task-form .repeat-days .days .day.active p {
   color: white;
 }
-.task-form .scale-inputs {
+.task-form .scale-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
 }
-.task-form .scale-inputs input {
+.task-form .scale-form input {
   width: 15vw;
   font-size: 14px;
   font-style: italic;
@@ -231,27 +256,23 @@
   border-bottom: 1px solid rgba(2, 48, 71, 0.5);
   padding: 0.5rem 0;
 }
-.task-form .scale-inputs .unit {
+.task-form .scale-form .unit {
   display: flex;
   flex-direction: column;
 }
-.task-form .scale-inputs .input-number {
+.task-form .scale-form .input-number {
   display: flex;
   flex-direction: column;
 }
-.task-form .subtasks-block {
+.task-form .subtasks-form {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-.task-form .subtasks-block label {
+.task-form .subtasks-form label {
   font-size: 14px;
 }
-.task-form .subtasks-block input {
-  font-size: 14px;
-  background: transparent;
-}
-.task-form .subtasks-block .subtask {
+.task-form .subtasks-form .subtask {
   display: flex;
   flex-direction: column;
   position: relative;
@@ -261,19 +282,27 @@
   padding: 1rem;
   padding-bottom: 4rem;
 }
-.task-form .subtasks-block .subtask .subtask-type {
+.task-form .subtasks-form .subtask .input-text {
+  font-size: 14px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(2, 48, 71, 0.5);
+  width: 20vw;
+  padding: 0.5rem 0;
+  font-weight: 500;
+}
+.task-form .subtasks-form .subtask .subtask-type {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-.task-form .subtasks-block .subtask .subtask-type .types {
+.task-form .subtasks-form .subtask .subtask-type .types {
   font-size: 14px;
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  align-items: center;
 }
-.task-form .subtasks-block .subtask .delete-subtask {
+.task-form .subtasks-form .subtask .delete-subtask {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
@@ -286,10 +315,40 @@
   border-radius: 5px;
   transition: background 0.2s;
 }
-.task-form .subtasks-block .subtask .delete-subtask:hover {
+.task-form .subtasks-form .subtask .delete-subtask:hover {
   background: #fdd;
 }
-.task-form .subtasks-block .add-subtask {
+.task-form .subtasks-form .subtask .days {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+.task-form .subtasks-form .subtask .days .day {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 14px;
+  background: white;
+  border: 1px solid #023047;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #023047;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.task-form .subtasks-form .subtask .days .day:hover {
+  background: #e6f0f5;
+}
+.task-form .subtasks-form .subtask .days .day.active {
+  background: #023047;
+  color: white;
+}
+.task-form .subtasks-form .subtask .days .day.active p {
+  color: white;
+}
+.task-form .subtasks-form .add-subtask {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -301,7 +360,7 @@
   margin-top: 20px;
   padding: 0;
 }
-.task-form .subtasks-block .add-subtask .circle {
+.task-form .subtasks-form .add-subtask .circle {
   background-color: #ff8f00;
   color: white;
   font-size: 1.5rem;
@@ -312,13 +371,13 @@
   align-items: center;
   justify-content: center;
 }
-.task-form .subtasks-block .add-subtask .text {
+.task-form .subtasks-form .add-subtask .text {
   font-size: 16px;
 }
-.task-form .subtasks-block .add-subtask:hover .circle {
+.task-form .subtasks-form .add-subtask:hover .circle {
   background-color: #ff8f00;
 }
-.task-form .buttons {
+.task-form .form-actions {
   margin-top: 1rem;
   margin-bottom: 1rem;
   display: flex;
@@ -326,7 +385,7 @@
   justify-content: end;
   gap: 1rem;
 }
-.task-form .buttons .cancel {
+.task-form .form-actions .cancel {
   padding: 0.5rem 1rem;
   border-radius: 5px;
   color: #023047;
@@ -334,7 +393,7 @@
   border-color: #023047;
   cursor: pointer;
 }
-.task-form .buttons .save {
+.task-form .form-actions .save {
   padding: 0.5rem 1rem;
   border-radius: 5px;
   background-color: #023047;

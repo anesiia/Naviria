@@ -52,6 +52,12 @@ namespace NaviriaAPI.Services
             await EnsureUserExistsAsync(userId);
 
             var entities = await _chatRepository.GetByUserIdAsync(userId);
+
+            foreach( var entity in entities)
+            {
+                entity.CreatedAt = entity.CreatedAt.ToLocalTime();
+            }
+
             return entities.Select(AssistantChatMapper.ToDto);
         }
 

@@ -30,7 +30,7 @@ namespace NaviriaAPI.Mappings
             {
                 UserId = dto.UserId,
                 Text = dto.Text,
-                RecievedAt = dto.RecievedAt,
+                RecievedAt = DateTime.UtcNow,
                 IsNew = true
             };
 

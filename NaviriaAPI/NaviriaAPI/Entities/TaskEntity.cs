@@ -54,6 +54,12 @@ namespace NaviriaAPI.Entities
         [BsonElement("subtasks")]
         public List<SubtaskBase> Subtasks { get; set; } = new();
 
+        [BsonElement("created_at"), BsonRepresentation(BsonType.DateTime)]
+        public DateTime CreatedAt { get; set; }
+
+        [BsonElement("completed_at"), BsonRepresentation(BsonType.DateTime)]
+        public DateTime? CompletedAt { get; set; }
+
         [BsonElement("status"), BsonRepresentation(BsonType.String)]
         public CurrentTaskStatus Status { get; set; }
 

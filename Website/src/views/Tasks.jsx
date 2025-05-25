@@ -100,7 +100,20 @@ export function Tasks() {
       type: task.type,
       repeatDays: task.repeatDays,
       checkedInDays: task.checkedInDays,
-      subtasks: task.subtasks,
+      subtasks: Array.isArray(task.subtasks)
+        ? task.subtasks.map((st) => ({
+            ...st,
+            subtask_type:
+              st.type === "repeatable"
+                ? "repeatable"
+                : st.type === "scale"
+                ? "scale"
+                : st.type === "standard"
+                ? "standard"
+                : "standard",
+          }))
+        : [],
+
       // тощо (додай усе, що повертає бекенд у GET)
     };
 
@@ -244,83 +257,96 @@ export function Tasks() {
         </div>
       </div>
       <div className="content">
-        <h1>
-          {selectedFolder ? `Мої ${selectedFolder.name}` : "Оберіть папку"}
-        </h1>
-        <div className="add-task">
-          <button
-            className="add-task-btn"
-            onClick={() => setShowCreateForm(true)}
-          >
-            +
-          </button>
-          <p>Створити нову задачу</p>
-        </div>
-        <div className="in-progress">
-          <h2>В процесі</h2>
-          <div className="tasks">
-            {showCreateForm && (
-              <TaskForm
-                onCancel={() => setShowCreateForm(false)}
-                onSave={() => setShowCreateForm(false)}
-              />
-            )}
-            {selectedFolder?.tasks
-              ?.filter((task) => task.status !== "Completed")
-              .map((task) => (
-                <Task
-                  key={task.id}
-                  {...task}
-                  folderId={selectedFolder.id}
-                  onToggleTask={handleToggleTask}
-                  fetchTasks={fetchTasks}
-                  onDelete={fetchTasks} // або свій метод для оновлення
-                />
-              ))}
+        {!selectedFolder ? (
+          <div className="empty-state">
+            <h1>Оберіть папку</h1>
+            <p>
+              Щоб почати працювати з задачами, оберіть існуючу папку ліворуч або
+              створіть нову.
+            </p>
           </div>
-        </div>
-        <div className="done">
-          <h2>Виконано</h2>
-          <div className="tasks">
-            {selectedFolder?.tasks
-              ?.filter((task) => task.status === "Completed")
-              .map((task) => (
-                <Task
-                  key={task.id}
-                  {...task}
-                  folderId={selectedFolder.id}
-                  fetchTasks={fetchTasks}
-                  onToggleTask={handleToggleTask}
-                  onDelete={fetchTasks}
-                />
-              ))}
-          </div>
-        </div>
+        ) : (
+          <>
+            <h1>
+              {selectedFolder ? `Мої ${selectedFolder.name}` : "Оберіть папку"}
+            </h1>
+            <div className="add-task">
+              <button
+                className="add-task-btn"
+                onClick={() => setShowCreateForm(true)}
+              >
+                +
+              </button>
+              <p>Створити нову задачу</p>
+            </div>
+            <div className="in-progress">
+              <h2>В процесі</h2>
+              <div className="tasks">
+                {showCreateForm && (
+                  <TaskForm
+                    selectedFolderId={selectedFolder?.id}
+                    onCancel={() => setShowCreateForm(false)}
+                    onSave={() => setShowCreateForm(false)}
+                    fetchTasks={fetchTasks}
+                  />
+                )}
 
-        <h1>Превʼю всіх типів задач</h1>
+                {/* Якщо задач у процесі нема — показати жартівливий текст */}
+                {selectedFolder?.tasks?.filter(
+                  (task) => task.status !== "Completed"
+                ).length === 0 ? (
+                  <div className="empty-tasks">
+                    <p>Тут поки порожньо! Самі собою задачі не заведуться 😉</p>
+                    <p>Додай першу задачу, і робочий процес піде!</p>
+                  </div>
+                ) : (
+                  selectedFolder?.tasks
+                    ?.filter((task) => task.status !== "Completed")
+                    .map((task) => (
+                      <Task
+                        key={task.id}
+                        {...task}
+                        folderId={selectedFolder.id}
+                        onToggleTask={handleToggleTask}
+                        fetchTasks={fetchTasks}
+                        onDelete={fetchTasks}
+                      />
+                    ))
+                )}
+              </div>
+            </div>
 
-        <h2>Simple Task</h2>
-        <Task type="simple" />
-
-        <h2>Repeat Task</h2>
-        <Task type="repeat" />
-
-        <h2>Scale Task</h2>
-        <Task type="scale" />
-
-        <h2>List Task (з Subtasks)</h2>
-        <Task type="list" />
-
-        <hr />
-
-        <h2>Simple Subtask</h2>
-        <Subtasks type="simple" />
-
-        <h2>Repeat Subtask</h2>
-        <Subtasks type="repeat" />
-
-        <h2>Scale Subtask</h2>
-        <Subtasks type="scale" />
+            <div className="done">
+              <h2>Виконано</h2>
+              <div className="tasks">
+                {/* Якщо виконаних задач нема — жартівливий текст */}
+                {selectedFolder?.tasks?.filter(
+                  (task) => task.status === "Completed"
+                ).length === 0 ? (
+                  <div className="empty-tasks">
+                    <p>
+                      Тут поки немає перемог! Але все попереду — варто тільки
+                      почати 💪
+                    </p>
+                  </div>
+                ) : (
+                  selectedFolder?.tasks
+                    ?.filter((task) => task.status === "Completed")
+                    .map((task) => (
+                      <Task
+                        key={task.id}
+                        {...task}
+                        folderId={selectedFolder.id}
+                        fetchTasks={fetchTasks}
+                        onToggleTask={handleToggleTask}
+                        onDelete={fetchTasks}
+                      />
+                    ))
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

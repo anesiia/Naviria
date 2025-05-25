@@ -57,6 +57,11 @@ namespace NaviriaAPI.Services
                 throw new NotFoundException($"User with ID {userId} has no tasks.");
             }
 
+            foreach ( var task in tasks )
+            {
+                task.CreatedAt = task.CreatedAt.ToLocalTime();
+            }
+
             return tasks.Select(TaskMapper.ToDto);
         }
 
@@ -68,6 +73,9 @@ namespace NaviriaAPI.Services
             {
                 throw new NotFoundException($"Task with ID {id} not found.");
             }
+
+            task.CreatedAt = task.CreatedAt.ToLocalTime();
+
             return TaskMapper.ToDto(task);
         }
 
@@ -120,7 +128,7 @@ namespace NaviriaAPI.Services
 
             if (isStatusChanged)
             {
-
+                existing.CompletedAt = DateTime.UtcNow;
                 var user = await _userService.GetByIdAsync(existing.UserId);
 
                 if (user == null)
