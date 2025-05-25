@@ -290,35 +290,59 @@ export function Tasks() {
                     fetchTasks={fetchTasks}
                   />
                 )}
-                {selectedFolder?.tasks
-                  ?.filter((task) => task.status !== "Completed")
-                  .map((task) => (
-                    <Task
-                      key={task.id}
-                      {...task}
-                      folderId={selectedFolder.id}
-                      onToggleTask={handleToggleTask}
-                      fetchTasks={fetchTasks}
-                      onDelete={fetchTasks} // або свій метод для оновлення
-                    />
-                  ))}
+
+                {/* Якщо задач у процесі нема — показати жартівливий текст */}
+                {selectedFolder?.tasks?.filter(
+                  (task) => task.status !== "Completed"
+                ).length === 0 ? (
+                  <div className="empty-tasks">
+                    <p>Тут поки порожньо! Самі собою задачі не заведуться 😉</p>
+                    <p>Додай першу задачу, і робочий процес піде!</p>
+                  </div>
+                ) : (
+                  selectedFolder?.tasks
+                    ?.filter((task) => task.status !== "Completed")
+                    .map((task) => (
+                      <Task
+                        key={task.id}
+                        {...task}
+                        folderId={selectedFolder.id}
+                        onToggleTask={handleToggleTask}
+                        fetchTasks={fetchTasks}
+                        onDelete={fetchTasks}
+                      />
+                    ))
+                )}
               </div>
             </div>
+
             <div className="done">
               <h2>Виконано</h2>
               <div className="tasks">
-                {selectedFolder?.tasks
-                  ?.filter((task) => task.status === "Completed")
-                  .map((task) => (
-                    <Task
-                      key={task.id}
-                      {...task}
-                      folderId={selectedFolder.id}
-                      fetchTasks={fetchTasks}
-                      onToggleTask={handleToggleTask}
-                      onDelete={fetchTasks}
-                    />
-                  ))}
+                {/* Якщо виконаних задач нема — жартівливий текст */}
+                {selectedFolder?.tasks?.filter(
+                  (task) => task.status === "Completed"
+                ).length === 0 ? (
+                  <div className="empty-tasks">
+                    <p>
+                      Тут поки немає перемог! Але все попереду — варто тільки
+                      почати 💪
+                    </p>
+                  </div>
+                ) : (
+                  selectedFolder?.tasks
+                    ?.filter((task) => task.status === "Completed")
+                    .map((task) => (
+                      <Task
+                        key={task.id}
+                        {...task}
+                        folderId={selectedFolder.id}
+                        fetchTasks={fetchTasks}
+                        onToggleTask={handleToggleTask}
+                        onDelete={fetchTasks}
+                      />
+                    ))
+                )}
               </div>
             </div>
           </>
