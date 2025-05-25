@@ -21,6 +21,8 @@ namespace NaviriaAPI.DTOs.Task.Update
         public string Type { get; set; } = string.Empty;
         public List<SubtaskUpdateDtoBase> Subtasks { get; set; } = new();
 
+        public DateTime? CompletedAt { get; set; }
+
         public CurrentTaskStatus Status { get; set; }
     }
 }

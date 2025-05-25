@@ -37,6 +37,7 @@ namespace NaviriaAPI.Mappings
                         NotificationDate = withSub.NotificationDate,
                         Priority = withSub.Priority,
                         Subtasks = withSub.Subtasks.Select(x => SubtaskMapper.FromCreateDto(x)).ToList(),
+                        CreatedAt = DateTime.UtcNow,
                         Status = CurrentTaskStatus.InProgress
                     };
                 case "repeatable":
@@ -57,7 +58,7 @@ namespace NaviriaAPI.Mappings
                         NotificationDate = rep.NotificationDate,
                         Priority = rep.Priority,
                         Subtasks = rep.Subtasks.Select(x => SubtaskMapper.FromCreateDto(x)).ToList(),
-
+                        CreatedAt = DateTime.UtcNow,
                         Status = CurrentTaskStatus.InProgress,
                         RepeatDays = rep.RepeatDays,
                         CheckedInDays = []
@@ -80,6 +81,7 @@ namespace NaviriaAPI.Mappings
                         NotificationDate = scale.NotificationDate,
                         Priority = scale.Priority,
                         Subtasks = scale.Subtasks.Select(x => SubtaskMapper.FromCreateDto(x)).ToList(),
+                        CreatedAt = DateTime.UtcNow,
                         Status = CurrentTaskStatus.InProgress,
                         Unit = scale.Unit,
                         CurrentValue = scale.CurrentValue,
@@ -103,6 +105,7 @@ namespace NaviriaAPI.Mappings
                         NotificationDate = std.NotificationDate,
                         Priority = std.Priority,
                         Subtasks = std.Subtasks.Select(x => SubtaskMapper.FromCreateDto(x)).ToList(),
+                        CreatedAt = DateTime.UtcNow,
                         Status = CurrentTaskStatus.InProgress
                     };
             }
@@ -131,6 +134,8 @@ namespace NaviriaAPI.Mappings
                             NotificationDate = withSub.NotificationDate,
                             Priority = withSub.Priority,
                             Subtasks = withSub.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
+                            CreatedAt = withSub.CreatedAt,
+                            CompletedAt = withSub.CompletedAt,
                             Status = withSub.Status
                         };
                     }
@@ -154,6 +159,8 @@ namespace NaviriaAPI.Mappings
                             NotificationDate = rep.NotificationDate,
                             Priority = rep.Priority,
                             Subtasks = rep.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
+                            CreatedAt = rep.CreatedAt,
+                            CompletedAt = rep.CompletedAt,
                             Status = rep.Status,
                             RepeatDays = rep.RepeatDays,
                             CheckedInDays = rep.CheckedInDays
@@ -179,6 +186,8 @@ namespace NaviriaAPI.Mappings
                             NotificationDate = scale.NotificationDate,
                             Priority = scale.Priority,
                             Subtasks = scale.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
+                            CreatedAt = scale.CreatedAt,
+                            CompletedAt = scale.CompletedAt,
                             Status = scale.Status,
                             Unit = scale.Unit,
                             CurrentValue = scale.CurrentValue,
@@ -205,6 +214,8 @@ namespace NaviriaAPI.Mappings
                             NotificationDate = std.NotificationDate,
                             Priority = std.Priority,
                             Subtasks = std.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
+                            CreatedAt = std.CreatedAt,
+                            CompletedAt = std.CompletedAt,
                             Status = std.Status
                         };
                     }
@@ -225,6 +236,8 @@ namespace NaviriaAPI.Mappings
                         NotificationDate = entity.NotificationDate,
                         Priority = entity.Priority,
                         Subtasks = entity.Subtasks.Select(SubtaskMapper.ToDto).ToList(),
+                        CreatedAt = entity.CreatedAt,
+                        CompletedAt = entity.CompletedAt,
                         Status = entity.Status
                     };
             }
@@ -245,6 +258,7 @@ namespace NaviriaAPI.Mappings
             entity.Subtasks = dto.Subtasks
             .Select(subDto => SubtaskMapper.FromUpdateDto(subDto.Id, subDto))
             .ToList();
+            entity.CompletedAt = dto.CompletedAt;
             entity.Status = dto.Status;
 
             switch (entity.Type)
