@@ -89,6 +89,36 @@ export async function checkinRepeatableSubtask(taskId, subtaskId, date) {
   });
 }
 
+export async function createTask(data) {
+  const res = await fetch(`${API_URL}/api/Task`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Не вдалося створити задачу");
+  return await res.json();
+}
+
+export async function createSubtask(taskId, data) {
+  const res = await fetch(`${API_URL}/api/tasks/${taskId}/subtasks`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Не вдалося створити підзадачу");
+  return await res.json();
+}
+
+export async function fetchCategories() {
+  const res = await fetch(`${API_URL}/api/Category`);
+  if (!res.ok) throw new Error("Не вдалося отримати категорії");
+  return await res.json();
+}
+
 // services/TasksServices.jsx
 export async function deleteTask(id) {
   const res = await fetch(`${API_URL}/api/Task/${id}`, {

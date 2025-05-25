@@ -261,8 +261,10 @@ export function Tasks() {
           <div className="tasks">
             {showCreateForm && (
               <TaskForm
+                selectedFolderId={selectedFolder?.id}
                 onCancel={() => setShowCreateForm(false)}
                 onSave={() => setShowCreateForm(false)}
+                fetchTasks={fetchTasks}
               />
             )}
             {selectedFolder?.tasks
@@ -296,31 +298,6 @@ export function Tasks() {
               ))}
           </div>
         </div>
-
-        <h1>Превʼю всіх типів задач</h1>
-
-        <h2>Simple Task</h2>
-        <Task type="simple" />
-
-        <h2>Repeat Task</h2>
-        <Task type="repeat" />
-
-        <h2>Scale Task</h2>
-        <Task type="scale" />
-
-        <h2>List Task (з Subtasks)</h2>
-        <Task type="list" />
-
-        <hr />
-
-        <h2>Simple Subtask</h2>
-        <Subtasks type="simple" />
-
-        <h2>Repeat Subtask</h2>
-        <Subtasks type="repeat" />
-
-        <h2>Scale Subtask</h2>
-        <Subtasks type="scale" />
       </div>
     </div>
   );
