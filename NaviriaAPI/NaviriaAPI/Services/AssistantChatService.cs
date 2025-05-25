@@ -12,6 +12,7 @@ using OpenAI.Chat;
 using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.DTOs.Task.Create;
+using System.Text.Json.Nodes;
 
 namespace NaviriaAPI.Services
 {
@@ -103,6 +104,8 @@ namespace NaviriaAPI.Services
             var rawReply = result.Value.Content[0].Text;
             var extractedJson = JsonHelper.ExtractJsonFromCodeBlock(rawReply);
 
+            await Console.Out.WriteLineAsync(rawReply);
+
             if (!extractedJson.TrimStart().StartsWith("{"))
             {
                 _logger.LogWarning("GPT returned non-JSON response: {RawReply}", rawReply);
@@ -112,7 +115,16 @@ namespace NaviriaAPI.Services
             try
             {
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var taskDto = JsonSerializer.Deserialize<TaskCreateDto>(extractedJson, options);
+                var node = System.Text.Json.Nodes.JsonNode.Parse(extractedJson);
+                var type = node?["Type"]?.GetValue<string>()?.ToLower() ?? "standard";
+
+                TaskCreateDto? taskDto = type switch
+                {
+                    "standard" => node.Deserialize<TaskStandartCreateDto>(options),
+                    "repeatable" => node.Deserialize<TaskRepeatableCreateDto>(options),
+                    "scale" => node.Deserialize<TaskScaleCreateDto>(options),
+                    _ => node.Deserialize<TaskCreateDto>(options)
+                };
 
                 if (taskDto == null || string.IsNullOrWhiteSpace(taskDto.Title))
                     return "Failed to read task. GPT did not fill in important fields.";
