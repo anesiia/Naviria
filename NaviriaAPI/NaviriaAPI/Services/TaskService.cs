@@ -120,7 +120,7 @@ namespace NaviriaAPI.Services
 
             if (isStatusChanged)
             {
-
+                existing.CompletedAt = DateTime.UtcNow;
                 var user = await _userService.GetByIdAsync(existing.UserId);
 
                 if (user == null)
