@@ -1,4 +1,4 @@
-﻿namespace NaviriaAPI.DTOs.UpdateDTOs
+﻿namespace NaviriaAPI.DTOs.Category
 {
     public class CategoryUpdateDto
     {

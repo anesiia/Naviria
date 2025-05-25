@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NaviriaAPI.DTOs;
 using NaviriaAPI.DTOs.Notification;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.IServices;
 
 namespace NaviriaAPI.Controllers

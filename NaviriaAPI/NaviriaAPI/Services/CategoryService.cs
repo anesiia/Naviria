@@ -1,7 +1,6 @@
 ﻿using NaviriaAPI.IRepositories;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.IServices;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities;
 using NaviriaAPI.DTOs.Category;
 

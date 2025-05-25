@@ -1,4 +1,4 @@
-﻿namespace NaviriaAPI.DTOs.CreateDTOs
+﻿namespace NaviriaAPI.DTOs.Quote
 {
     public class QuoteCreateDto
     {
