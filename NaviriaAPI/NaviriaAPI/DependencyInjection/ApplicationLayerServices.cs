@@ -68,8 +68,9 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<IGeneralStatisticService, GeneralStatisticsService>();
             services.AddScoped<IStatisticRepository, StatisticRepository>();
 
-            services.AddScoped<ITaskStatisticService, TaskStatisticService>();
+            services.AddScoped<ITaskStatisticService, RepeatableTaskStatisticService>();
             services.AddScoped<IStatisticsByCategoryService, StatisticsByCategoryService>();
+            services.AddScoped<ITaskStatisticByDateService, TaskStatisticByDateService>();
 
         }
     }
