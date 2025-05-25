@@ -1,9 +1,12 @@
 ﻿using NaviriaAPI.IRepositories;
-using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
-using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
+using NaviriaAPI.DTOs.Task.Subtask.Create;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.IServices;
+using NaviriaAPI.DTOs.Task.Subtask.Update;
+using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
+using NaviriaAPI.Exceptions;
+using System.ComponentModel.DataAnnotations;
+using NaviriaAPI.DTOs.Task.Subtask.View;
 
 namespace NaviriaAPI.Services
 {
@@ -60,5 +63,29 @@ namespace NaviriaAPI.Services
 
             return await _taskRepository.UpdateAsync(task);
         }
+
+        /// <inheritdoc />
+        public async Task<SubtaskRepeatableDto> MarkRepeatableSubtaskCheckedInAsync(string taskId, string subtaskId, DateTime date)
+        {
+            var task = await _taskRepository.GetByIdAsync(taskId)
+                ?? throw new NotFoundException($"Task with id {taskId} not found");
+
+            var subtask = task.Subtasks.FirstOrDefault(s => s.Id == subtaskId)
+                as SubtaskRepeatable
+                ?? throw new ValidationException("Subtask is not of type 'repeatable'");
+
+            if (!subtask.RepeatDays.Contains(date.DayOfWeek))
+                throw new ValidationException($"Date {date.ToShortDateString()} is not allowed for this repeatable subtask");
+
+            if (!subtask.CheckedInDays.Any(d => d.Date == date.Date))
+            {
+                subtask.CheckedInDays.Add(date.Date);
+                await _taskRepository.UpdateAsync(task);
+            }
+
+            return (SubtaskRepeatableDto)SubtaskMapper.ToDto(subtask);
+        }
+
+
     }
 }

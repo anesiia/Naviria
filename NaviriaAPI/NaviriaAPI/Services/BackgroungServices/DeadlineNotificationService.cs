@@ -1,4 +1,4 @@
-﻿using NaviriaAPI.DTOs.CreateDTOs;
+﻿using NaviriaAPI.DTOs.Notification;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Helpers;

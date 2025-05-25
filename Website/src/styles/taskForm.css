@@ -11,14 +11,14 @@
   font-size: 16px;
   color: #023047;
   border: none;
-  border-bottom: 1px solid #023047;
+  border-bottom: 1px solid rgba(2, 48, 71, 0.5);
   padding: 0.5rem 0;
 }
 .task-form .description {
   width: 30vw;
   font-size: 14px;
   border: none;
-  border-bottom: 1px solid #023047;
+  border-bottom: 1px solid rgba(2, 48, 71, 0.5);
   padding: 0.5rem 0;
 }
 .task-form .category {
@@ -135,7 +135,7 @@
   user-select: none;
 }
 .task-form .toggles input {
-  width: 7vw;
+  width: 8vw;
   padding: 0.5rem;
   border-radius: 10px;
   background: #f0f0f0;
@@ -174,10 +174,149 @@
   gap: 0.5rem;
 }
 .task-form .task-type .types {
+  font-size: 14px;
   display: flex;
   flex-direction: row;
   gap: 1rem;
   align-items: center;
+}
+.task-form .repeat-days {
+  display: flex;
+  flex-direction: column;
+}
+.task-form .repeat-days label {
+  font-size: 500;
+  font-size: 14px;
+}
+.task-form .repeat-days .days {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+.task-form .repeat-days .days .day {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 14px;
+  background: white;
+  border: 1px solid #023047;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #023047;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.task-form .repeat-days .days .day:hover {
+  background: #e6f0f5;
+}
+.task-form .repeat-days .days .day.selected {
+  background: #023047;
+  color: white;
+}
+.task-form .repeat-days .days .day.selected p {
+  color: white;
+}
+.task-form .scale-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.task-form .scale-inputs input {
+  width: 15vw;
+  font-size: 14px;
+  font-style: italic;
+  border: none;
+  border-bottom: 1px solid rgba(2, 48, 71, 0.5);
+  padding: 0.5rem 0;
+}
+.task-form .scale-inputs .unit {
+  display: flex;
+  flex-direction: column;
+}
+.task-form .scale-inputs .input-number {
+  display: flex;
+  flex-direction: column;
+}
+.task-form .subtasks-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.task-form .subtasks-block label {
+  font-size: 14px;
+}
+.task-form .subtasks-block input {
+  font-size: 14px;
+  background: transparent;
+}
+.task-form .subtasks-block .subtask {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 0.5rem;
+  border-radius: 10px;
+  background: #f2f8fb;
+  padding: 1rem;
+  padding-bottom: 4rem;
+}
+.task-form .subtasks-block .subtask .subtask-type {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.task-form .subtasks-block .subtask .subtask-type .types {
+  font-size: 14px;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+.task-form .subtasks-block .subtask .delete-subtask {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #023047;
+  color: #023047;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+.task-form .subtasks-block .subtask .delete-subtask:hover {
+  background: #fdd;
+}
+.task-form .subtasks-block .add-subtask {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: #003b5c;
+  margin-top: 20px;
+  padding: 0;
+}
+.task-form .subtasks-block .add-subtask .circle {
+  background-color: #ff8f00;
+  color: white;
+  font-size: 1.5rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.task-form .subtasks-block .add-subtask .text {
+  font-size: 16px;
+}
+.task-form .subtasks-block .add-subtask:hover .circle {
+  background-color: #ff8f00;
 }
 .task-form .buttons {
   margin-top: 1rem;
@@ -191,11 +330,14 @@
   padding: 0.5rem 1rem;
   border-radius: 5px;
   color: #023047;
+  background-color: white;
   border-color: #023047;
+  cursor: pointer;
 }
 .task-form .buttons .save {
   padding: 0.5rem 1rem;
   border-radius: 5px;
   background-color: #023047;
   color: white;
+  cursor: pointer;
 }

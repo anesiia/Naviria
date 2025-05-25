@@ -1,18 +1,20 @@
-﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
+﻿using NaviriaAPI.DTOs.Task.Update;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.DTOs.FeaturesDTOs;
-using NaviriaAPI.DTOs.TaskDtos;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.IServices.IGamificationLogic;
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Driver;
-using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
-using NaviriaAPI.Entities;
+using NaviriaAPI.DTOs.Task.Create;
+using NaviriaAPI.DTOs.Task.View;
+using NaviriaAPI.DTOs.Task.Subtask.Update;
+using NaviriaAPI.DTOs.Task.Subtask.Create;
+using NaviriaAPI.DTOs.TaskDtos;
+using NaviriaAPI.Entities.EmbeddedEntities.TaskTypes;
 
 namespace NaviriaAPI.Services
 {
@@ -77,6 +79,12 @@ namespace NaviriaAPI.Services
                 throw new NotFoundException($"User with ID {dto.UserId} not found.");
             }
 
+            if (dto.Type != "with_subtasks" && dto.Subtasks != null && dto.Subtasks.Any())
+                throw new ValidationException("Only tasks with TYPE 'with_subtasks' can have subtasks");
+
+            if (dto.Type != "with_subtasks")
+                dto.Subtasks = new List<SubtaskCreateDtoBase>();
+
             // Validate title and description for security
             _messageSecurityService.Validate(dto.UserId, dto.Title);
             _messageSecurityService.Validate(dto.UserId, dto.Description);
@@ -100,6 +108,11 @@ namespace NaviriaAPI.Services
 
             if (dto.Tags?.Count > 10)
                 throw new ValidationException("A task can have no more than 10 tags.");
+            if (dto.Type != "with_subtasks" && dto.Subtasks != null && dto.Subtasks.Any())
+                throw new ValidationException("Only tasks with TYPE 'with_subtasks' can have subtasks");
+
+            if (dto.Type != "with_subtasks")
+                dto.Subtasks = new List<SubtaskUpdateDtoBase>();
 
             var prevStatus = existing.Status;
             var newStatus = dto.Status;
@@ -149,23 +162,16 @@ namespace NaviriaAPI.Services
             var tasks = (await _taskRepository.GetAllByUserAsync(userId)).ToList();
             var folders = (await _folderRepository.GetAllByUserIdAsync(userId)).ToList();
 
-            if (!tasks.Any())
-            {
-                throw new NotFoundException($"User with ID {userId} has no tasks.");
-            }
-
-            var grouped = tasks
-                .GroupBy(t => t.FolderId)
-                .Select(g =>
-                {
-                    var folderName = folders.FirstOrDefault(f => f.Id == g.Key)?.Name ?? "Unknown";
-                    return new FolderWithTasksDto
-                    {
-                        FolderId = g.Key,
-                        FolderName = folderName,
-                        Tasks = g.Select(TaskMapper.ToDto).ToList()
-                    };
-                });
+            var grouped = folders.Select(folder =>
+        new FolderWithTasksDto
+        {
+            FolderId = folder.Id,
+            FolderName = folder.Name,
+            Tasks = tasks
+                .Where(t => t.FolderId == folder.Id)
+                .Select(TaskMapper.ToDto)
+                .ToList()
+        });
 
             return grouped;
         }
@@ -182,6 +188,25 @@ namespace NaviriaAPI.Services
             }
 
             return tasks.Select(TaskMapper.ToDto);
+        }
+
+        /// <inheritdoc />
+        public async Task<TaskRepeatableDto> MarkRepeatableTaskCheckedInAsync(string taskId, DateTime date)
+        {
+            var entity = await _taskRepository.GetByIdAsync(taskId);
+            if (entity is not TaskRepeatable repTask)
+                throw new ValidationException("Task is not repeatable type!");
+
+            if (!repTask.RepeatDays.Contains(date.DayOfWeek))
+                throw new ValidationException($"This date does not match allowed repeat days! Allowed: {string.Join(", ", repTask.RepeatDays)}");
+
+            if (!repTask.CheckedInDays.Any(d => d.Date == date.Date))
+            {
+                repTask.CheckedInDays.Add(date.Date);
+                await _taskRepository.UpdateAsync(repTask);
+            }
+
+            return (TaskRepeatableDto)TaskMapper.ToDto(repTask);
         }
 
         private void ValidateTaskFields(string userId, TaskUpdateDto dto)

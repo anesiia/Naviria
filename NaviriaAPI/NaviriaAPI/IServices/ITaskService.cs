@@ -1,8 +1,9 @@
-﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
+﻿using NaviriaAPI.DTOs.Task.Update;
 using NaviriaAPI.DTOs.FeaturesDTOs;
-using NaviriaAPI.DTOs.TaskDtos;
 using NaviriaAPI.Exceptions;
+using NaviriaAPI.DTOs.Task.Create;
+using NaviriaAPI.DTOs.Task.View;
+using NaviriaAPI.DTOs.TaskDtos;
 
 namespace NaviriaAPI.IServices
 {
@@ -69,5 +70,19 @@ namespace NaviriaAPI.IServices
         /// <returns>A list of TaskDto with the specified deadline.</returns>
         /// <exception cref="NotFoundException">Thrown if no tasks are found with the specified deadline.</exception>
         Task<IEnumerable<TaskDto>> GetTasksWithDeadlineAsync(DateTime deadlineDate);
+
+        /// <summary>
+        /// Marks the specified repeatable task as checked in for a given date.
+        /// </summary>
+        /// <param name="taskId">The ID of the repeatable task.</param>
+        /// <param name="date">The date to check in (will be added to <c>CheckedInDays</c> if allowed by <c>RepeatDays</c>).</param>
+        /// <returns>The updated <see cref="TaskRepeatableDto"/> reflecting the changes.</returns>
+        /// <exception cref="NotFoundException">
+        /// Thrown if the task with the specified ID does not exist or is not of type <c>repeatable</c>.
+        /// </exception>
+        /// <exception>
+        /// Thrown if the provided date does not correspond to any of the allowed repeat days.
+        /// </exception>
+        Task<TaskRepeatableDto> MarkRepeatableTaskCheckedInAsync(string taskId, DateTime date);
     }
 }

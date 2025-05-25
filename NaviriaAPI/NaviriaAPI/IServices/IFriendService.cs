@@ -1,5 +1,5 @@
-﻿using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.FeaturesDTOs;
+﻿using NaviriaAPI.DTOs.FeaturesDTOs;
+using NaviriaAPI.DTOs.User;
 
 namespace NaviriaAPI.IServices
 {

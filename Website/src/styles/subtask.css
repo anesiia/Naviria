@@ -1,6 +1,10 @@
 .subtask {
   display: flex;
   flex-direction: column;
+  border-radius: 20px;
+  border: 1px solid #ffb703;
+  margin-left: 1rem;
+  margin-top: 0.5rem;
 }
 .subtask label {
   font-size: 16px;
@@ -11,8 +15,6 @@
   flex-direction: column;
   padding: 1rem 2rem;
   gap: 1.2rem;
-}
-.subtask .info-subtask-scale p {
   font-size: 14px;
 }
 .subtask .info-subtask-scale .subtask-name {
@@ -59,6 +61,7 @@
   margin-bottom: 0.5rem;
 }
 .subtask .info-subtask-scale .values .add-value .add-action {
+  margin-top: 1rem;
   display: flex;
   flex-direction: row;
   gap: 1rem;
@@ -86,6 +89,8 @@
   display: flex;
   flex-direction: column;
   padding: 1rem 2rem;
+  font-size: 14px;
+  gap: 1rem;
 }
 .subtask .info-subtask-simple p {
   font-size: 14px;
@@ -101,6 +106,7 @@
   flex-direction: column;
   padding: 1rem 2rem;
   gap: 1.2rem;
+  font-size: 14px;
 }
 .subtask .info-subtask-repeat p {
   font-size: 14px;
@@ -129,7 +135,8 @@
   gap: 0.5rem;
 }
 .subtask .info-subtask-repeat .values-repeat .naming .days .day {
-  background-color: #023047;
+  background-color: #f0f0f0;
+  color: #023047;
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
@@ -137,9 +144,15 @@
   justify-content: center;
   align-items: center;
 }
+.subtask .info-subtask-repeat .values-repeat .naming .days .day.active {
+  background-color: #023047 !important;
+  border: none;
+}
+.subtask .info-subtask-repeat .values-repeat .naming .days .day.active p {
+  color: #fff;
+}
 .subtask .info-subtask-repeat .values-repeat .naming .days .day p {
   margin: 0;
-  color: white;
   font-weight: 400;
 }
 .subtask .info-subtask-repeat .values-repeat .done-btn {

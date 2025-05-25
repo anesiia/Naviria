@@ -1,13 +1,11 @@
-﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.DTOs;
-using NaviriaAPI.Exceptions;
+﻿using NaviriaAPI.Exceptions;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.Entities;
 using Microsoft.Extensions.Logging;
 using NaviriaAPI.Services.User;
+using NaviriaAPI.DTOs.Notification;
 
 namespace NaviriaAPI.Services
 {

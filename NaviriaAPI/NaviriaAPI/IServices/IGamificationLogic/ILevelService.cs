@@ -1,4 +1,4 @@
-﻿using NaviriaAPI.DTOs;
+﻿using NaviriaAPI.DTOs.User;
 using NaviriaAPI.Entities.EmbeddedEntities;
 
 namespace NaviriaAPI.IServices.IGamificationLogic

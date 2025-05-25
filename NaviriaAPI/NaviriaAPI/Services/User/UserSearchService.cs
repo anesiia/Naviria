@@ -1,10 +1,10 @@
-﻿using NaviriaAPI.DTOs;
-using NaviriaAPI.IRepositories;
+﻿using NaviriaAPI.IRepositories;
 using NaviriaAPI.Mappings;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.IServices.IUserServices;
+using NaviriaAPI.DTOs.User;
 
 namespace NaviriaAPI.Services.User
 {

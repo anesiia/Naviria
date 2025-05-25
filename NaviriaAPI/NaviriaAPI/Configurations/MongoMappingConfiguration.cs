@@ -1,4 +1,4 @@
-﻿using NaviriaAPI.Helpers;
+﻿using NaviriaAPI.Helpers.TasksPolymorphism;
 
 namespace NaviriaAPI.Configurations
 {
@@ -7,6 +7,7 @@ namespace NaviriaAPI.Configurations
         public static void ConfigureMongoMappings(this IServiceCollection services)
         {
             MongoSubtaskMapping.RegisterSubtaskMappings();
+            MongoTaskMapping.RegisterTaskMappings();
         }
     }
 }

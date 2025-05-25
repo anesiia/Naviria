@@ -52,7 +52,7 @@ export default function Header() {
       <img className="logo" src="logo.svg" />
       <nav className="links">
         <Link to="/tasks">Навірії</Link>
-        <Link to="/helper">Помічник</Link>
+        <Link to="/assistant">Помічник</Link>
         <Link to="/achievements">Досягнення</Link>
         <Link to="/statistics">Статистика</Link>
         <Link to="/friends">Ком'юніті</Link>

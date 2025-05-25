@@ -11,7 +11,9 @@ namespace NaviriaAPI.DTOs.FeaturesDTOs
         [MinLength(1, ErrorMessage = "Message is too short.")]
         [RegularExpression(@"^[^<>]*$", ErrorMessage = "Message contains potentially unsafe characters.")]
         public string Message { get; set; } = string.Empty;
-        
+        public string Role { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+
         public bool IsTaskRequest { get; set; } = false;
     }
 }

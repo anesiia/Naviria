@@ -8,6 +8,7 @@ import { Registration } from "./views/Registration";
 import { Friends } from "./views/Friends";
 import { Achievements } from "./views/Achievements";
 import { Tasks } from "./views/Tasks";
+import { AssistantChat } from "./views/AssistantChat";
 
 function App() {
   const hideHeader = HideHeader();
@@ -22,6 +23,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/tasks" element={<Tasks />} />
+          <Route path="/assistant" element={<AssistantChat />} />
         </Routes>
       </div>
     </div>

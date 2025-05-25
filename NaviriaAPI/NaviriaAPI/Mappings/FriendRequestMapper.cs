@@ -1,8 +1,7 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.DTOs;
 using NaviriaAPI.Entities;
 using SharpCompress.Common;
+using NaviriaAPI.DTOs.FriendRequest;
 
 namespace NaviriaAPI.Mappings
 {

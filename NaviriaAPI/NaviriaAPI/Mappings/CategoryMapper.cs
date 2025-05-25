@@ -1,5 +1,4 @@
-﻿using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.CreateDTOs;
+﻿using NaviriaAPI.DTOs.Category;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities;
 

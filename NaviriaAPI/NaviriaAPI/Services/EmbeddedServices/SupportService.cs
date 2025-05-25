@@ -2,7 +2,7 @@
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices.IEmbeddedServices;
 using NaviriaAPI.Mappings;
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.Notification;
 using Microsoft.Extensions.Logging;
 
 namespace NaviriaAPI.Services.EmbeddedServices

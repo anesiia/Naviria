@@ -1,10 +1,10 @@
 ﻿using NaviriaAPI.Entities.EmbeddedEntities;
 using NaviriaAPI.IServices.IGamificationLogic;
 using NaviriaAPI.IServices;
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.Notification;
 using NaviriaAPI.Constants;
-using NaviriaAPI.DTOs;
 using NaviriaAPI.Exceptions;
+using NaviriaAPI.DTOs.User;
 
 namespace NaviriaAPI.Services
 {

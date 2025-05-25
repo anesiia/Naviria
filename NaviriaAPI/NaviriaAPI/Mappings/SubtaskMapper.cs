@@ -3,6 +3,9 @@ using NaviriaAPI.DTOs.CreateDTOs;
 using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs.TaskDtos;
 using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
+using NaviriaAPI.DTOs.Task.Subtask.Create;
+using NaviriaAPI.DTOs.Task.Subtask.View;
+using NaviriaAPI.DTOs.Task.Subtask.Update;
 
 namespace NaviriaAPI.Mappings
 {
@@ -30,7 +33,7 @@ namespace NaviriaAPI.Mappings
                     Type = r.Type
                 },
 
-                ScaleSubtaskCreateDto sc => new ScaleSubtask
+                SubtaskScaleCreateDto sc => new ScaleSubtask
                 {
                     Id = ObjectId.GenerateNewId().ToString(),
                     Title = sc.Title,
@@ -67,7 +70,7 @@ namespace NaviriaAPI.Mappings
                     Type = r.Type
                 },
 
-                ScaleSubtaskUpdateDto sc => new ScaleSubtask
+                SubtaskScaleUpdateDto sc => new ScaleSubtask
                 {
                     Id = id,
                     Title = sc.Title,
@@ -104,7 +107,7 @@ namespace NaviriaAPI.Mappings
                     Type = r.Type
                 },
 
-                ScaleSubtask sc => new ScaleSubtaskDto
+                ScaleSubtask sc => new SubtaskScaleDto
                 {
                     Id = sc.Id,
                     Title = sc.Title,

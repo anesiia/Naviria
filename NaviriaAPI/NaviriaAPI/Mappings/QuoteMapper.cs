@@ -1,7 +1,6 @@
 ﻿using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.DTOs;
 using NaviriaAPI.Entities;
+using NaviriaAPI.DTOs.Quote;
 
 namespace NaviriaAPI.Mappings
 {

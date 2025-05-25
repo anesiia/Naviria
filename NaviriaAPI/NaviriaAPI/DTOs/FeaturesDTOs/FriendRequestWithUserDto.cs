@@ -1,4 +1,7 @@
-﻿namespace NaviriaAPI.DTOs.FeaturesDTOs
+﻿using NaviriaAPI.DTOs.FriendRequest;
+using NaviriaAPI.DTOs.User;
+
+namespace NaviriaAPI.DTOs.FeaturesDTOs
 {
     public class FriendRequestWithUserDto
     {

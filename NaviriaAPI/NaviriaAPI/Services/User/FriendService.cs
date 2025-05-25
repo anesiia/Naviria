@@ -1,5 +1,5 @@
-﻿using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.FeaturesDTOs;
+﻿using NaviriaAPI.DTOs.FeaturesDTOs;
+using NaviriaAPI.DTOs.User;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;

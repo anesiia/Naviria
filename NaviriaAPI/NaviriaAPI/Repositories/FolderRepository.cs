@@ -17,7 +17,10 @@ namespace NaviriaAPI.Repositories
 
         public async Task<IEnumerable<FolderEntity>> GetAllByUserIdAsync(string userId)
         {
-            return await _folders.Find(f => f.UserId == userId).ToListAsync();
+            return await _folders
+                .Find(f => f.UserId == userId)
+                .SortByDescending(f => f.CreatedAt)
+                .ToListAsync();
         }
 
         public async Task<FolderEntity?> GetByIdAsync(string id)

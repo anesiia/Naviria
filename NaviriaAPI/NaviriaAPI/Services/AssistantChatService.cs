@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using NaviriaAPI.DTOs.CreateDTOs;
+using NaviriaAPI.DTOs.Folder;
 using NaviriaAPI.DTOs.FeaturesDTOs;
 using NaviriaAPI.Entities;
 using NaviriaAPI.IRepositories;
@@ -11,6 +11,7 @@ using NaviriaAPI.Constants;
 using OpenAI.Chat;
 using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.IServices.IUserServices;
+using NaviriaAPI.DTOs.Task.Create;
 
 namespace NaviriaAPI.Services
 {
