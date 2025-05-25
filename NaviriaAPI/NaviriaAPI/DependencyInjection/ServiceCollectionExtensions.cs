@@ -41,6 +41,7 @@ namespace NaviriaAPI.Extentions
             services.AddSingleton<BackupManager>();
             services.AddHostedService<WeeklyBackupService>();
             services.AddHostedService<DeadlineNotificationService>();
+            services.AddHostedService<TaskNotificationService>();
 
 
             services.Configure<JwtOptions>(config.GetSection("Jwt"));

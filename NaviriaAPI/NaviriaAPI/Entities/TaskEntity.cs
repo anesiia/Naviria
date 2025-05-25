@@ -45,6 +45,9 @@ namespace NaviriaAPI.Entities
         [BsonElement("notification_date"), BsonRepresentation(BsonType.DateTime)]
         public DateTime? NotificationDate { get; set; }
 
+        [BsonElement("notification_sent")]
+        public bool NotificationSent { get; set; }
+
         [BsonElement("priority"), BsonRepresentation(BsonType.Int32)]
         public int Priority { get; set; } // from 1 to 10
 
