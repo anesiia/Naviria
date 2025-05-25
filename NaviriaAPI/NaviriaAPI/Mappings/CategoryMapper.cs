@@ -1,5 +1,4 @@
 ﻿using NaviriaAPI.DTOs.Category;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.Entities;
 
 namespace NaviriaAPI.Mappings

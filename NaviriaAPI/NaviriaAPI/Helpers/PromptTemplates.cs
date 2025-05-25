@@ -20,11 +20,12 @@
                                                    "Description": "...",
                                                    "Tags": [{ "Name": "..." }],
                                                    "IsDeadlineOn": true,
-                                                   "Deadline": "2025-05-20T14:00:00Z",
+                                                   "Deadline": "2025-05-20",
                                                    "IsShownProgressOnPage": true,
                                                    "IsNotificationsOn": false,
                                                    "NotificationDate": null,
                                                    "Priority": 1,
+                                                   "Type" : "with_subtasks",
                                                    "Subtasks": [
                                                      {
                                                        "Type": "standard",
@@ -49,8 +50,8 @@
                                                    ]
                                                  }
 
-                                                 ❗️DO NOT add any explanations, comments, greetings, or text outside of JSON.
-                                                 ❗️Respond with ONLY JSON.
+                                                 DO NOT add any explanations, comments, greetings, or text outside of JSON.
+                                                 Respond with ONLY JSON.
                                                  """;
 
         public static string TaskCreationPrompt => _taskCreationPrompt;

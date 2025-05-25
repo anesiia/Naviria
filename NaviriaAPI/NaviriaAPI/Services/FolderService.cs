@@ -1,7 +1,4 @@
-﻿using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.Folder;
-using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.Entities;
+﻿using NaviriaAPI.DTOs.Folder;
 using NaviriaAPI.IRepositories;
 using NaviriaAPI.IServices;
 using NaviriaAPI.Mappings;

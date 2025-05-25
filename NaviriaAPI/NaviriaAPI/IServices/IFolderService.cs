@@ -1,6 +1,4 @@
-﻿using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.DTOs;
-using NaviriaAPI.DTOs.Folder;
+﻿using NaviriaAPI.DTOs.Folder;
 
 namespace NaviriaAPI.IServices
 {

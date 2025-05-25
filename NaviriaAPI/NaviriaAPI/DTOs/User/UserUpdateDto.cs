@@ -1,7 +1,7 @@
 ﻿using NaviriaAPI.Entities.EmbeddedEntities;
 using System.ComponentModel.DataAnnotations;
 
-namespace NaviriaAPI.DTOs.UpdateDTOs
+namespace NaviriaAPI.DTOs.User
 {
     public class UserUpdateDto
     {
