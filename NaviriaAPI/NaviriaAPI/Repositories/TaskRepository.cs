@@ -21,6 +21,15 @@ namespace NaviriaAPI.Repositories
         {
             return await _tasks.Find(t => t.Id == id).FirstOrDefaultAsync();
         }
+        public async Task<IEnumerable<TaskEntity>> GetByUserIdsAsync(IEnumerable<string> userIds)
+        {
+            return await _tasks.Find(t => userIds.Contains(t.UserId)).ToListAsync();
+        }
+
+        public async Task<IEnumerable<TaskEntity>> GetAllAsync()
+        {
+            return await _tasks.Find(_ => true).ToListAsync();
+        }
 
         public async Task<IEnumerable<TaskEntity>> GetAllByUserAsync(string userId)
         {

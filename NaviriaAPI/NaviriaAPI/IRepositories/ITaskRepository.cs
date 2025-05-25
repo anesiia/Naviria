@@ -1,5 +1,6 @@
 ﻿using NaviriaAPI.Entities;
 using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
+using System.Threading.Tasks;
 
 namespace NaviriaAPI.IRepositories
 {
@@ -22,6 +23,19 @@ namespace NaviriaAPI.IRepositories
         /// <param name="id">The identifier of the task.</param>
         /// <returns>The matching task entity, or null if not found.</returns>
         Task<TaskEntity?> GetByIdAsync(string id);
+
+        /// <summary>
+        /// Retrieves all tasks that belong to a set of user IDs.
+        /// </summary>
+        /// <param name="userIds">A collection of user IDs whose tasks are to be retrieved.</param>
+        /// <returns>An enumerable collection of <see cref="TaskEntity"/> belonging to the specified users.</returns>
+        Task<IEnumerable<TaskEntity>> GetByUserIdsAsync(IEnumerable<string> userIds);
+
+        /// <summary>
+        /// Retrieves all tasks in the database.
+        /// </summary>
+        /// <returns>An enumerable collection of all <see cref="TaskEntity"/> in the database.</returns>
+        Task<IEnumerable<TaskEntity>> GetAllAsync();
 
         /// <summary>
         /// Creates a new task in the database.
@@ -75,8 +89,18 @@ namespace NaviriaAPI.IRepositories
         /// <param name="folderId">The ID of the folder.</param>
         Task DeleteManyByFolderIdAsync(string folderId);
 
+        /// <summary>
+        /// Retrieves all tasks that are overdue (their deadline is before the specified datetime and they are still in progress).
+        /// </summary>
+        /// <param name="now">The current date and time used to determine overdue tasks.</param>
+        /// <returns>A list of <see cref="TaskEntity"/> that are overdue.</returns>
         Task<List<TaskEntity>> GetOverdueTasksAsync(DateTime now);
 
+        /// <summary>
+        /// Retrieves all repeatable subtasks for a specific user by aggregating repeatable subtasks from all the user's tasks.
+        /// </summary>
+        /// <param name="userId">The identifier of the user.</param>
+        /// <returns>A list of <see cref="SubtaskRepeatable"/> belonging to the user's tasks.</returns>
         Task<List<SubtaskRepeatable>> GetAllRepeatableSubtasksByUserAsync(string userId);
 
 
