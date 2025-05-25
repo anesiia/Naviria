@@ -199,7 +199,7 @@ export function TaskForm({ selectedFolderId, onCancel, onSave, fetchTasks }) {
           ? "with_subtasks"
           : "standard",
       ...(type === "repeat" && {
-        repeat_days: days.map(
+        RepeatDays: days.map(
           (d) => ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"].indexOf(d) + 1
         ),
         checked_in_days: [],
@@ -207,7 +207,7 @@ export function TaskForm({ selectedFolderId, onCancel, onSave, fetchTasks }) {
       ...(type === "scale" && {
         unit: scaleUnit,
         current_value: 0,
-        target_value: Number(scaleGoal),
+        TargetValue: Number(scaleGoal),
       }),
       ...(type === "list" && {
         subtasks: subtasks.map((st) => {
@@ -224,7 +224,7 @@ export function TaskForm({ selectedFolderId, onCancel, onSave, fetchTasks }) {
             description: st.description,
           };
           if (st.type === "repeat") {
-            base.repeat_days = st.days.map(
+            base.RepeatDays = st.days.map(
               (d) => ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"].indexOf(d) + 1
             );
             base.checked_in_days = [];
@@ -232,7 +232,7 @@ export function TaskForm({ selectedFolderId, onCancel, onSave, fetchTasks }) {
           if (st.type === "scale") {
             base.unit = st.scaleUnit;
             base.current_value = 0;
-            base.target_value = Number(st.scaleGoal);
+            base.TargetValue = Number(st.scaleGoal);
           }
           if (st.type === "simple") {
             base.isCompleted = false;
