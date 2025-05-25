@@ -100,7 +100,20 @@ export function Tasks() {
       type: task.type,
       repeatDays: task.repeatDays,
       checkedInDays: task.checkedInDays,
-      subtasks: task.subtasks,
+      subtasks: Array.isArray(task.subtasks)
+        ? task.subtasks.map((st) => ({
+            ...st,
+            subtask_type:
+              st.type === "repeatable"
+                ? "repeatable"
+                : st.type === "scale"
+                ? "scale"
+                : st.type === "standard"
+                ? "standard"
+                : "standard",
+          }))
+        : [],
+
       // тощо (додай усе, що повертає бекенд у GET)
     };
 
