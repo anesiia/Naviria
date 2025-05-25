@@ -1,5 +1,4 @@
-﻿using NaviriaAPI.DTOs.UpdateDTOs;
-using NaviriaAPI.Entities;
+﻿using NaviriaAPI.Entities;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.DTOs.User;
 

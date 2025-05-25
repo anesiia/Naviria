@@ -1,6 +1,4 @@
 ﻿using MongoDB.Bson;
-using NaviriaAPI.DTOs.CreateDTOs;
-using NaviriaAPI.DTOs.UpdateDTOs;
 using NaviriaAPI.DTOs.TaskDtos;
 using NaviriaAPI.Entities.EmbeddedEntities.Subtasks;
 using NaviriaAPI.DTOs.Task.Subtask.Create;

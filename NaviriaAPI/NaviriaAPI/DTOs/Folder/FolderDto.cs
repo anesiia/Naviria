@@ -1,4 +1,4 @@
-﻿namespace NaviriaAPI.DTOs
+﻿namespace NaviriaAPI.DTOs.Folder
 {
     public class FolderDto
     {
