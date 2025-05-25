@@ -45,6 +45,11 @@ namespace NaviriaAPI.Services
                 _logger.LogInformation("No notifications found.");
             }
 
+            foreach (var notification in notifications)
+            {
+                notification.RecievedAt = notification.RecievedAt.ToLocalTime();
+            }
+
             return notifications.Select(NotificationMapper.ToDto).ToList();
         }
 
@@ -62,6 +67,8 @@ namespace NaviriaAPI.Services
                 _logger.LogWarning("Notification with ID {NotificationId} was not found.", id);
                 return null;
             }
+
+            entity.RecievedAt = entity.RecievedAt.ToLocalTime();
 
             return NotificationMapper.ToDto(entity);
         }
@@ -95,6 +102,11 @@ namespace NaviriaAPI.Services
             if (!entities.Any())
             {
                 _logger.LogInformation("No notifications found for user: {UserId}", userId);
+            }
+
+            foreach (var entity in entities)
+            {
+                entity.RecievedAt = entity.RecievedAt.ToLocalTime();
             }
 
             return entities.Select(NotificationMapper.ToDto);

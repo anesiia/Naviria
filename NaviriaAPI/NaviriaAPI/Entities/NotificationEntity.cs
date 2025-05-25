@@ -17,7 +17,7 @@ namespace NaviriaAPI.Entities
         public string Text { get; set; } = string.Empty;
 
         [BsonElement("recieved_at")]
-        public DateTime RecievedAt { get; set; } = DateTime.Now.ToUniversalTime();
+        public DateTime RecievedAt { get; set; }
 
         [BsonElement("is_new")]
         public bool IsNew {  get; set; }

@@ -55,7 +55,7 @@ namespace NaviriaAPI.Entities
         public List<SubtaskBase> Subtasks { get; set; } = new();
 
         [BsonElement("created_at"), BsonRepresentation(BsonType.DateTime)]
-        public DateTime? CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         [BsonElement("completed_at"), BsonRepresentation(BsonType.DateTime)]
         public DateTime? CompletedAt { get; set; }
