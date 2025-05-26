@@ -22,9 +22,9 @@ namespace NaviriaAPI.Helpers.TasksPolymorphism
                 });
             }
 
-            if (!BsonClassMap.IsClassMapRegistered(typeof(TaskStandart)))
+            if (!BsonClassMap.IsClassMapRegistered(typeof(TaskStandard)))
             {
-                BsonClassMap.RegisterClassMap<TaskStandart>(cm =>
+                BsonClassMap.RegisterClassMap<TaskStandard>(cm =>
                 {
                     cm.AutoMap();
                     cm.SetDiscriminator("standard");

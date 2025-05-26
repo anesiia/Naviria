@@ -2,9 +2,9 @@
 
 namespace NaviriaAPI.Entities.EmbeddedEntities.TaskTypes
 {
-    [BsonDiscriminator("standart")]
-    public class TaskStandart : TaskEntity
+    [BsonDiscriminator("standard")]
+    public class TaskStandard : TaskEntity
     {
-        public TaskStandart() { Type = "standart"; }
+        public TaskStandard() { Type = "standard"; }
     }
 }

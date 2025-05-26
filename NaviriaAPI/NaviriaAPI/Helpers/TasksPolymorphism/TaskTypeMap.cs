@@ -10,28 +10,28 @@ namespace NaviriaAPI.Helpers.TasksPolymorphism
     {
         public static Dictionary<string, Type> CreateMap => new()
 {
-    { "standard", typeof(TaskStandartCreateDto) },
+    { "standard", typeof(TaskStandardCreateDto) },
     { "scale", typeof(TaskScaleCreateDto) },
     { "repeatable", typeof(TaskRepeatableCreateDto) },
     { "with_subtasks", typeof(TaskWithSubtasksCreateDto) }
 };
         public static Dictionary<string, Type> UpdateMap => new()
 {
-    { "standard", typeof(TaskStandartUpdateDto) },
+    { "standard", typeof(TaskStandardUpdateDto) },
     { "scale", typeof(TaskScaleUpdateDto) },
     { "repeatable", typeof(TaskRepeatableUpdateDto) },
     { "with_subtasks", typeof(TaskWithSubtasksUpdateDto) }
 };
         public static Dictionary<string, Type> ReadMap => new()
 {
-    { "standard", typeof(TaskStandartDto) },
+    { "standard", typeof(TaskStandardDto) },
     { "scale", typeof(TaskScaleDto) },
     { "repeatable", typeof(TaskRepeatableDto) },
     { "with_subtasks", typeof(TaskWithSubtasksDto) }
 };
         public static Dictionary<string, Type> EntityMap => new()
 {
-    { "standard", typeof(TaskStandart) },
+    { "standard", typeof(TaskStandard) },
     { "scale", typeof(TaskScale) },
     { "repeatable", typeof(TaskRepeatable) },
     { "with_subtasks", typeof(TaskWithSubtasks) }

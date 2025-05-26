@@ -1,8 +1,8 @@
 ﻿namespace NaviriaAPI.DTOs.Task.Update
 {
-    public class TaskStandartUpdateDto : TaskUpdateDto
+    public class TaskStandardUpdateDto : TaskUpdateDto
     {
-        public TaskStandartUpdateDto()
+        public TaskStandardUpdateDto()
         {
             Type = "standard";
         }

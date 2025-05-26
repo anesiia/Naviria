@@ -48,6 +48,11 @@ namespace NaviriaAPI.Mappings
 
         public static SubtaskBase FromUpdateDto(string id, object dto)
         {
+            if (string.IsNullOrWhiteSpace(id) || id.Length != 24 || !ObjectId.TryParse(id, out _))
+            {
+                id = ObjectId.GenerateNewId().ToString();
+            }
+
             return dto switch
             {
                 SubtaskStandardUpdateDto s => new SubtaskStandard

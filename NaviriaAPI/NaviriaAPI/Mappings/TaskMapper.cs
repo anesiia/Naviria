@@ -91,8 +91,8 @@ namespace NaviriaAPI.Mappings
                         TargetValue = scale.TargetValue
                     };
                 default:
-                    var std = (TaskStandartCreateDto)dto;
-                    return new TaskStandart
+                    var std = (TaskStandardCreateDto)dto;
+                    return new TaskStandard
                     {
                         Id = ObjectId.GenerateNewId().ToString(),
                         UserId = std.UserId,
@@ -203,9 +203,9 @@ namespace NaviriaAPI.Mappings
                     }
                     break;
                 default:
-                    if (entity is TaskStandart std)
+                    if (entity is TaskStandard std)
                     {
-                        return new TaskStandartDto
+                        return new TaskStandardDto
                         {
                             Id = std.Id,
                             UserId = std.UserId,
@@ -228,7 +228,7 @@ namespace NaviriaAPI.Mappings
                         };
                     }
 
-                    return new TaskStandartDto
+                    return new TaskStandardDto
                     {
                         Id = entity.Id,
                         UserId = entity.UserId,
