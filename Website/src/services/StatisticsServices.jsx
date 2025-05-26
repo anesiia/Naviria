@@ -84,3 +84,9 @@ export async function fetchGlobalCompletedTasksMonthly() {
     throw new Error("Failed to fetch global completed tasks monthly");
   return res.json();
 }
+
+export async function fetchLeaderboardTop() {
+  const res = await fetch(`${API_URL}/api/Leaderboard/top`);
+  if (!res.ok) throw new Error("Failed to fetch leaderboard data");
+  return res.json();
+}

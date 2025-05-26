@@ -11,6 +11,7 @@ import {
   fetchCompletedTasksMonthly,
   fetchFriendsCompletedTasksMonthly,
   fetchGlobalCompletedTasksMonthly,
+  fetchLeaderboardTop,
 } from "../services/StatisticsServices";
 import {
   LineChart,
@@ -52,6 +53,7 @@ export function Statistics() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [leaders, setLeaders] = useState([]);
   const [generalStats, setGeneralStats] = useState({
     usersCount: null,
     tasksCount: null,
@@ -60,6 +62,13 @@ export function Statistics() {
     daysSinceBirthday: null,
   });
 
+  useEffect(() => {
+    setLoading(true);
+    fetchLeaderboardTop()
+      .then((data) => setLeaders(data))
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
   const [lineData, setLineData] = useState([]);
 
   useEffect(() => {
@@ -348,6 +357,51 @@ export function Statistics() {
             правильному шляху — рухайся вперед і досягай більше!
           </p>
         </div>
+      </div>
+      <div className="leaderboard-container">
+        <h2>Таблиця лідерів</h2>
+        <table className="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Аватар</th>
+              <th>Ім'я</th>
+              <th>Нікнейм</th>
+              <th>Рівень</th>
+              <th>Бали</th>
+              <th>Виконання</th>
+              <th>Досягнень</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leaders.map(
+              ({
+                userId,
+                fullName,
+                nickname,
+                level,
+                points,
+                completionRate,
+                achievementsCount,
+                photo,
+              }) => (
+                <tr key={userId}>
+                  <td>
+                    <img
+                      src={photo || "Ellipse 4.svg"}
+                      className="leaderboard-avatar"
+                    />
+                  </td>
+                  <td>{fullName}</td>
+                  <td>@{nickname}</td>
+                  <td>{level}</td>
+                  <td>{points}</td>
+                  <td>{(completionRate * 100).toFixed(0)}%</td>
+                  <td>{achievementsCount}</td>
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
