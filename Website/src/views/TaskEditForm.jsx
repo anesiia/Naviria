@@ -54,11 +54,11 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
           title: st.title || "",
           description: st.description || "",
           type:
-            st.subtask_type === "standard"
+            st.type === "standard"
               ? "simple"
-              : st.subtask_type === "repeatable"
+              : st.type === "repeatable"
               ? "repeat"
-              : st.subtask_type === "scale"
+              : st.type === "scale"
               ? "scale"
               : "simple",
           days: (st.repeatDays || []).map(
