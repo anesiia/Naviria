@@ -258,6 +258,7 @@ namespace NaviriaAPI.Mappings
         {
             entity.Title = dto.Title;
             entity.Description = dto.Description;
+            entity.Tags = dto.Tags;
             entity.IsDeadlineOn = dto.IsDeadlineOn;
             entity.Deadline = dto.Deadline;
             entity.IsShownProgressOnPage = dto.IsShownProgressOnPage;

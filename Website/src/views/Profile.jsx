@@ -63,7 +63,7 @@ export function Profile() {
                 ></div>
               </div>
               <p className="bold">
-                {user.levelInfo.xpForNextLevel}/{user.levelInfo.totalXp} xp
+                {user.levelInfo.totalXp}/{user.levelInfo.xpForNextLevel} xp
               </p>
             </div>
             <p className="description">{user.description}</p>
