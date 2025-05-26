@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using CloudinaryDotNet.Actions;
+using NaviriaAPI.IServices.IGamificationLogic;
 
 namespace NaviriaAPI.Tests.Services
 {
@@ -24,8 +25,9 @@ namespace NaviriaAPI.Tests.Services
         private Mock<IUserService> _userService;
         private Mock<ILogger<FriendRequestService>> _logger;
         private Mock<IUserRepository> _userRepository;
+        private Mock<IAchievementManager> _achievementManager;
         private FriendRequestService _service;
-
+        
         [SetUp]
         public void SetUp()
         {
@@ -33,7 +35,9 @@ namespace NaviriaAPI.Tests.Services
             _userService = new Mock<IUserService>();
             _logger = new Mock<ILogger<FriendRequestService>>();
             _userRepository = new Mock<IUserRepository>();
-            _service = new FriendRequestService(_friendRequestRepository.Object, _userService.Object, _logger.Object, _userRepository.Object);
+            _achievementManager = new Mock<IAchievementManager>();
+
+            _service = new FriendRequestService(_friendRequestRepository.Object, _userService.Object, _logger.Object, _userRepository.Object, _achievementManager.Object);
         }
 
         [Test]

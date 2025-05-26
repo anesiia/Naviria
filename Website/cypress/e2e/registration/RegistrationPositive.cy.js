@@ -1,4 +1,3 @@
-
 describe('Сторінка "Реєстрація"', () => {
   it('успішно реєструє нового користувача зі сторінки входу', () => {
     cy.visit('http://localhost:5173/login');
@@ -13,7 +12,7 @@ describe('Сторінка "Реєстрація"', () => {
 
     cy.get('input[name="password"]').type('StrongPass123');
     cy.get('input[name="repeat-password"]').type('StrongPass123');
-    cy.get('input[name="nickname"]').type(`TestUser3000${Date.now()}p`);
+    cy.get('input[name="nickname"]').type(`TUser${Date.now()}p`);
     cy.get('input[name="birth-date"]').type('2000-01-01');
     cy.get('input[name="gender"][value="F"]').check();
 
@@ -23,5 +22,12 @@ describe('Сторінка "Реєстрація"', () => {
     // Очікується редірект або повідомлення про успішну реєстрацію
     cy.url().should('include', '/profile');
     cy.contains('Особистий прогрес').should('exist');
+
+    // Перехід на сторінку /achievements
+    cy.visit("/achievements");
+
+    // Перевірка, що є ачівка з назвою та описом
+    cy.contains('.achievement .name', 'Registration').should('exist');
+
   });
 });
