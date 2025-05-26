@@ -126,7 +126,7 @@ namespace NaviriaAPI.Services
 
                 TaskCreateDto? taskDto = type switch
                 {
-                    "standard" => node.Deserialize<TaskStandartCreateDto>(options),
+                    "standard" => node.Deserialize<TaskStandardCreateDto>(options),
                     "repeatable" => node.Deserialize<TaskRepeatableCreateDto>(options),
                     "scale" => node.Deserialize<TaskScaleCreateDto>(options),
                     _ => node.Deserialize<TaskCreateDto>(options)
