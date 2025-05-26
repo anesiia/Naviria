@@ -77,6 +77,7 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<ITaskStatisticService, RepeatableTaskStatisticService>();
             services.AddScoped<IStatisticsByCategoryService, StatisticsByCategoryService>();
             services.AddScoped<ITaskStatisticByDateService, TaskStatisticByDateService>();
+            services.AddScoped<ILeaderboardService, LeaderboardService>();
 
         }
     }
