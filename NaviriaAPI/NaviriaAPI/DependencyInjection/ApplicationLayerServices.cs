@@ -52,8 +52,14 @@ namespace NaviriaAPI.DependencyInjection
             services.AddScoped<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
 
             services.AddScoped<IAchievementManager, AchievementManager>();
-            services.AddScoped<IAchievementStrategy, RegistrationAchievementStrategy>();
             services.AddScoped<IAchievementGranter, AchievementGranter>();
+
+            services.AddScoped<IAchievementStrategy, RegistrationAchievementStrategy>();
+            services.AddScoped<IAchievementStrategy, FiveTasksInWeekAchievementStrategy>();
+            services.AddScoped<IAchievementStrategy, FirstTaskCompletedAchievementStrategy>();
+            services.AddScoped<IAchievementStrategy, LongTaskCompletedAchievementStrategy>();
+            services.AddScoped<IAchievementStrategy, FiveFriendsAddedAchievementStrategy>();
+            services.AddScoped<IAchievementStrategy, PhotoUploadedAchievementStrategy>();
 
             services.AddScoped<IAchievementCleanupService, AchievementCleanupService>();
             services.AddScoped<IUserCleanupService, UserCleanupService>();

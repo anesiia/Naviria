@@ -22,6 +22,7 @@ namespace NaviriaAPI.DTOs.Task.View
         public bool IsShownProgressOnPage { get; set; }
         public bool IsNotificationsOn { get; set; }
         public DateTime? NotificationDate { get; set; }
+        public bool NotificationSent { get; set; }
 
         public int Priority { get; set; }
         public string Type { get; set; } = string.Empty;

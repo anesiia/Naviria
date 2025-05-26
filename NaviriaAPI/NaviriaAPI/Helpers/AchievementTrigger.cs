@@ -3,10 +3,10 @@
     public enum AchievementTrigger
     {
         OnRegistration,
-        //OnPhotoUploading,
-        //OnLongTaskCompleted,
-        //OnFirstTaskCompleted,
-        //OnAdding5Friends,
-        //OnCreating5Task,
+        OnPhotoUploading,
+        OnLongTaskCompleted,
+        On5TaskInWeekTaskCompleted,
+        OnFirstTaskCompleted,
+        OnAdding5Friends,
     }
 }

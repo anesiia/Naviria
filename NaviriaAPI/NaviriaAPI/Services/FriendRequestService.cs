@@ -6,6 +6,8 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.Exceptions;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.DTOs.FriendRequest;
+using NaviriaAPI.Helpers;
+using NaviriaAPI.IServices.IGamificationLogic;
 
 namespace NaviriaAPI.Services
 {
@@ -15,17 +17,20 @@ namespace NaviriaAPI.Services
         private readonly IUserService _userService;
         private readonly ILogger<FriendRequestService> _logger;
         private readonly IUserRepository _userRepository;
+        private readonly IAchievementManager _achievementManager;
 
         public FriendRequestService(
             IFriendRequestRepository friendRequestRepository,
             IUserService userService,
             ILogger<FriendRequestService> logger,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IAchievementManager achievementManager)
         {
             _friendRequestRepository = friendRequestRepository;
             _userService = userService;
             _logger = logger;
             _userRepository = userRepository;
+            _achievementManager = achievementManager;
         }
         public async Task<FriendRequestDto> CreateAsync(FriendRequestCreateDto friendRequestDto)
         {
@@ -54,6 +59,10 @@ namespace NaviriaAPI.Services
                 if (friendRequestDto.Status == "accepted")
                 {
                     await AddToFriendsAsync(entity.FromUserId, entity.ToUserId);
+
+                    await _achievementManager.EvaluateAsync(entity.FromUserId, AchievementTrigger.OnAdding5Friends);
+                    await _achievementManager.EvaluateAsync(entity.ToUserId, AchievementTrigger.OnAdding5Friends);
+
                     await DeleteAsync(id);
                 }
                 else if (friendRequestDto.Status == "rejected")

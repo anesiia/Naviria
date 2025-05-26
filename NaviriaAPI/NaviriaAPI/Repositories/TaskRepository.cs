@@ -121,5 +121,29 @@ namespace NaviriaAPI.Repositories
             }
             return repeatable;
         }
+
+        public async Task<IEnumerable<TaskEntity>> GetCompletedTasksInLastNDaysAsync(string userId, int days)
+        {
+            var dateThreshold = DateTime.UtcNow.AddDays(-days);
+
+            var filter = Builders<TaskEntity>.Filter.And(
+                Builders<TaskEntity>.Filter.Eq(t => t.UserId, userId),
+                Builders<TaskEntity>.Filter.Eq(t => t.Status, CurrentTaskStatus.Completed),
+                Builders<TaskEntity>.Filter.Gte(t => t.CompletedAt, dateThreshold)
+            );
+
+            return await _tasks.Find(filter).ToListAsync();
+        }
+
+        public async Task<int> GetCompletedTasksCountAsync(string userId)
+        {
+            var filter = Builders<TaskEntity>.Filter.And(
+                Builders<TaskEntity>.Filter.Eq(t => t.UserId, userId),
+                Builders<TaskEntity>.Filter.Eq(t => t.Status, CurrentTaskStatus.Completed)
+            );
+
+            return (int)await _tasks.CountDocumentsAsync(filter);
+        }
+
     }
 }
