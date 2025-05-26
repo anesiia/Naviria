@@ -2,11 +2,12 @@
 using NaviriaAPI.Entities;
 using NaviriaAPI.Helpers;
 using NaviriaAPI.IRepositories;
+using NaviriaAPI.IServices.IStatisticServices;
 using System.IO.Pipes;
 
 namespace NaviriaAPI.Services.StatisticServices
 {
-    public class LeaderboardService
+    public class LeaderboardService : ILeaderboardService
     {
         private readonly IUserRepository _userRepository;
         private readonly ITaskRepository _taskRepository;

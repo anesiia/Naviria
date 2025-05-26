@@ -83,7 +83,8 @@ namespace NaviriaAPI.Services.User
 
             userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
 
-            await _achievementManager.EvaluateAsync(id, AchievementTrigger.OnPhotoUploading);
+            if(string.IsNullOrEmpty(userDtoFromDb.Photo) && userDto.Photo != null)
+                await _achievementManager.EvaluateAsync(id, AchievementTrigger.OnPhotoUploading);
 
             // Recalculate level info if points changed
             if (userDtoFromDb.Points != userDto.Points)

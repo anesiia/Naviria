@@ -2,9 +2,9 @@
 
 namespace NaviriaAPI.DTOs.TaskDtos
 {
-    public class TaskStandartDto : TaskDto
+    public class TaskStandardDto : TaskDto
     {
-        public TaskStandartDto()
+        public TaskStandardDto()
         {
             Type = "standard";
         }

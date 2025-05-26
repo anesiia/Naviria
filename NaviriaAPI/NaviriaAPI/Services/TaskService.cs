@@ -134,22 +134,24 @@ namespace NaviriaAPI.Services
 
             if (isStatusChanged)
             {
-                existing.CompletedAt = DateTime.UtcNow;
+                dto.CompletedAt = DateTime.UtcNow;
                 var user = await _userService.GetByIdAsync(existing.UserId);
 
                 if (user == null)
                     throw new NotFoundException($"User with ID {existing.UserId} not found.");
 
                 await _taskRewardService.GrantTaskCompletionRewardsAsync(existing, user, prevStatus, newStatus);
-
-                await _achievementManager.EvaluateAsync(existing.UserId, AchievementTrigger.On5TaskInWeekTaskCompleted);
-                await _achievementManager.EvaluateAsync(existing.UserId, AchievementTrigger.OnFirstTaskCompleted);
-                await _achievementManager.EvaluateAsync(existing.UserId, AchievementTrigger.OnLongTaskCompleted, existing.Id);
+    
+                await _achievementManager.EvaluateAsync(existing.UserId, AchievementTrigger.OnFirstTaskCompleted);   
             }
 
             existing = TaskMapper.UpdateEntity(existing, dto);
 
             var result = await _taskRepository.UpdateAsync(existing);
+
+            await _achievementManager.EvaluateAsync(existing.UserId, AchievementTrigger.On5TaskInWeekTaskCompleted);
+            await _achievementManager.EvaluateAsync(existing.UserId, AchievementTrigger.OnLongTaskCompleted, existing.Id);
+
             return result;
         }
 

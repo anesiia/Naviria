@@ -10,23 +10,12 @@ namespace NaviriaAPI.Services.AchievementStrategies
     /// </summary>
     public class PhotoUploadedAchievementStrategy : IAchievementStrategy
     {
-        private readonly IUserRepository _userRepository;
-
-        public PhotoUploadedAchievementStrategy(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
-
         public AchievementTrigger Trigger => AchievementTrigger.OnPhotoUploading;
 
         public async Task<IEnumerable<string>> GetAchievementIdsAsync(string userId, object? context = null)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-
-            if (user != null && !string.IsNullOrEmpty(user.Photo))
                 return [AchievementIds.PhotoUploaded];
 
-            return [];
         }
     }
 }
