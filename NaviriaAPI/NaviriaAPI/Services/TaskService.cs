@@ -15,6 +15,9 @@ using NaviriaAPI.DTOs.Task.Subtask.Update;
 using NaviriaAPI.DTOs.Task.Subtask.Create;
 using NaviriaAPI.DTOs.TaskDtos;
 using NaviriaAPI.Entities.EmbeddedEntities.TaskTypes;
+using NaviriaAPI.Helpers;
+using NaviriaAPI.Services.GamificationLogic;
+using System.Threading.Tasks;
 
 namespace NaviriaAPI.Services
 {
@@ -26,6 +29,7 @@ namespace NaviriaAPI.Services
         private readonly IUserService _userService;
         private readonly IMessageSecurityService _messageSecurityService;
         private readonly ITaskRewardService _taskRewardService;
+        private readonly IAchievementManager _achievementManager;
 
         public TaskService(
             ITaskRepository taskRepository,
@@ -33,7 +37,8 @@ namespace NaviriaAPI.Services
             IFolderRepository folderRepository,
             IUserService userService,
             IMessageSecurityService messageSecurityService,
-            ITaskRewardService taskRewardService)
+            ITaskRewardService taskRewardService,
+            IAchievementManager achievementManager)
         {
             _taskRepository = taskRepository;
             _logger = logger;
@@ -41,6 +46,7 @@ namespace NaviriaAPI.Services
             _userService = userService;
             _messageSecurityService = messageSecurityService;
             _taskRewardService = taskRewardService;
+            _achievementManager = achievementManager;
         }
 
         /// <inheritdoc />
@@ -135,6 +141,10 @@ namespace NaviriaAPI.Services
                     throw new NotFoundException($"User with ID {existing.UserId} not found.");
 
                 await _taskRewardService.GrantTaskCompletionRewardsAsync(existing, user, prevStatus, newStatus);
+
+                await _achievementManager.EvaluateAsync(existing.UserId, AchievementTrigger.On5TaskInWeekTaskCompleted);
+                await _achievementManager.EvaluateAsync(existing.UserId, AchievementTrigger.OnFirstTaskCompleted);
+                await _achievementManager.EvaluateAsync(existing.UserId, AchievementTrigger.OnLongTaskCompleted, existing.Id);
             }
 
             existing = TaskMapper.UpdateEntity(existing, dto);

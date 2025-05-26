@@ -103,6 +103,20 @@ namespace NaviriaAPI.IRepositories
         /// <returns>A list of <see cref="SubtaskRepeatable"/> belonging to the user's tasks.</returns>
         Task<List<SubtaskRepeatable>> GetAllRepeatableSubtasksByUserAsync(string userId);
 
+        /// <summary>
+        /// Retrieves all tasks completed by a specific user within the last N days.
+        /// </summary>
+        /// <param name="userId">The identifier of the user.</param>
+        /// <param name="days">The number of days to look back from the current date.</param>
+        /// <returns>An enumerable collection of <see cref="TaskEntity"/> completed within the specified time frame.</returns>
+        Task<IEnumerable<TaskEntity>> GetCompletedTasksInLastNDaysAsync(string userId, int days);
+
+        /// <summary>
+        /// Retrieves the total number of tasks completed by a specific user.
+        /// </summary>
+        /// <param name="userId">The identifier of the user.</param>
+        /// <returns>The count of completed tasks.</returns>
+        Task<int> GetCompletedTasksCountAsync(string userId);
 
     }
 }

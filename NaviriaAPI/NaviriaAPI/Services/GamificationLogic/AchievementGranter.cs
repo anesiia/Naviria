@@ -5,6 +5,10 @@ using NaviriaAPI.IServices.IGamificationLogic;
 
 namespace NaviriaAPI.Services.GamificationLogic
 {
+    /// <summary>
+    /// Service for granting achievements to users.
+    /// Adds achievement information to the user's profile.
+    /// </summary>
     public class AchievementGranter : IAchievementGranter
     {
         private readonly IUserRepository _userRepository;
@@ -21,6 +25,11 @@ namespace NaviriaAPI.Services.GamificationLogic
             _logger = logger;
         }
 
+        /// <summary>
+        /// Grants the specified achievement to the user if it has not already been received.
+        /// </summary>
+        /// <param name="userId">The user ID.</param>
+        /// <param name="achievementId">The achievement ID.</param>
         public async Task GiveAsync(string userId, string achievementId)
         {
             var user = await _userRepository.GetByIdAsync(userId);
