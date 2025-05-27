@@ -160,7 +160,7 @@ export function Task(props) {
                 <div className="dates">
                   <div className="start-date">
                     <p className="name-date">Дата старту</p>
-                    <p className="value-date">-</p>
+                    <p className="value-date">{formatDate(props.createdAt)}</p>
                   </div>
                   <div className="deadline">
                     <p className="name-date">Дедлайн</p>
