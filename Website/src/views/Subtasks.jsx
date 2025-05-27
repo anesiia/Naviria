@@ -15,6 +15,7 @@ export function Subtasks(props) {
       const updatedSubtask = {
         ...props,
         currentValue: (props.currentValue || 0) + Number(addValue),
+        subtask_type: getServerSubtaskType(props.type),
       };
       await updateSubtask(props.taskId, props.id, updatedSubtask);
       await props.fetchTasks();
@@ -23,6 +24,18 @@ export function Subtasks(props) {
     }
     setAdding(false);
     setAddValue("");
+  };
+  const getServerSubtaskType = (type) => {
+    switch (type) {
+      case "simple":
+        return "standard";
+      case "repeat":
+        return "repeatable";
+      case "scale":
+        return "scale";
+      default:
+        return "standard";
+    }
   };
 
   let subtaskType;
