@@ -86,13 +86,9 @@ export async function updateFriendRequest(requestId, status) {
     body: JSON.stringify({ status }),
   });
 
-  const data = await res.json();
-
   if (!res.ok) {
-    throw new Error(data.message || "Не вдалося оновити запит");
+    throw new Error("Не вдалося оновити запит");
   }
-
-  return data;
 }
 
 export async function deleteFriend(friendId) {
@@ -127,6 +123,31 @@ export async function searchFriends(query) {
       },
     }
   );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Не вдалося знайти друзів");
+  }
+
+  return data;
+}
+
+export async function searchMyFriends(query, categoryId) {
+  const id = localStorage.getItem("id");
+  let url = `${API_URL}/api/Friends/${id}/search-friends?query=${encodeURIComponent(
+    query
+  )}`;
+  if (categoryId) {
+    url += `&categoryId=${categoryId}`;
+  }
+
+  const res = await fetch(url, {
+    headers: {
+      ...authHeaders(),
+      "Content-Type": "application/json",
+    },
+  });
 
   const data = await res.json();
 
