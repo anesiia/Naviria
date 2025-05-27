@@ -65,8 +65,14 @@ export function Profile() {
               <p className="bold">
                 {user.levelInfo.totalXp}/{user.levelInfo.xpForNextLevel} xp
               </p>
+              <Link to="/edit-profile" className="edit-profile">
+                <img src="fi-rr-pencil.svg" alt="edit" />
+              </Link>
             </div>
-            <p className="description">{user.description}</p>
+            <p className="description">
+              {user.description ||
+                "Опису ще нема, але ти можешь додати його у будь-який момент"}
+            </p>
           </div>
         </div>
         <div className="progress-info">

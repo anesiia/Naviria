@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Header from "./views/Header";
 import { HideHeader } from "./hooks/HideHeader";
-// import Footer from "./views/Footer";
+import { EditProfile } from "./views/EditProfile";
 import { Login } from "./views/Login";
 import { Profile } from "./views/Profile";
 import { Registration } from "./views/Registration";
@@ -26,6 +26,7 @@ function App() {
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/assistant" element={<AssistantChat />} />
           <Route path="/statistics" element={<Statistics />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
         </Routes>
       </div>
     </div>

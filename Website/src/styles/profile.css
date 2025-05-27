@@ -54,6 +54,9 @@
   background: linear-gradient(90deg, #053a51 0%, #219dbb 100%);
   transition: width 0.3s ease;
 }
+.profile-page .profile-wrapper .info-box .personal-info .level-info .edit-profile img {
+  width: 100%;
+}
 .profile-page .profile-wrapper .info-box .personal-info .description {
   opacity: 0.6;
 }
