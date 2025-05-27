@@ -75,6 +75,8 @@ export function Subtasks(props) {
   const alreadyChecked =
     Array.isArray(props.checkedInDays) &&
     props.checkedInDays.some((d) => d.startsWith(todayISO));
+  console.log("checkedInDays after fetch:", props.checkedInDays);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -127,7 +129,7 @@ export function Subtasks(props) {
                   }
                   setLoading(false);
                 }}
-                disabled={alreadyChecked || loading}
+                disabled={!canCheckin || alreadyChecked || loading}
               >
                 {alreadyChecked ? "Вже відмічено" : "Відмітити"}
               </button>

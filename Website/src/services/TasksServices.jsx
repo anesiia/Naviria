@@ -80,7 +80,6 @@ export async function checkinRepeatableSubtask(taskId, subtaskId, date) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // додай авторизацію, якщо потрібно
     },
     body: JSON.stringify({ date }),
   }).then((res) => {
