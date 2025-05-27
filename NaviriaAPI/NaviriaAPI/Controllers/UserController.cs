@@ -239,5 +239,42 @@ namespace NaviriaAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Uploads a new profile photo for the user.
+        /// </summary>
+        /// <param name="id">User ID.</param>
+        /// <param name="file">Profile image file.</param>
+        /// <returns>Upload result (success, url, achievement granted).</returns>
+        /// <response code="200">If upload is successful.</response>
+        /// <response code="400">If the request is invalid or missing data.</response>
+        /// <response code="404">If user is not found.</response>
+        /// <response code="500">If an error occurs during upload.</response>
+        [HttpPost("{id}/upload-profile-photo")]
+        public async Task<IActionResult> UploadProfilePhoto(string id, IFormFile file)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("User ID is required.");
+            if (file == null || file.Length == 0)
+                return BadRequest("No file was uploaded.");
+
+            try
+            {
+                var result = await _userService.UploadUserProfilePhotoAsync(id, file);
+
+                return result ? Ok(new { success = true }) : StatusCode(500, "Failed to upload photo.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, ex.Message);
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to upload profile photo for user {0}", id);
+                return StatusCode(500, "Failed to upload profile photo.");
+            }
+        }
+
     }
 }

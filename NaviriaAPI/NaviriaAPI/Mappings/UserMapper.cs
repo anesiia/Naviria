@@ -91,7 +91,6 @@ namespace NaviriaAPI.Mappings
                 Photo = dto.Photo,
                 Points = dto.Points,
                 LevelInfo = dto.LevelInfo,
-                LastSeen = dto.LastSeen,
                 IsOnline = dto.IsOnline,
                 IsProUser = dto.IsProUser
             };

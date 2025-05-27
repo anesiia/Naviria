@@ -51,7 +51,13 @@ export function Profile() {
     <div className="profile-page">
       <div className="profile-wrapper">
         <div className="info-box">
-          <img className="avatar" src="Ellipse 20.svg" />
+          <img
+            className="avatar"
+            src={
+              user.photo && user.photo !== "" ? user.photo : "Ellipse 20.svg"
+            }
+            alt={user.nickname}
+          />
           <div className="personal-info">
             <p className="name">{user.nickname}</p>
             <div className="level-info">
@@ -65,8 +71,14 @@ export function Profile() {
               <p className="bold">
                 {user.levelInfo.totalXp}/{user.levelInfo.xpForNextLevel} xp
               </p>
+              <Link to="/edit-profile" className="edit-profile">
+                <img src="fi-rr-pencil.svg" alt="edit" />
+              </Link>
             </div>
-            <p className="description">{user.description}</p>
+            <p className="description">
+              {user.description ||
+                "Опису ще нема, але ти можешь додати його у будь-який момент"}
+            </p>
           </div>
         </div>
         <div className="progress-info">
@@ -101,7 +113,11 @@ export function Profile() {
           <div className="friends-list">
             {friends.map((friend, index) => (
               <div className="friend" key={index}>
-                <img src="Ellipse 21.svg" className="pic" />
+                <img
+                  className="avatar"
+                  src={friend && friend.photo ? friend.photo : "Ellipse 4.svg"}
+                  alt={friend ? friend.nickname : "avatar"}
+                />
                 <p className="friend-name">{friend.nickname}</p>
               </div>
             ))}

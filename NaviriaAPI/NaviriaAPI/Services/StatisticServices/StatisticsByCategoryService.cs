@@ -68,7 +68,7 @@ namespace NaviriaAPI.Services.StatisticServices
                 {
                     CategoryId = g.Key,
                     CategoryName = categoryNames.TryGetValue(g.Key, out var name) ? name : "",
-                    Value = Math.Round((double)g.Count() / total, 2)
+                    Value = Math.Round(((double)g.Count() / total) * 100, 0)
                 })
                 .OrderByDescending(x => x.Value)
                 .ToList();

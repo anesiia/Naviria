@@ -107,7 +107,11 @@ export function Friends() {
       <div className="discover-list">
         {list.map((friend, index) => (
           <div className="item" key={index}>
-            <img className="avatar" src="Ellipse 19.svg" />
+            <img
+              className="avatar"
+              src={friend && friend.photo ? friend.photo : "Ellipse 4.svg"}
+              alt={friend ? friend.nickname : "avatar"}
+            />
             <div className="info">
               <div className="name-lvl">
                 <p className="name">{friend.nickname}</p>
@@ -175,7 +179,11 @@ export function Friends() {
         {friends.map((friend, index) => (
           <div className="friend" key={index}>
             <div className="info">
-              <img className="avatar" src="Ellipse 23.svg" />
+              <img
+                className="avatar"
+                src={friend && friend.photo ? friend.photo : "Ellipse 4.svg"}
+                alt={friend ? friend.nickname : "avatar"}
+              />
               <div className="name">{friend.nickname}</div>
             </div>
             {renderActions(friend, "my")}
