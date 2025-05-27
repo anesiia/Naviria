@@ -1,0 +1,105 @@
+.edit-profile-page {
+  max-width: 600px;
+  margin: 2rem auto;
+  font-family: Arial, sans-serif;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #1a2938;
+  }
+
+  .photo-section {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    .photo-preview {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ccc;
+      margin-bottom: 0.5rem;
+    }
+
+    .photo-placeholder {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="file"] {
+      display: block;
+      margin: 0 auto 1rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #006aa7;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: default;
+      }
+    }
+
+    .error {
+      color: red;
+      margin-top: 0.5rem;
+    }
+  }
+
+  .profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 600;
+      color: #2a3b55;
+
+      input,
+      textarea {
+        margin-top: 0.25rem;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical;
+      }
+    }
+
+    button[type="submit"] {
+      padding: 0.75rem;
+      background-color: #f7941d;
+      border: none;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 4px;
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: default;
+      }
+    }
+
+    .error {
+      color: red;
+      margin-top: 0.5rem;
+    }
+  }
+}

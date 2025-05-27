@@ -51,7 +51,13 @@ export function Profile() {
     <div className="profile-page">
       <div className="profile-wrapper">
         <div className="info-box">
-          <img className="avatar" src="Ellipse 20.svg" />
+          <img
+            className="avatar"
+            src={
+              user.photo && user.photo !== "" ? user.photo : "Ellipse 20.svg"
+            }
+            alt={user.nickname}
+          />
           <div className="personal-info">
             <p className="name">{user.nickname}</p>
             <div className="level-info">

@@ -6,13 +6,19 @@ import {
   getNotifications,
   markAllNotificationsRead,
 } from "../services/NotificationsServices";
-
+import { getProfile } from "../services/ProfileServices";
 import "../styles/header.css";
 
 export default function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [user, setUser] = useState(null);
   const ref = useRef(null);
+  useEffect(() => {
+    getProfile()
+      .then((data) => setUser(data))
+      .catch(() => setUser(null));
+  }, []);
   const fetchNotificationsAgain = async () => {
     try {
       const data = await getNotifications();
@@ -69,7 +75,11 @@ export default function Header() {
         )}
 
         <Link to="/profile">
-          <img className="avatar" src="Ellipse.svg" alt="avatar" />
+          <img
+            className="avatar"
+            src={user && user.photo ? user.photo : "Ellipse.svg"}
+            alt={user ? user.nickname : "avatar"}
+          />
         </Link>
       </div>
     </header>

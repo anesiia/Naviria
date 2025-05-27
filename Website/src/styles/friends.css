@@ -64,6 +64,12 @@
   align-items: center;
   gap: 0.5rem;
 }
+.friends-page .side-bar .friend-list .friend .info .avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
 .friends-page .side-bar .friend-list .friend .actions {
   display: flex;
   flex-direction: row;
@@ -162,6 +168,12 @@
   gap: 1.5rem;
   border: none;
   border-bottom: 1px solid rgba(2, 48, 71, 0.5);
+}
+.friends-page .content .discover-list .item .avatar {
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+  object-fit: cover;
 }
 .friends-page .content .discover-list .item .info {
   display: flex;

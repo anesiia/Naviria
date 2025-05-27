@@ -17,8 +17,11 @@
   gap: 3rem;
   margin-bottom: 2rem;
 }
-.profile-page .profile-wrapper .info-box img {
-  width: 12rem;
+.profile-page .profile-wrapper .info-box .avatar {
+  width: 13rem;
+  height: 13rem;
+  border-radius: 50%;
+  object-fit: cover;
 }
 .profile-page .profile-wrapper .info-box .personal-info {
   display: flex;
