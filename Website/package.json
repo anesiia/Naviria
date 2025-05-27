@@ -11,9 +11,16 @@
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
+    "cli-truncate": "^4.0.0",
+    "indent-string": "^5.0.0",
+    "ini": "^5.0.0",
+    "lodash.once": "^4.1.1",
+    "npm-run-path": "^6.0.0",
+    "pump": "^3.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.5.0"
+    "react-router-dom": "^7.5.0",
+    "recharts": "^2.15.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
@@ -25,6 +32,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "log-symbols": "^7.0.1",
     "vite": "^6.3.0"
   }
 }
