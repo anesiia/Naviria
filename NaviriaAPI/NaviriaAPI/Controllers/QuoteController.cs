@@ -4,24 +4,47 @@ using NaviriaAPI.IServices;
 
 namespace NaviriaAPI.Controllers
 {
+    /// <summary>
+    /// API controller for managing motivational quotes.
+    /// Provides endpoints to create, retrieve, update, and delete quotes.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class QuoteController : ControllerBase
     {
         private readonly IQuoteService _quoteService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuoteController"/> class.
+        /// </summary>
+        /// <param name="quoteService">Service for quote operations.</param>
         public QuoteController(IQuoteService quoteService)
         {
             _quoteService = quoteService;
         }
 
+        /// <summary>
+        /// Gets the list of all quotes.
+        /// </summary>
+        /// <returns>
+        /// 200: Returns a list of all quotes.<br/>
+        /// 500: If an internal error occurs.
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var qoutes = await _quoteService.GetAllAsync();
-            return Ok(qoutes);
+            var quotes = await _quoteService.GetAllAsync();
+            return Ok(quotes);
         }
 
+        /// <summary>
+        /// Gets a quote by its identifier.
+        /// </summary>
+        /// <param name="id">The quote identifier.</param>
+        /// <returns>
+        /// 200: Returns the quote.<br/>
+        /// 404: If the quote is not found.
+        /// </returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -30,6 +53,15 @@ namespace NaviriaAPI.Controllers
             return Ok(quote);
         }
 
+        /// <summary>
+        /// Creates a new quote.
+        /// </summary>
+        /// <param name="quoteDto">The quote creation DTO.</param>
+        /// <returns>
+        /// 201: The created quote with its ID.<br/>
+        /// 400: If the input data is invalid.<br/>
+        /// 500: If an internal error occurs.
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] QuoteCreateDto quoteDto)
         {
@@ -37,6 +69,16 @@ namespace NaviriaAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdQuote.Id }, createdQuote);
         }
 
+        /// <summary>
+        /// Updates the details of a quote by its identifier.
+        /// </summary>
+        /// <param name="id">The quote identifier.</param>
+        /// <param name="quoteDto">The updated quote data.</param>
+        /// <returns>
+        /// 204: If the update was successful.<br/>
+        /// 404: If the quote is not found.<br/>
+        /// 500: If an internal error occurs.
+        /// </returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] QuoteUpdateDto quoteDto)
         {
@@ -44,6 +86,15 @@ namespace NaviriaAPI.Controllers
             return updated ? NoContent() : NotFound();
         }
 
+        /// <summary>
+        /// Deletes a quote by its identifier.
+        /// </summary>
+        /// <param name="id">The quote identifier.</param>
+        /// <returns>
+        /// 204: If the deletion was successful.<br/>
+        /// 404: If the quote is not found.<br/>
+        /// 500: If an internal error occurs.
+        /// </returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
