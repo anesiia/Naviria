@@ -85,7 +85,8 @@ namespace NaviriaAPI.Services.User
             if (userDtoFromDb == null)
                 throw new NotFoundException($"User with ID {id} not found.");
 
-            userDto.LastSeen = userDto.LastSeen.ToUniversalTime();
+            if(userDto.Password == null)
+                userDto.Password = userDtoFromDb.Password;
 
             if(string.IsNullOrEmpty(userDtoFromDb.Photo) && userDto.Photo != null)
                 await _achievementManager.EvaluateAsync(id, AchievementTrigger.OnPhotoUploading);
