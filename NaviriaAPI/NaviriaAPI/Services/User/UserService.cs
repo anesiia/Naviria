@@ -64,7 +64,7 @@ namespace NaviriaAPI.Services.User
                 throw new NicknameAlreadyExistException("User with such nickname already exists");
 
 
-            await _validation.ValidateAsync(userDto);
+            await _validation.ValidateCreateAsync(userDto);
 
             var entity = UserMapper.ToEntity(userDto);
             entity.Password = _passwordHasher.HashPassword(entity, userDto.Password);
@@ -79,7 +79,7 @@ namespace NaviriaAPI.Services.User
         /// <inheritdoc />
         public async Task<bool> UpdateAsync(string id, UserUpdateDto userDto)
         {
-            UserValidationService.ValidateAsync(userDto);
+            UserValidationService.ValidateUpdate(userDto);
 
             var userDtoFromDb = await GetByIdAsync(id);
             if (userDtoFromDb == null)
@@ -206,7 +206,7 @@ namespace NaviriaAPI.Services.User
             if (userEntity == null)
                 throw new NotFoundException($"User with ID {id} not found.");
 
-            UserValidationService.ValidateAsync(patchDto);
+            UserValidationService.ValidatePatch(patchDto);
 
             if (patchDto.FullName != null)
                 userEntity.FullName = patchDto.FullName;
