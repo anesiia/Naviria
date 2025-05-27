@@ -123,8 +123,9 @@ namespace NaviriaAPI.Services.User
             if (!string.IsNullOrWhiteSpace(query))
             {
                 users = users.Where(u =>
-                    (!string.IsNullOrWhiteSpace(u.Nickname) && u.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
-                    (!string.IsNullOrWhiteSpace(u.FullName) && u.FullName.Contains(query, StringComparison.OrdinalIgnoreCase))
+                    (!string.IsNullOrWhiteSpace(u.Nickname) && u.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase)) 
+                    //uncomment to turn on search by fullname
+                    // || (!string.IsNullOrWhiteSpace(u.FullName) && u.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)) 
                 ).ToList();
             }
 

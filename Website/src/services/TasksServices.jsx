@@ -118,7 +118,6 @@ export async function fetchCategories() {
   return await res.json();
 }
 
-// services/TasksServices.jsx
 export async function deleteTask(id) {
   const res = await fetch(`${API_URL}/api/Task/${id}`, {
     method: "DELETE",
