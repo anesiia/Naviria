@@ -11,6 +11,7 @@ using NaviriaAPI.Helpers;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.IServices.ICleanupServices;
 using NaviriaAPI.DTOs.User;
+using NaviriaAPI.IServices.ICloudStorage;
 
 namespace NaviriaAPI.Services.User
 {
@@ -25,6 +26,7 @@ namespace NaviriaAPI.Services.User
         private readonly ILogger<UserService> _logger;
         private readonly IAchievementManager _achievementManager;
         private readonly IUserCleanupService _userCleanupService;
+        private readonly ICloudinaryService _cloudinaryService;
 
         public UserService(
             IUserRepository userRepository,
@@ -35,7 +37,8 @@ namespace NaviriaAPI.Services.User
             IJwtService jwtService,
             ILogger<UserService> logger,
             IAchievementManager achievementManager,
-            IUserCleanupService userCleanupService)
+            IUserCleanupService userCleanupService,
+            ICloudinaryService cloudinaryService)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -46,6 +49,7 @@ namespace NaviriaAPI.Services.User
             _logger = logger;
             _achievementManager = achievementManager;
             _userCleanupService = userCleanupService;
+            _cloudinaryService = cloudinaryService;
         }
 
         /// <inheritdoc />
@@ -174,5 +178,26 @@ namespace NaviriaAPI.Services.User
 
             return user;
         }
+
+        /// <inheritdoc />
+        public async Task<bool> UploadUserProfilePhotoAsync(string userId, IFormFile file)
+        {
+            var user = await _userRepository.GetByIdAsync(userId)
+                ?? throw new InvalidOperationException("User not found!");
+
+            bool hadNoPhoto = string.IsNullOrEmpty(user.Photo);
+
+            var imageUrl = await _cloudinaryService.UploadImageAndGetUrlAsync(file);
+
+            user.Photo = imageUrl;
+            await _userRepository.UpdateAsync(user);
+
+            if (hadNoPhoto)
+                await _achievementManager.EvaluateAsync(userId, AchievementTrigger.OnPhotoUploading);
+
+            return true;
+        }
+
+
     }
 }
