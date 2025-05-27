@@ -178,6 +178,12 @@
   background: #fff;
   box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.25);
 }
+.profile-page .profile-wrapper .friends .friends-list .friend .avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
 .profile-page .profile-wrapper .friends .friends-list .friend .friend-name {
   font-weight: 600;
 }

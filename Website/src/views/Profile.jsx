@@ -113,7 +113,11 @@ export function Profile() {
           <div className="friends-list">
             {friends.map((friend, index) => (
               <div className="friend" key={index}>
-                <img src="Ellipse 21.svg" className="pic" />
+                <img
+                  className="avatar"
+                  src={friend && friend.photo ? friend.photo : "Ellipse 4.svg"}
+                  alt={friend ? friend.nickname : "avatar"}
+                />
                 <p className="friend-name">{friend.nickname}</p>
               </div>
             ))}
