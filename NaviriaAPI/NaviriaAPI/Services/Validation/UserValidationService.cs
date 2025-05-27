@@ -34,7 +34,7 @@ namespace NaviriaAPI.Services.Validation
         public static void ValidateAsync(UserUpdateDto dto)
         {
             var now = DateTime.UtcNow;
-            if (dto.LastSeen > now)
+            if (dto.LastSeen.HasValue && dto.LastSeen.Value > now)
                 throw new ValidationException("LastSeen cannot be in the future");
         }
     }

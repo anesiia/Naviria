@@ -104,6 +104,7 @@ namespace NaviriaAPI.Services.User
 
             var updatedUserEntity = UserMapper.ToEntity(id, userDto);
             updatedUserEntity.RegitseredAt = userDtoFromDb.RegitseredAt;
+            updatedUserEntity.LastSeen = DateTime.Now;
 
             return await _userRepository.UpdateAsync(updatedUserEntity);
         }
