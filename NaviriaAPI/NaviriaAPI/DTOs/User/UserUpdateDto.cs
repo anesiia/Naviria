@@ -5,23 +5,23 @@ namespace NaviriaAPI.DTOs.User
 {
     public class UserUpdateDto
     {
-        [Required]
+        //[Required]
         [MaxLength(50)]
         [MinLength(3)]
         [RegularExpression("^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\\s'-]{1,50}$")]
         public string FullName { get; set; } = string.Empty;
 
-        [Required]
+        //[Required]
         [MaxLength(20)]
         [MinLength(3)]
         [RegularExpression("^[a-zA-Z0-9]+$")]
         public string Nickname { get; set; } = string.Empty;
 
-        [MaxLength(150)]
+        //[MaxLength(150)]
         [RegularExpression("^[a-zA-Zа-яА-ЯёЁіІїЇєЄ0-9.,!\\s]{0,150}$")]
         public string Description { get; set; } = string.Empty;
 
-        [Required]
+        //[Required]
         [EmailAddress]
         [RegularExpression("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")]
         public string Email { get; set; } = string.Empty;
@@ -30,11 +30,11 @@ namespace NaviriaAPI.DTOs.User
         [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, and one digit.")]
         public string? Password { get; set; }
 
-        [Required]
+        //[Required]
         [Range(0, int.MaxValue)]
         public int Points { get; set; } = 0;
 
-        [Required]
+        //[Required]
         public LevelProgressInfo LevelInfo { get; set; } = new();
 
         public List<UserFriendInfo> Friends { get; set; } = new();

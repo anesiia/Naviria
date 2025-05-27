@@ -276,5 +276,35 @@ namespace NaviriaAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Partially updates user information by user ID.
+        /// </summary>
+        /// <param name="id">The ID of the user to patch.</param>
+        /// <param name="patchDto">The partial user data to update (only non-null properties will be changed).</param>
+        /// <returns>No content if the patch is successful; NotFound if the user is not found.</returns>
+        /// <response code="204">If the patch was successful.</response>
+        /// <response code="400">If the user ID is missing or update data is not provided.</response>
+        /// <response code="404">If the user is not found.</response>
+        /// <response code="500">If an error occurs while patching the user.</response>
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchUser(string id, [FromBody] UserPatchDto patchDto)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return BadRequest("User ID is required.");
+
+            if (patchDto == null)
+                return BadRequest("No update data provided.");
+
+            try
+            {
+                var updated = await _userService.PatchAsync(id, patchDto);
+                return updated ? NoContent() : NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to patch user with ID {0}", id);
+                return StatusCode(500, $"Failed to patch user with ID {id}");
+            }
+        }
     }
 }

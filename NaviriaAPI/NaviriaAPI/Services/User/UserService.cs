@@ -200,6 +200,62 @@ namespace NaviriaAPI.Services.User
             return true;
         }
 
+        public async Task<bool> PatchAsync(string id, UserPatchDto patchDto)
+        {
+            var userEntity = await _userRepository.GetByIdAsync(id);
+            if (userEntity == null)
+                throw new NotFoundException($"User with ID {id} not found.");
 
+            UserValidationService.ValidateAsync(patchDto);
+
+            if (patchDto.FullName != null)
+                userEntity.FullName = patchDto.FullName;
+
+            if (patchDto.Nickname != null)
+                userEntity.Nickname = patchDto.Nickname;
+
+            if (patchDto.Description != null)
+                userEntity.Description = patchDto.Description;
+
+            if (patchDto.Email != null)
+                userEntity.Email = patchDto.Email;
+
+            if (patchDto.Password != null)
+                userEntity.Password = _passwordHasher.HashPassword(userEntity, patchDto.Password);
+
+            // Points and LevelInfo
+            if (patchDto.Points.HasValue)
+            {
+                int oldPoints = userEntity.Points;
+                userEntity.Points = patchDto.Points.Value;
+
+                int additionalXp = userEntity.Points - oldPoints;
+
+                userEntity.LevelInfo = await _levelService.CalculateLevelProgressAsync(UserMapper.ToDto(userEntity), additionalXp);
+            }
+
+            if (patchDto.LevelInfo != null)
+                userEntity.LevelInfo = patchDto.LevelInfo;
+
+            if (patchDto.Friends != null)
+                userEntity.Friends = patchDto.Friends;
+
+            if (patchDto.Achievements != null)
+                userEntity.Achievements = patchDto.Achievements;
+
+            if (patchDto.FutureMessage != null)
+                userEntity.FutureMessage = patchDto.FutureMessage;
+
+            if (patchDto.Photo != null)
+                userEntity.Photo = patchDto.Photo;
+
+            if (patchDto.IsOnline.HasValue)
+                userEntity.IsOnline = patchDto.IsOnline.Value;
+
+            if (patchDto.IsProUser.HasValue)
+                userEntity.IsProUser = patchDto.IsProUser.Value;
+
+            return await _userRepository.UpdateAsync(userEntity);
+        }
     }
 }

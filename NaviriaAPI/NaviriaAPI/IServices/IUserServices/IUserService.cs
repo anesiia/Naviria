@@ -78,5 +78,13 @@ namespace NaviriaAPI.IServices.IUserServices
         /// <param name="file">Image for profile picture</param>
         /// <returns>True if the uploading was successful.</returns>
         Task<bool> UploadUserProfilePhotoAsync(string userId, IFormFile file);
+
+        /// <summary>
+        /// Patches specific the user's data.
+        /// </summary>
+        /// <param name="id">The unique identifier of the user to update.</param>
+        /// <param name="patchDto">The patched user data.</param>
+        /// <returns>True if the patch was successful; otherwise, false.</returns>
+        Task<bool> PatchAsync(string id, UserPatchDto patchDto);
     }
 }
