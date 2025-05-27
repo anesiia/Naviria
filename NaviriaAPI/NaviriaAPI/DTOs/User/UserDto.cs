@@ -15,7 +15,7 @@ namespace NaviriaAPI.DTOs.User
 
         public string Gender { get; set; } = string.Empty;
 
-        public DateTime BirthDate { get; set; } = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        public DateTime BirthDate { get; set; }
 
         public string Description { get; set; } = string.Empty;
 

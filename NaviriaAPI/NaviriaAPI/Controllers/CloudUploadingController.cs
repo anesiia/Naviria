@@ -22,14 +22,14 @@ namespace NaviriaAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("upload-profile-photo")]
-        public async Task<IActionResult> UploadProfilePhoto([FromForm] string userId, [FromForm] IFormFile file)
+        public async Task<IActionResult> UploadProfilePhoto([FromForm] IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded");
 
             try
             {
-                var answer = await _cloudinaryService.UploadImageAsync(userId, file);
+                var answer = await _cloudinaryService.UploadImageAndGetUrlAsync(file);
                 return Ok(answer);
             }
             catch (Exception ex)

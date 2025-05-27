@@ -70,5 +70,13 @@ namespace NaviriaAPI.IServices.IUserServices
         /// <param name="userId">The user's unique identifier.</param>
         /// <returns>True if the user exists; otherwise, false.</returns>
         Task<bool> UserExistsAsync(string userId);
+
+        /// <summary>
+        /// Uploads user profile photo.
+        /// </summary>
+        /// <param name="userId">The user's unique identifier.</param>
+        /// <param name="file">Image for profile picture</param>
+        /// <returns>True if the uploading was successful.</returns>
+        Task<bool> UploadUserProfilePhotoAsync(string userId, IFormFile file);
     }
 }
