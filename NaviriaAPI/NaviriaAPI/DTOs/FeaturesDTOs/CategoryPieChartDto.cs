@@ -4,6 +4,6 @@
     {
         public string CategoryId { get; set; }
         public string CategoryName { get; set; }
-        public double Value { get; set; } // 0..1
+        public double Value { get; set; } // 1..100
     }
 }
