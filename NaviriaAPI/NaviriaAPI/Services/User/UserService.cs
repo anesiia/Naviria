@@ -97,7 +97,10 @@ namespace NaviriaAPI.Services.User
                 userDto.LevelInfo = userDtoFromDb.LevelInfo;
             }
 
-            return await _userRepository.UpdateAsync(UserMapper.ToEntity(id, userDto));
+            var updatedUserEntity = UserMapper.ToEntity(id, userDto);
+            updatedUserEntity.RegitseredAt = userDtoFromDb.RegitseredAt;
+
+            return await _userRepository.UpdateAsync(updatedUserEntity);
         }
 
         /// <inheritdoc />
