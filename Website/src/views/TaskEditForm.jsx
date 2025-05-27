@@ -28,6 +28,15 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
   const [priorityValue, setPriorityValue] = useState(task.priority || 1);
   const [type, setType] = useState(mapApiTypeToFormType(task.type));
 
+  const weekDays = [
+    { short: "Пн", eng: "Monday" },
+    { short: "Вт", eng: "Tuesday" },
+    { short: "Ср", eng: "Wednesday" },
+    { short: "Чт", eng: "Thursday" },
+    { short: "Пт", eng: "Friday" },
+    { short: "Сб", eng: "Saturday" },
+    { short: "Нд", eng: "Sunday" },
+  ];
   // Repeat
   const [days, setDays] = useState(
     (task.repeatDays || [])
@@ -45,11 +54,11 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
           title: st.title || "",
           description: st.description || "",
           type:
-            st.subtask_type === "standard"
+            st.type === "standard"
               ? "simple"
-              : st.subtask_type === "repeatable"
+              : st.type === "repeatable"
               ? "repeat"
-              : st.subtask_type === "scale"
+              : st.type === "scale"
               ? "scale"
               : "simple",
           days: (st.repeatDays || []).map(
@@ -110,16 +119,6 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
     );
   };
 
-  const weekDays = [
-    { short: "Пн", eng: "Monday" },
-    { short: "Вт", eng: "Tuesday" },
-    { short: "Ср", eng: "Wednesday" },
-    { short: "Чт", eng: "Thursday" },
-    { short: "Пт", eng: "Friday" },
-    { short: "Сб", eng: "Saturday" },
-    { short: "Нд", eng: "Sunday" },
-  ];
-
   function mapApiTypeToFormType(apiType) {
     switch (apiType) {
       case "standard":
@@ -168,6 +167,16 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
   };
 
   const handleSave = async () => {
+    // Очищаємо subtasks від id == "" (порожній рядок)
+    const cleanedSubtasks = subtasks.map((st) => {
+      // Якщо id невалідне (порожній рядок, null, undefined, або не 24 hex), видаляємо id
+      if (!st.id || !/^[a-f0-9]{24}$/i.test(st.id)) {
+        const { id: _, ...rest } = st;
+        return rest;
+      }
+      return st;
+    });
+
     const payload = {
       ...task,
       title: titleValue,
@@ -204,7 +213,7 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
         targetValue: Number(scaleGoal),
       }),
       ...(type === "list" && {
-        subtasks: subtasks.map((st) => {
+        subtasks: cleanedSubtasks.map((st) => {
           const base = {
             title: st.title,
             description: st.description,
@@ -216,6 +225,7 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
                 : st.type === "scale"
                 ? "scale"
                 : "standard",
+            isCompleted: st.isCompleted || false,
           };
           if (st.type === "repeat") {
             base.repeatDays = st.days.map(
@@ -228,10 +238,10 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
             base.current_value = st.current_value || 0;
             base.targetValue = Number(st.scaleGoal);
           }
-          if (st.type === "simple") {
-            base.isCompleted = st.isCompleted || false;
+          // Додаємо id, лише якщо він валідний ObjectId
+          if (typeof st.id === "string" && /^[a-f0-9]{24}$/i.test(st.id)) {
+            base.id = st.id;
           }
-          if (st.id) base.id = st.id; // збереження ідентифікатора для існуючих
           return base;
         }),
       }),
@@ -356,6 +366,7 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
               value="simple"
               checked={type === "simple"}
               onChange={(e) => setType(e.target.value)}
+              disabled
             />
             Звичайна
           </label>
@@ -366,6 +377,7 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
               value="repeat"
               checked={type === "repeat"}
               onChange={(e) => setType(e.target.value)}
+              disabled
             />
             Повторювана
           </label>
@@ -376,6 +388,7 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
               value="scale"
               checked={type === "scale"}
               onChange={(e) => setType(e.target.value)}
+              disabled
             />
             Зі шкалою
           </label>
@@ -386,6 +399,7 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
               value="list"
               checked={type === "list"}
               onChange={(e) => setType(e.target.value)}
+              disabled
             />
             З підзадачами
           </label>
@@ -473,6 +487,7 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
                           scaleGoal: "",
                         })
                       }
+                      disabled
                     />
                     Звичайна
                   </label>
@@ -491,6 +506,7 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
                           scaleGoal: "",
                         })
                       }
+                      disabled
                     />
                     Повторювана
                   </label>
@@ -509,6 +525,7 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
                           scaleGoal: "",
                         })
                       }
+                      disabled
                     />
                     Шкала
                   </label>
