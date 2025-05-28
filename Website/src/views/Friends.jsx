@@ -10,6 +10,7 @@ import {
   deleteFriend,
   searchFriends,
   searchMyFriends,
+  searchIncomingRequests,
 } from "../services/FriendsServices";
 import { fetchCategories } from "../services/TasksServices";
 import "../styles/friends.css";
@@ -22,6 +23,7 @@ export function Friends() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(""); // id категорії або ""
+  const [filteredFriends, setFilteredFriends] = useState([]);
 
   useEffect(() => {
     const fetchAllCategories = async () => {
@@ -40,7 +42,8 @@ export function Friends() {
       try {
         if (activeTab === "my") {
           const data = await getUserFriends();
-          setFriends(data);
+          setFriends(data); // Повний список для aside
+          setFilteredFriends(data);
         } else if (activeTab === "requests") {
           const data = await getFriendRequests();
           setRequests(data);
@@ -117,7 +120,7 @@ export function Friends() {
   const renderList = () => {
     const list =
       activeTab === "my"
-        ? friends
+        ? filteredFriends
         : activeTab === "requests"
         ? requests
         : discover;
@@ -245,34 +248,50 @@ export function Friends() {
 
   const handleSearch = async () => {
     if (activeTab === "my") {
-      // Пошук серед друзів з урахуванням фільтру
       try {
-        // Якщо пустий пошук і пустий фільтр — просто завантажуємо всіх друзів
         if (!searchQuery.trim() && !selectedCategory) {
           const data = await getUserFriends();
-          setFriends(data);
+          setFriends(data); // для aside (повний)
+          setFilteredFriends(data); // для main (весь список)
           return;
         }
-
-        // Якщо пустий пошук, але є фільтр — підставляємо пробіл у query (щоб API прийняв)
         const queryForApi = searchQuery.trim() ? searchQuery.trim() : " ";
         const data = await searchMyFriends(queryForApi, selectedCategory);
-        setFriends(data);
+        setFilteredFriends(data); // <--- тільки main, aside НЕ чіпаємо!
       } catch (e) {
         console.error("Помилка пошуку друзів:", e.message);
       }
     } else if (activeTab === "discover") {
-      // Пошук у discover (як раніше)
+      // Пошук у discover
       try {
-        if (!searchQuery.trim()) {
+        if (!searchQuery.trim() && !selectedCategory) {
           const data = await getDiscoverUsers();
           setDiscover(data);
           return;
         }
-        const data = await searchFriends(searchQuery);
+        // було:
+        // const data = await searchFriends(searchQuery);
+        // треба:
+        const data = await searchFriends(searchQuery, selectedCategory);
         setDiscover(data);
       } catch (e) {
         console.error("Помилка пошуку у discover:", e.message);
+      }
+    } else if (activeTab === "requests") {
+      // пошук серед запитів (НОВА ГІЛКА)
+      try {
+        if (!searchQuery.trim() && !selectedCategory) {
+          const data = await getFriendRequests();
+          setRequests(data);
+          return;
+        }
+        const data = await searchIncomingRequests(
+          searchQuery,
+          selectedCategory
+        );
+        setRequests(data);
+      } catch (e) {
+        console.error("Помилка пошуку серед запитів:", e.message);
       }
     }
   };
@@ -303,12 +322,6 @@ export function Friends() {
         <div className="title">
           <img className="icon" src="friends-icon.svg" />
           <h2 className="title-text">Мої друзі</h2>
-        </div>
-        <div className="search-box">
-          <input type="text" placeholder="Пошук" />
-          <button className="search-btn">
-            <img src="search.svg" alt="search" />
-          </button>
         </div>
         {renderMyFriendsList()}
       </aside>
@@ -348,6 +361,34 @@ export function Friends() {
           {activeTab === "my" && (
             <select
               className="options"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="">Без фільтра</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          )}
+          {activeTab === "discover" && (
+            <select
+              className="options"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="">Без фільтра</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {activeTab === "requests" && (
+            <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
