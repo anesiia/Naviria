@@ -20,3 +20,20 @@ export async function getAchievements() {
 
   return data;
 }
+
+export async function awardAchievementGift(achievementId) {
+  const userId = localStorage.getItem("id");
+  const res = await fetch(
+    `${API_URL}/api/Achievements/${userId}/award-achievement-points/${achievementId}`,
+    {
+      method: "PUT",
+      headers: {
+        ...authHeaders(),
+      },
+    }
+  );
+
+  if (!res.ok) throw new Error("Не вдалося отримати подарунок");
+  // Сервер може повернути пустий body
+  return res.text();
+}

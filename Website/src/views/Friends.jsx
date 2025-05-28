@@ -148,7 +148,7 @@ export function Friends() {
                     <button
                       className="reject"
                       onClick={() =>
-                        handleUpdateRequest(request.id, "declined")
+                        handleUpdateRequest(request.id, "rejected")
                       }
                     >
                       Відхилити

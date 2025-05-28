@@ -35,17 +35,19 @@ export default function Notifications({ notifications, onMarkRead }) {
           Прочитати всі
         </button>
       </div>
-      {notifications.map((notif) => (
-        <div
-          key={notif.id}
-          className={`notification-item ${notif.isNew ? "unread" : "read"}`}
-        >
-          <p className="notification-text">{notif.text}</p>
-          <span className="notification-time">
-            {formatTime(notif.recievedAt)}
-          </span>
-        </div>
-      ))}
+      {[...notifications]
+        .sort((a, b) => new Date(b.recievedAt) - new Date(a.recievedAt))
+        .map((notif) => (
+          <div
+            key={notif.id}
+            className={`notification-item ${notif.isNew ? "unread" : "read"}`}
+          >
+            <p className="notification-text">{notif.text}</p>
+            <span className="notification-time">
+              {formatTime(notif.recievedAt)}
+            </span>
+          </div>
+        ))}
     </div>
   );
 }

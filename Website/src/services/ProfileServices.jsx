@@ -25,7 +25,7 @@ export async function getProfile() {
 export async function updateProfile(data) {
   const id = localStorage.getItem("id");
   const res = await fetch(`${API_URL}/api/User/${id}`, {
-    method: "PUT",
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       ...authHeaders(),
@@ -33,7 +33,15 @@ export async function updateProfile(data) {
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Failed to update profile");
-  return res.json();
+
+  // Виправлення: Перевіряємо, чи є тіло
+  const text = await res.text();
+  if (!text) return null; // або return {}
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
 }
 
 // Завантаження фото
