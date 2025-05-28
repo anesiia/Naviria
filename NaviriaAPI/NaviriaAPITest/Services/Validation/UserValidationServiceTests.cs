@@ -4,8 +4,8 @@ using NaviriaAPI.IRepositories;
 using NaviriaAPI.Services.Validation;
 using NUnit.Framework;
 using System;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace NaviriaAPI.Tests.Services.Validation
 {
@@ -22,131 +22,136 @@ namespace NaviriaAPI.Tests.Services.Validation
             _validationService = new UserValidationService(_mockUserRepository.Object);
         }
 
-        [Test]
-        public async Task TC01_ValidateAsync_ShouldThrowArgumentException_WhenEmailExists()
+        private UserCreateDto GetValidUserCreateDto() => new UserCreateDto
         {
-            // Arrange
-            var dto = new UserCreateDto
-            {
-                Email = "existing@example.com",
-                Nickname = "newUser",
-                BirthDate = new DateTime(2000, 1, 1)
-            };
+            Email = "newuser@example.com",
+            Nickname = "validNick123",
+            FullName = "John Doe",
+            Password = "StrongPass1",
+            BirthDate = DateTime.UtcNow.AddYears(-25),
+            FutureMessage = "This is a valid message."
+        };
 
-            _mockUserRepository.Setup(repo => repo.GetByEmailAsync(dto.Email))
-                               .ReturnsAsync(new Entities.UserEntity());  // Simulate existing user with this email
+        [Test]
+        public async Task TC01_ShouldThrow_WhenEmailAlreadyExists()
+        {
+            var dto = GetValidUserCreateDto();
+            _mockUserRepository.Setup(r => r.GetByEmailAsync(dto.Email))
+                               .ReturnsAsync(new Entities.UserEntity());
 
-            // Act & Assert
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => _validationService.ValidateAsync(dto));
-            Assert.That(exception.Message, Is.EqualTo("User with this email already exists"));
+            var ex = Assert.ThrowsAsync<ArgumentException>(() => _validationService.ValidateCreateAsync(dto));
+            Assert.That(ex!.Message, Is.EqualTo("User with this email already exists"));
         }
 
         [Test]
-        public async Task TC02_ValidateAsync_ShouldThrowArgumentException_WhenNicknameExists()
+        public async Task TC02_ShouldThrow_WhenNicknameAlreadyExists()
         {
-            // Arrange
-            var dto = new UserCreateDto
-            {
-                Email = "newUser@example.com",
-                Nickname = "existingNickname",
-                BirthDate = new DateTime(2000, 1, 1)
-            };
+            var dto = GetValidUserCreateDto();
+            _mockUserRepository.Setup(r => r.GetByNicknameAsync(dto.Nickname))
+                               .ReturnsAsync(new Entities.UserEntity());
 
-            _mockUserRepository.Setup(repo => repo.GetByNicknameAsync(dto.Nickname))
-                               .ReturnsAsync(new Entities.UserEntity());  // Simulate existing user with this nickname
-
-            // Act & Assert
-            var exception = Assert.ThrowsAsync<ArgumentException>(() => _validationService.ValidateAsync(dto));
-            Assert.That(exception.Message, Is.EqualTo("User with this nickname already exists"));
-            
+            var ex = Assert.ThrowsAsync<ArgumentException>(() => _validationService.ValidateCreateAsync(dto));
+            Assert.That(ex!.Message, Is.EqualTo("User with this nickname already exists"));
         }
 
         [Test]
-        public async Task TC03_ValidateAsync_ShouldThrowValidationException_WhenBirthDateIsInTheFuture()
+        public async Task TC03_ShouldThrow_WhenFullNameIsInvalid()
         {
-            // Arrange
-            var dto = new UserCreateDto
-            {
-                Email = "newUser@example.com",
-                Nickname = "newUser",
-                BirthDate = DateTime.UtcNow.AddDays(1),  // Future date
-            };
+            var dto = GetValidUserCreateDto();
+            dto.FullName = "J@ne!";  // invalid characters
 
-            // Act & Assert
-            var exception = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateAsync(dto));
-            Assert.That(exception.Message, Is.EqualTo("Birth date cannot be in the future"));
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateCreateAsync(dto));
+            Assert.That(ex!.Message, Does.Contain("FullName contains invalid characters"));
         }
 
         [Test]
-        public async Task TC04_ValidateAsync_ShouldThrowValidationException_WhenUserIsUnder18()
+        public async Task TC04_ShouldThrow_WhenNicknameIsInvalid()
         {
-            // Arrange
-            var dto = new UserCreateDto
-            {
-                Email = "newUser@example.com",
-                Nickname = "newUser",
-                BirthDate = DateTime.UtcNow.AddYears(-17),  // 17 years old
-            };
+            var dto = GetValidUserCreateDto();
+            dto.Nickname = "in valid!";
 
-            // Act & Assert
-            var exception = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateAsync(dto));
-            Assert.That(exception.Message, Is.EqualTo("User must be at least 18 years old"));
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateCreateAsync(dto));
+            Assert.That(ex!.Message, Does.Contain("Nickname must contain only letters and digits"));
         }
 
         [Test]
-        public async Task TC05_ValidateAsync_ShouldThrowValidationException_WhenUserIsOver120()
+        public async Task TC05_ShouldThrow_WhenEmailIsInvalid()
         {
-            // Arrange
-            var dto = new UserCreateDto
-            {
-                Email = "newUser@example.com",
-                Nickname = "newUser",
-                BirthDate = DateTime.UtcNow.AddYears(-121)  // 121 years old
-            };
+            var dto = GetValidUserCreateDto();
+            dto.Email = "invalid_email";
 
-
-            // Act & Assert
-            var exception = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateAsync(dto));
-            Assert.That(exception.Message, Is.EqualTo("User cannot be older than 120 years"));
-        }
-
-        
-
-        [Test]
-        public async Task TC06_ValidateAsync_ShouldNotThrowAnyException_WhenUserIsValid()
-        {
-            // Arrange
-            var dto = new UserCreateDto
-            {
-                Email = "newUser@example.com",
-                Nickname = "newUser",
-                BirthDate = DateTime.UtcNow.AddYears(-25)  // Valid birth date (25 years old)
-            };
-
-            _mockUserRepository.Setup(repo => repo.GetByEmailAsync(dto.Email))
-                               .ReturnsAsync((Entities.UserEntity?)null);  // Simulate email does not exist
-
-            _mockUserRepository.Setup(repo => repo.GetByNicknameAsync(dto.Nickname))
-                               .ReturnsAsync((Entities.UserEntity?)null);  // Simulate nickname does not exist
-
-            // Act & Assert
-            Assert.DoesNotThrowAsync(() => _validationService.ValidateAsync(dto));
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateCreateAsync(dto));
+            Assert.That(ex!.Message, Does.Contain("Email format is invalid"));
         }
 
         [Test]
-        public void TC07_ValidateAsync_ShouldThrowValidationException_WhenLastSeenIsInTheFuture()
+        public async Task TC06_ShouldThrow_WhenPasswordIsInvalid()
         {
-            // Arrange
-            var dto = new UserUpdateDto
-            {
-                LastSeen = DateTime.UtcNow.AddMinutes(5) // майбутній час
-            };
+            var dto = GetValidUserCreateDto();
+            dto.Password = "weak";  // too short
 
-            // Act & Assert
-            var exception = Assert.Throws<ValidationException>(() =>
-                UserValidationService.ValidateAsync(dto));
-            Assert.That(exception.Message, Is.EqualTo("LastSeen cannot be in the future"));
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateCreateAsync(dto));
+            Assert.That(ex!.Message, Does.Contain("Password must be at least 8 characters long"));
         }
 
+        [Test]
+        public async Task TC07_ShouldThrow_WhenPasswordMissingUpperLowerDigit()
+        {
+            var dto = GetValidUserCreateDto();
+            dto.Password = "alllowercase";
+
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateCreateAsync(dto));
+            Assert.That(ex!.Message, Does.Contain("Password must contain at least one uppercase letter"));
+        }
+
+        [Test]
+        public async Task TC08_ShouldThrow_WhenBirthDateIsInFuture()
+        {
+            var dto = GetValidUserCreateDto();
+            dto.BirthDate = DateTime.UtcNow.AddDays(1);
+
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateCreateAsync(dto));
+            Assert.That(ex!.Message, Is.EqualTo("Birth date cannot be in the future."));
+        }
+
+        [Test]
+        public async Task TC09_ShouldThrow_WhenUserIsUnder18()
+        {
+            var dto = GetValidUserCreateDto();
+            dto.BirthDate = DateTime.UtcNow.AddYears(-17);
+
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateCreateAsync(dto));
+            Assert.That(ex!.Message, Is.EqualTo("User must be at least 18 years old."));
+        }
+
+        [Test]
+        public async Task TC10_ShouldThrow_WhenUserIsOver120()
+        {
+            var dto = GetValidUserCreateDto();
+            dto.BirthDate = DateTime.UtcNow.AddYears(-121);
+
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateCreateAsync(dto));
+            Assert.That(ex!.Message, Is.EqualTo("User cannot be older than 120 years."));
+        }
+
+        [Test]
+        public async Task TC11_ShouldThrow_WhenFutureMessageIsInvalid()
+        {
+            var dto = GetValidUserCreateDto();
+            dto.FutureMessage = "Invalid!!!@###";  // contains invalid characters
+
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _validationService.ValidateCreateAsync(dto));
+            Assert.That(ex!.Message, Does.Contain("FutureMessage contains invalid characters"));
+        }
+
+        [Test]
+        public async Task TC12_ShouldNotThrow_WhenUserIsValid()
+        {
+            var dto = GetValidUserCreateDto();
+            _mockUserRepository.Setup(r => r.GetByEmailAsync(dto.Email)).ReturnsAsync((Entities.UserEntity?)null);
+            _mockUserRepository.Setup(r => r.GetByNicknameAsync(dto.Nickname)).ReturnsAsync((Entities.UserEntity?)null);
+
+            Assert.DoesNotThrowAsync(() => _validationService.ValidateCreateAsync(dto));
+        }
     }
 }

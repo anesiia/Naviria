@@ -30,11 +30,7 @@ namespace NaviriaAPI.Tests.Services.CloudStorage
         public async Task TC01_UploadImageAsync_ShouldReturnTrue_WhenUploadSuccessful()
         {
             // Arrange
-            var fileName = "photo.jpg";
-            var content = "fake image content";
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
-
-            _fileMock.Setup(f => f.FileName).Returns(fileName);
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes("fake image"));
             _fileMock.Setup(f => f.OpenReadStream()).Returns(stream);
 
             var uploadResult = new ImageUploadResult
@@ -47,14 +43,13 @@ namespace NaviriaAPI.Tests.Services.CloudStorage
                 .Setup(r => r.UpdateProfileImageAsync("user123", "https://example.com/photo.jpg"))
                 .ReturnsAsync(true);
 
-            var service = new TestableCloudinaryService(null, _userRepositoryMock.Object, uploadResult);
+            var service = new TestableCloudinaryService(_userRepositoryMock.Object, uploadResult);
 
             // Act
             var result = await service.UploadImageAsync("user123", _fileMock.Object);
 
             // Assert
             Assert.That(result, Is.True);
-
             _userRepositoryMock.Verify(r => r.UpdateProfileImageAsync("user123", "https://example.com/photo.jpg"), Times.Once);
         }
 
@@ -62,22 +57,18 @@ namespace NaviriaAPI.Tests.Services.CloudStorage
         public void TC02_UploadImageAsync_ShouldThrow_WhenUploadFails()
         {
             // Arrange
-            var fileName = "photo.jpg";
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes("content"));
-
-            _fileMock.Setup(f => f.FileName).Returns(fileName);
-            _fileMock.Setup(f => f.OpenReadStream()).Returns(stream);
+            _fileMock.Setup(f => f.OpenReadStream()).Returns(new MemoryStream());
 
             var failedUpload = new ImageUploadResult
             {
                 StatusCode = HttpStatusCode.BadRequest
             };
 
-            var service = new TestableCloudinaryService(null, _userRepositoryMock.Object, failedUpload);
+            var service = new TestableCloudinaryService(_userRepositoryMock.Object, failedUpload);
 
             // Act & Assert
-            Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await service.UploadImageAsync("user123", _fileMock.Object));
+            Assert.ThrowsAsync<InvalidOperationException>(() =>
+                service.UploadImageAsync("user123", _fileMock.Object));
         }
     }
 }

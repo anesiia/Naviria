@@ -61,7 +61,7 @@ namespace NaviriaAPI.Tests.Services.StatisticServices
 
             Assert.That(result, Has.Count.EqualTo(2));
             Assert.That(result[0].CategoryId, Is.EqualTo("cat1"));
-            Assert.That(result[0].Value, Is.EqualTo(0.67).Within(0.01));
+            Assert.That(result[0].Value, Is.EqualTo(67).Within(0.01));
             Assert.That(result[1].CategoryName, Is.EqualTo("Study"));
         }
 
@@ -85,7 +85,7 @@ namespace NaviriaAPI.Tests.Services.StatisticServices
             {
                 new TaskEntity { CategoryId = "cat1" },
                 new TaskEntity { CategoryId = "cat2" },
-                new TaskEntity { CategoryId = "cat1" } // Duplicate to check count
+                new TaskEntity { CategoryId = "cat1" } 
             };
 
             var categories = new List<CategoryEntity>
@@ -149,7 +149,7 @@ namespace NaviriaAPI.Tests.Services.StatisticServices
 
             Assert.That(result, Has.Count.EqualTo(2));
             Assert.That(result[0].CategoryName, Is.EqualTo("Work"));
-            Assert.That(result[0].Value, Is.EqualTo(0.67).Within(0.01));
+            Assert.That(result[0].Value, Is.EqualTo(67).Within(0.01));
         }
 
         [Test]
@@ -170,5 +170,57 @@ namespace NaviriaAPI.Tests.Services.StatisticServices
 
             Assert.That(result, Is.Empty);
         }
+
+        [Test]
+        public async Task TC006_GetUserPieChartStatsAsync_UnknownCategory_ReturnsEmptyCategoryName()
+        {
+            var userId = "user1";
+            var tasks = new List<TaskEntity>
+    {
+        new TaskEntity { CategoryId = "unknownCat" }
+    };
+            var categories = new List<CategoryEntity>(); 
+
+            _taskRepoMock.Setup(r => r.GetAllByUserAsync(userId)).ReturnsAsync(tasks);
+            _categoryRepoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(categories);
+
+            var result = await _service.GetUserPieChartStatsAsync(userId);
+
+            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result[0].CategoryName, Is.EqualTo(""));
+            Assert.That(result[0].CategoryId, Is.EqualTo("unknownCat"));
+            Assert.That(result[0].Value, Is.EqualTo(100));
+        }
+
+        [Test]
+        public async Task TC007_ResultsAreSortedByValueDescending()
+        {
+            var userId = "sortedUser";
+            var tasks = new List<TaskEntity>
+    {
+        new TaskEntity { CategoryId = "c1" },
+        new TaskEntity { CategoryId = "c2" },
+        new TaskEntity { CategoryId = "c2" },
+        new TaskEntity { CategoryId = "c3" },
+        new TaskEntity { CategoryId = "c2" }
+    };
+            var categories = new List<CategoryEntity>
+    {
+        new CategoryEntity { Id = "c1", Name = "Reading" },
+        new CategoryEntity { Id = "c2", Name = "Gaming" },
+        new CategoryEntity { Id = "c3", Name = "Cooking" }
+    };
+
+            _taskRepoMock.Setup(r => r.GetAllByUserAsync(userId)).ReturnsAsync(tasks);
+            _categoryRepoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(categories);
+
+            var result = await _service.GetUserPieChartStatsAsync(userId);
+
+            Assert.That(result, Has.Count.EqualTo(3));
+            Assert.That(result[0].CategoryName, Is.EqualTo("Gaming")); // має найбільше завдань
+            Assert.That(result[1].Value, Is.LessThanOrEqualTo(result[0].Value));
+            Assert.That(result[2].Value, Is.LessThanOrEqualTo(result[1].Value));
+        }
+
     }
 }
