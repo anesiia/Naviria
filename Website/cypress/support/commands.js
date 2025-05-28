@@ -13,3 +13,7 @@ Cypress.Commands.add('loginAsAlex', () => {
 Cypress.Commands.add('loginAsMaria', () => {
     cy.login('maria.kovalenko@example.com', 'Maria1234');
 });
+
+Cypress.Commands.add('loginAsNataliya', () => {
+    cy.login('nataliya.melnyk@example.com', 'Natasha123');
+});

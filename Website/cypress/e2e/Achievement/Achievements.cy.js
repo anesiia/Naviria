@@ -9,7 +9,7 @@ describe('Сторінка "Досягнення"', () => {
     });
 
     it('не відображає досягнень для Марії (авторизований користувач без досягнень)', () => {
-        cy.loginAsMaria();
+        cy.loginAsNataliya();
         cy.visit('/achievements');
 
         cy.contains('Твої досягнення').should('be.visible');
