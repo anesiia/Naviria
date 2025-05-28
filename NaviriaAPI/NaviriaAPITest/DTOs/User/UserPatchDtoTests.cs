@@ -19,7 +19,7 @@ namespace NaviriaAPI.Tests.DTOs.User
         }
 
         [Test]
-        public void Properties_AssignAndReadValues_Success()
+        public void TC001_Properties_AssignAndReadValues_Success()
         {
             var levelInfo = new LevelProgressInfo();
             var friends = new List<UserFriendInfo> { new UserFriendInfo() };
@@ -58,7 +58,7 @@ namespace NaviriaAPI.Tests.DTOs.User
         [TestCase("J", false)]
         [TestCase("John", true)]
         [TestCase("ThisFullNameIsWayTooLongToBeValidBecauseItExceedsFiftyCharacters", false)]
-        public void FullName_Validation_Works(string fullName, bool expectedIsValid)
+        public void TC002_FullName_Validation_Works(string fullName, bool expectedIsValid)
         {
             _userPatchDto.FullName = fullName;
             bool isValid = IsPropertyValid(_userPatchDto, nameof(_userPatchDto.FullName));
@@ -68,7 +68,7 @@ namespace NaviriaAPI.Tests.DTOs.User
         [TestCase("ab", false)]
         [TestCase("abc", true)]
         [TestCase("ThisNicknameIsWayTooLongToBeValid", false)]
-        public void Nickname_Validation_Works(string nickname, bool expectedIsValid)
+        public void TC003_Nickname_Validation_Works(string nickname, bool expectedIsValid)
         {
             _userPatchDto.Nickname = nickname;
             bool isValid = IsPropertyValid(_userPatchDto, nameof(_userPatchDto.Nickname));
@@ -77,7 +77,7 @@ namespace NaviriaAPI.Tests.DTOs.User
 
         [TestCase("notanemail", false)]
         [TestCase("email@example.com", true)]
-        public void Email_Validation_Works(string email, bool expectedIsValid)
+        public void TC004_Email_Validation_Works(string email, bool expectedIsValid)
         {
             _userPatchDto.Email = email;
             bool isValid = IsPropertyValid(_userPatchDto, nameof(_userPatchDto.Email));
@@ -86,7 +86,7 @@ namespace NaviriaAPI.Tests.DTOs.User
 
         [TestCase("short", false)]
         [TestCase("longenough", true)]
-        public void Password_Validation_Works(string password, bool expectedIsValid)
+        public void TC005_Password_Validation_Works(string password, bool expectedIsValid)
         {
             _userPatchDto.Password = password;
             bool isValid = IsPropertyValid(_userPatchDto, nameof(_userPatchDto.Password));
@@ -95,7 +95,7 @@ namespace NaviriaAPI.Tests.DTOs.User
 
         [TestCase("http:/invalid-url", false)]
         [TestCase("https://valid.url.com/image.png", true)]
-        public void Photo_Validation_Works(string photoUrl, bool expectedIsValid)
+        public void TC006_Photo_Validation_Works(string photoUrl, bool expectedIsValid)
         {
             _userPatchDto.Photo = photoUrl;
             bool isValid = IsPropertyValid(_userPatchDto, nameof(_userPatchDto.Photo));
