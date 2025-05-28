@@ -1,6 +1,5 @@
 describe('Сторінка статистики', () => {
     beforeEach(() => {
-        // Вхід під користувачем Марія
         cy.loginAsMaria();
         cy.visit('/statistics');
     });
