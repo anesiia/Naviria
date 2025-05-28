@@ -1,4 +1,6 @@
 ﻿using NaviriaAPI.DTOs.User;
+using NaviriaAPI.DTOs.FeaturesDTOs;
+using NaviriaAPI.Exceptions;
 
 namespace NaviriaAPI.IServices
 {
@@ -39,11 +41,11 @@ namespace NaviriaAPI.IServices
         /// <param name="categoryId">Optional category ID to filter users who have at least one task in this category. If null, no category filter is applied.</param>
         /// <param name="query">Optional search string to match requester's nickname or full name. If null, no name filter is applied.</param>
         /// <returns>
-        /// A list of <see cref="UserDto"/> representing users who sent friend requests and match the specified criteria.
+        /// A list of <see cref="FriendRequestWithUserDto"/> representing users who sent friend requests and match the specified criteria, including the friend request info.
         /// </returns>
         /// <exception cref="NotFoundException">
         /// Thrown if no incoming friend requests match the criteria.
         /// </exception>
-        Task<List<UserDto>> SearchIncomingFriendRequestsAsync(string userId, string? categoryId, string? query);
+        Task<List<FriendRequestWithUserDto>> SearchIncomingFriendRequestsAsync(string userId, string? categoryId, string? query);
     }
 }

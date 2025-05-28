@@ -5,6 +5,8 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ISecurityService;
 using NaviriaAPI.IServices.IUserServices;
 using NaviriaAPI.DTOs.User;
+using NaviriaAPI.DTOs.FeaturesDTOs;
+using NaviriaAPI.Entities;
 
 namespace NaviriaAPI.Services.User
 {
@@ -33,74 +35,76 @@ namespace NaviriaAPI.Services.User
         /// <inheritdoc />
         public async Task<List<UserDto>> SearchAllUsersAsync(string userId, string? categoryId, string? query)
         {
-            return await UniversalSearchAsync(
-                userId,
-                categoryId,
-                query,
-                excludeSelf: true,
-                onlyFriends: false,
-                onlyIncomingRequests: false);
+            return await UniversalSearchAsync(userId, categoryId, query, excludeSelf: true, onlyFriends: false);
         }
 
         /// <inheritdoc />
         public async Task<List<UserDto>> SearchFriendsAsync(string userId, string? categoryId, string? query)
         {
-            return await UniversalSearchAsync(
-                userId,
-                categoryId,
-                query,
-                excludeSelf: true,
-                onlyFriends: true,
-                onlyIncomingRequests: false);
+            return await UniversalSearchAsync(userId, categoryId, query, excludeSelf: true, onlyFriends: true);
         }
 
         /// <inheritdoc />
-        public async Task<List<UserDto>> SearchIncomingFriendRequestsAsync(string userId, string? categoryId, string? query)
+        public async Task<List<FriendRequestWithUserDto>> SearchIncomingFriendRequestsAsync(string userId, string? categoryId, string? query)
         {
-            return await UniversalSearchAsync(
-                userId,
-                categoryId,
-                query,
-                excludeSelf: true,
-                onlyFriends: false,
-                onlyIncomingRequests: true);
+            ValidateQuery(userId, query);
+
+            // 1. Retrieve all incoming friend requests
+            var requests = await _friendRequestRepository.GetByReceiverIdAsync(userId);
+            var senderIds = requests.Select(r => r.FromUserId).Distinct();
+
+            // 2. Filter by category if needed
+            senderIds = await FilterUserIdsByCategoryAsync(senderIds, categoryId);
+
+            // 3. Load user entities for senders
+            var senders = await _userRepository.GetManyByIdsAsync(senderIds);
+
+            // 4. Filter users by query if provided
+            senders = FilterUsersByQuery(senders, query);
+
+            // 5. Map users for quick access
+            var sendersDict = senders.ToDictionary(u => u.Id);
+
+            // 6. Build result list combining friend request and user info
+            var result = requests
+                .Where(r => sendersDict.ContainsKey(r.FromUserId))
+                .Select(r => new FriendRequestWithUserDto
+                {
+                    Request = FriendRequestMapper.ToDto(r),
+                    Sender = UserMapper.ToDto(sendersDict[r.FromUserId])
+                })
+                .ToList();
+
+            if (!result.Any())
+                throw new NotFoundException("No incoming friend requests found.");
+
+            return result;
         }
 
         /// <summary>
-        /// Universal filtering logic for searching users, friends, or incoming requests
-        /// based on category, name, and filter options.
+        /// Universal search logic for finding users or friends based on category, query, and filter options.
         /// </summary>
         private async Task<List<UserDto>> UniversalSearchAsync(
             string userId,
             string? categoryId,
             string? query,
             bool excludeSelf,
-            bool onlyFriends,
-            bool onlyIncomingRequests)
+            bool onlyFriends)
         {
-            // Validate the query to prevent dangerous content
-            if (!string.IsNullOrWhiteSpace(query))
-            {
-                _messageSecurityService.Validate(userId, query);
-            }
+            ValidateQuery(userId, query);
 
-            // Get the list of relevant user IDs
+            // 1. Retrieve relevant user IDs (all or by category)
             IEnumerable<string> userIds;
-
             if (!string.IsNullOrWhiteSpace(categoryId))
-            {
                 userIds = await _taskRepository.GetUserIdsByCategoryAsync(categoryId);
-            }
             else
-            {
                 userIds = (await _userRepository.GetAllAsync()).Select(u => u.Id);
-            }
 
-            // Exclude the current user if requested
+            // 2. Exclude current user if required
             if (excludeSelf)
                 userIds = userIds.Where(id => id != userId);
 
-            // Filter to only friends if requested
+            // 3. Filter only friends if requested
             if (onlyFriends)
             {
                 var me = await _userService.GetUserOrThrowAsync(userId);
@@ -108,26 +112,11 @@ namespace NaviriaAPI.Services.User
                 userIds = userIds.Where(id => friendIds.Contains(id));
             }
 
-            // Filter to only users who sent a friend request, if requested
-            if (onlyIncomingRequests)
-            {
-                var incomingRequests = await _friendRequestRepository.GetByReceiverIdAsync(userId);
-                var requesterIds = incomingRequests.Select(r => r.FromUserId).ToHashSet();
-                userIds = userIds.Where(id => requesterIds.Contains(id));
-            }
-
-            // Load user entities by filtered IDs
+            // 4. Load user entities by filtered IDs
             var users = await _userRepository.GetManyByIdsAsync(userIds.Distinct());
 
-            // Filter users by query (nickname or full name) if provided
-            if (!string.IsNullOrWhiteSpace(query))
-            {
-                users = users.Where(u =>
-                    (!string.IsNullOrWhiteSpace(u.Nickname) && u.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase)) 
-                    //uncomment to turn on search by fullname
-                    // || (!string.IsNullOrWhiteSpace(u.FullName) && u.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)) 
-                ).ToList();
-            }
+            // 5. Filter users by query (nickname or full name) if provided
+            users = FilterUsersByQuery(users, query);
 
             var dtos = users.Select(UserMapper.ToDto).ToList();
 
@@ -135,6 +124,42 @@ namespace NaviriaAPI.Services.User
                 throw new NotFoundException("No users found.");
 
             return dtos;
+        }
+
+        /// <summary>
+        /// Validates the search query for security.
+        /// </summary>
+        private void ValidateQuery(string userId, string? query)
+        {
+            if (!string.IsNullOrWhiteSpace(query))
+                _messageSecurityService.Validate(userId, query);
+        }
+
+        /// <summary>
+        /// Filters user IDs by category, if a category is provided.
+        /// </summary>
+        private async Task<IEnumerable<string>> FilterUserIdsByCategoryAsync(IEnumerable<string> userIds, string? categoryId)
+        {
+            if (string.IsNullOrWhiteSpace(categoryId))
+                return userIds;
+
+            var idsInCategory = (await _taskRepository.GetUserIdsByCategoryAsync(categoryId)).ToHashSet();
+            return userIds.Where(id => idsInCategory.Contains(id));
+        }
+
+        /// <summary>
+        /// Filters users by the search query (nickname or full name).
+        /// </summary>
+        private static List<UserEntity> FilterUsersByQuery(IEnumerable<UserEntity> users, string? query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return users.ToList();
+
+            return users.Where(u =>
+                (!string.IsNullOrWhiteSpace(u.Nickname) && u.Nickname.Contains(query, StringComparison.OrdinalIgnoreCase))
+            // Uncomment below to enable full name search:
+            // || (!string.IsNullOrWhiteSpace(u.FullName) && u.FullName.Contains(query, StringComparison.OrdinalIgnoreCase))
+            ).ToList();
         }
     }
 }
