@@ -29,11 +29,11 @@ namespace NaviriaAPI.DTOs.User
         public bool? IsOnline { get; set; }
         public bool? IsProUser { get; set; }
 
-        public LevelProgressInfo? LevelInfo { get; set; } = new();
+        public LevelProgressInfo? LevelInfo { get; set; }
 
-        public List<UserFriendInfo>? Friends { get; set; } = new();
+        public List<UserFriendInfo>? Friends { get; set; }
 
-        public List<UserAchievementInfo>? Achievements { get; set; } = new();
+        public List<UserAchievementInfo>? Achievements { get; set; }
 
     }
 

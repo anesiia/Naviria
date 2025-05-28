@@ -14,6 +14,8 @@ export default function Header() {
   const [notifications, setNotifications] = useState([]);
   const [user, setUser] = useState(null);
   const ref = useRef(null);
+  const hasUnread = notifications.some((n) => n.isNew);
+
   useEffect(() => {
     getProfile()
       .then((data) => setUser(data))
@@ -65,7 +67,10 @@ export default function Header() {
       </nav>
       <div className="actions">
         <button className="notifications" onClick={handleToggleNotifications}>
-          <img src="bell.svg" alt="notifications" />
+          <img
+            src={hasUnread ? "new-notif.svg" : "bell.svg"}
+            alt="notifications"
+          />
         </button>
         {showNotifications && (
           <Notifications

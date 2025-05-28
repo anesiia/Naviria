@@ -40,3 +40,8 @@
   font-size: 16px;
   background: linear-gradient(90deg, #023047 0%, #219dbb 100%);
 }
+.achievements-page .achievements .achievement .gift-btn.awarded {
+  background: white;
+  color: #023047;
+  border: 1px solid #023047;
+}
