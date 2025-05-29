@@ -68,7 +68,8 @@ namespace NaviriaAPI.Services.User
 
             var entity = UserMapper.ToEntity(userDto);
             entity.Password = _passwordHasher.HashPassword(entity, userDto.Password);
-            entity.LevelInfo = _levelService.CalculateFirstLevelProgress(50);
+            entity.Points = 50;
+            entity.LevelInfo = _levelService.CalculateFirstLevelProgress(entity.Points);
 
             await _userRepository.CreateAsync(entity);
             await _achievementManager.EvaluateAsync(entity.Id, AchievementTrigger.OnRegistration);
