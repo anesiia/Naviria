@@ -1,10 +1,10 @@
-package com.example.dyplomproject.data.remote
+package com.example.dyplomproject.data.remote.repository
 
 import android.util.Log
+import com.example.dyplomproject.data.remote.ApiService
 import com.example.dyplomproject.data.remote.request.LoginRequest
 import com.example.dyplomproject.data.remote.request.UserRegistrationRequest
 import com.example.dyplomproject.data.remote.response.AuthResponse
-import retrofit2.Response
 
 class AuthRepository(private val apiService: ApiService) {
 //    suspend fun login(email: String, password: String): Response<AuthResponse> {
@@ -16,26 +16,26 @@ class AuthRepository(private val apiService: ApiService) {
             if (response.isSuccessful) {
                 Result.success(response.body()!!)
             } else {
-                //val errorBody = response.errorBody()?.string() ?: "No error body"
-//                Log.e(
-//                    "AuthRepository",
-//                    "Login failed with code: ${response.code()}, Error: $errorBody"
-//                )
-//                Result.failure(Exception("Login failed with code ${response.code()}: $errorBody"))
-                val userMessage = when (response.code()) {
-                    400 -> "Некоректні дані. Перевірте заповнення полів."
-                    401 -> "Невірний email або пароль."
-                    403 -> "Доступ заборонено."
-                    404 -> "Сервер не знайдено."
-                    500 -> "Помилка сервера. Спробуйте пізніше."
-                    else -> "Невідома помилка: ${response.code()}"
-                }
-                Result.failure(Exception(userMessage))
+                val errorBody = response.errorBody()?.string() ?: "No error body"
+                Log.e(
+                    "AuthRepository",
+                    "Login failed with code: ${response.code()}, Error: $errorBody"
+                )
+                Result.failure(Exception("Login failed with code ${response.code()}: $errorBody"))
+//                val userMessage = when (response.code()) {
+//                    400 -> "Некоректні дані. Перевірте заповнення полів."
+//                    401 -> "Невірний email або пароль."
+//                    403 -> "Доступ заборонено."
+//                    404 -> "Сервер не знайдено."
+//                    500 -> "Помилка сервера. Спробуйте пізніше."
+//                    else -> "Невідома помилка: ${response.code()}"
+//                }
+//                Result.failure(Exception(userMessage))
             }
         } catch (e: Exception) {
-//            Log.e("AuthRepository", "Login exception: ${e.message}", e)
-//            Result.failure(e)
-            Result.failure(Exception("Не вдалось під'єднатися до сервера, перевірте підключення!"))
+            Log.e("AuthRepository", "Login exception: ${e.message}", e)
+            Result.failure(e)
+            //Result.failure(Exception("Не вдалось під'єднатися до сервера, перевірте підключення!"))
         }
     }
 
