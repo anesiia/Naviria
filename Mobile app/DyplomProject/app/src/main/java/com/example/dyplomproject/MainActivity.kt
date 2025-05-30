@@ -43,10 +43,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import com.example.dyplomproject.data.remote.ApiService
-import com.example.dyplomproject.data.remote.AuthRepository
-import com.example.dyplomproject.data.remote.UserRepository
+import com.example.dyplomproject.data.remote.repository.AuthRepository
+import com.example.dyplomproject.data.remote.repository.UserRepository
 import com.example.dyplomproject.data.utils.DataStoreManager
-import com.example.dyplomproject.ui.components.FriendRequestsScreen
+import com.example.dyplomproject.ui.screen.FriendRequestsScreen
 import com.example.dyplomproject.ui.screen.FriendsScreen
 import com.example.dyplomproject.ui.screen.ProfileScreen
 import com.example.dyplomproject.ui.screen.RegistrationScreen
@@ -82,23 +82,27 @@ class MainActivity : ComponentActivity() {
 
         val okHttpClient = OkHttpClient.Builder()
             .sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
-            .hostnameVerifier { _, _ -> true } // ⚠️ Don't use in production!
+            .hostnameVerifier { _, _ -> true } // Don't use in production!
             .build()
 
-        val retrofit = Retrofit.Builder()
-            //.baseUrl("http://10.0.2.2:5186/") //Mariam's URL//.baseUrl("https://192.168.1.7:7172/")
-            .baseUrl("https://10.0.2.2:7172/") //Lisa's URL //.baseUrl("https://192.168.1.7:7172/")
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val apiService = retrofit.create(ApiService::class.java)
-
-
-//        val apiService = Retrofit.Builder()
-//            .baseUrl("http://192.168.1.6:5186") // Replace with your actual URL
+//        val retrofit = Retrofit.Builder()
+//            ////.baseUrl("https://192.168.1.7:7172/")
+//            //.baseUrl("https://10.0.2.2:7172/") //Lisa's URL
+//            .baseUrl("https://192.168.1.6:7172/")
+//            .client(okHttpClient)
 //            .addConverterFactory(GsonConverterFactory.create())
 //            .build()
-//            .create(ApiService::class.java)
+//        val apiService = retrofit.create(ApiService::class.java)
+
+
+        val apiService = Retrofit.Builder()
+            //.baseUrl("http://10.0.2.2:5186/") //Mariam's URL emulator
+            //.baseUrl("http://192.168.56.1:5186/")//Mariam's URL Physical device
+            .baseUrl("http://192.168.1.9:5186/") //Lisa's URL
+            //.baseUrl("http://10.0.2.2:5186/") //Lisa's URL
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiService::class.java)
 
         val authRepository = AuthRepository(apiService)
         val dataStoreManager = DataStoreManager(applicationContext)
@@ -107,7 +111,7 @@ class MainActivity : ComponentActivity() {
         // Create ViewModel using ViewModelFactory
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(dataStoreManager))
             .get(AuthViewModel::class.java)
-        authViewModel.logout()
+        //authViewModel.logout()
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory(authRepository))
             .get(LoginViewModel::class.java)
         enableEdgeToEdge()
@@ -315,7 +319,7 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
             }
             composable("tasks") {
                 MainScaffold(navController) { padding ->
-                    TaskScreen(navController, padding = padding)
+                    userId?.let { it1 -> TaskScreen(navController, it1, padding = padding) }
                 }
             }
             composable("friend_requests") {
