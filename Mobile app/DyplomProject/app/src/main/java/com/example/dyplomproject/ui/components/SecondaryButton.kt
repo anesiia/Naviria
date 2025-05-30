@@ -30,40 +30,90 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun SecondaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier.fillMaxWidth(),
-    style: ButtonStyle = ButtonStyle.Primary
+    style: ButtonStyle = ButtonStyle.Primary,
+    enabled: Boolean = true
 ) {
     val shape = RoundedCornerShape(style.cornerRadius)
+
+    // Visual feedback for disabled state
+    val backgroundColor = if (enabled) {
+        style.gradient ?: SolidColor(style.backgroundColor)
+    } else {
+        SolidColor(style.backgroundColor.copy(alpha = 0.4f))
+    }
+
+    val contentColor = if (enabled) {
+        style.contentColor
+    } else {
+        style.contentColor.copy(alpha = 0.4f)
+    }
+
+    val borderColor = if (enabled) {
+        style.borderColor
+    } else {
+        style.borderColor.copy(alpha = 0.3f)
+    }
 
     Box(
         modifier = modifier
             .clip(shape)
-            .background(
-                brush = style.gradient ?: SolidColor(style.backgroundColor),
-                shape = shape
-            )
+            .background(brush = backgroundColor, shape = shape)
             .border(
                 width = if (style.borderColor != Color.Transparent) 1.dp else 0.dp,
-                color = style.borderColor,
+                color = borderColor,
                 shape = shape
             )
-            .clickable(onClick = onClick)
+            .let {
+                if (enabled) it.clickable(onClick = onClick) else it
+            }
     ) {
         Text(
             text = text,
-            color = style.contentColor,
+            color = contentColor,
             style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(12.dp)
         )
     }
 }
+//    val shape = RoundedCornerShape(style.cornerRadius)
+//
+//    Box(
+//        modifier = modifier
+//            .clip(shape)
+//            .background(
+//                brush = style.gradient ?: SolidColor(style.backgroundColor),
+//                shape = shape
+//            )
+//            .border(
+//                width = if (style.borderColor != Color.Transparent) 1.dp else 0.dp,
+//                color = style.borderColor,
+//                shape = shape
+//            )
+//            .clickable(onClick = onClick)
+//    ) {
+//        Text(
+//            text = text,
+//            color = style.contentColor,
+//            style = MaterialTheme.typography.labelSmall,
+//            maxLines = 1, // Ensure single line
+//            overflow = TextOverflow.Ellipsis, // Show ellipsis if text overflows
+//            modifier = Modifier
+//                .align(Alignment.Center)
+//                .padding(12.dp)
+//        )
+//    }
+
 
 sealed class ButtonStyle(
     val gradient: Brush? = null,

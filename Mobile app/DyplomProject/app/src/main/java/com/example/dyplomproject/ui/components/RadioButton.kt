@@ -15,16 +15,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.dyplomproject.R
 
+//object RadioButtonStyle {
+//    const val GenderRadioButton = "radio_button"
+//}
+
 @Composable
-fun GenderRadioButton(selected: Boolean, text: String, onClick: () -> Unit) {
+fun RadioButton(selected: Boolean, text: String, onClick: () -> Unit, style: String = "task") {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clickable(onClick = onClick)
             .padding(4.dp)
     ) {
-        val iconRes =
-            if (selected) R.drawable.ic_radiobutton_checked else R.drawable.ic_radiobutton_unchecked
+        var iconRes = R.drawable.ic_radiobutton_unchecked;
+        if (style == "gender") {
+            iconRes = if (selected) R.drawable.ic_radiobutton_checked else R.drawable.ic_radiobutton_unchecked
+        } else if (style == "task"){
+            iconRes = if (selected) R.drawable.ic_task_radiobutton_checked else R.drawable.ic_task_radiobutton_unchecked
+        }
+
         Image(
             painter = painterResource(id = iconRes),
             contentDescription = if (selected) "Selected" else "Not selected",
