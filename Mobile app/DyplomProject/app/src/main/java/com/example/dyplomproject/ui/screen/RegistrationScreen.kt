@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -25,7 +24,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,7 +39,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -49,9 +46,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dyplomproject.R
 import androidx.navigation.NavHostController
-import com.example.dyplomproject.data.remote.AuthRepository
+import com.example.dyplomproject.data.remote.repository.AuthRepository
 import com.example.dyplomproject.data.utils.RetrofitInstance
-import com.example.dyplomproject.ui.components.GenderRadioButton
+import com.example.dyplomproject.ui.components.RadioButton
 import com.example.dyplomproject.ui.components.LabeledTextField
 import com.example.dyplomproject.ui.components.PrimaryButton
 import com.example.dyplomproject.ui.components.UnderlinedText
@@ -154,13 +151,15 @@ fun RegistrationScreen(
                 Text("Стать", style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    GenderRadioButton(selected = uiState.gender == "f",
+                    RadioButton(selected = uiState.gender == "f",
                         text = "Жінка",
-                        onClick = { registrationViewModel.updateField("gender", "f") })
+                        onClick = { registrationViewModel.updateField("gender", "f") },
+                        style = "gender")
                     Spacer(modifier = Modifier.width(64.dp))
-                    GenderRadioButton(selected = uiState.gender == "m",
+                    RadioButton(selected = uiState.gender == "m",
                         text = "Чоловік",
-                        onClick = { registrationViewModel.updateField("gender", "m") })
+                        onClick = { registrationViewModel.updateField("gender", "m") },
+                        style = "gender")
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -329,11 +328,11 @@ fun RegistrationScreenPreview() {
             Text("Стать", style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                GenderRadioButton(selected = selectedGender.value == "Жінка",
+                RadioButton(selected = selectedGender.value == "Жінка",
                     text = "Жінка",
                     onClick = { selectedGender.value = "Жінка" })
                 Spacer(modifier = Modifier.width(64.dp))
-                GenderRadioButton(selected = selectedGender.value == "Чоловік",
+                RadioButton(selected = selectedGender.value == "Чоловік",
                     text = "Чоловік",
                     onClick = { selectedGender.value = "Чоловік" })
             }

@@ -1,17 +1,16 @@
 package com.example.dyplomproject.ui.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dyplomproject.data.remote.FriendRequest
 //import androidx.room.util.copy
 import com.example.dyplomproject.data.utils.RetrofitInstance
-import com.example.dyplomproject.data.remote.UserRepository
+import com.example.dyplomproject.data.remote.repository.UserRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -57,6 +56,9 @@ class FriendsViewModel(
     private val _uiState = MutableStateFlow(FriendsUiState())
     val uiState: StateFlow<FriendsUiState> = _uiState.asStateFlow()
 
+    private val _messageFlow = MutableSharedFlow<String>()
+    val messageFlow = _messageFlow.asSharedFlow()
+
     //probably i don't need that method because most of the fields are updated SAFELY IN OTHER FUNCTIONS
 //    fun updateField(field: FriendsField) {
 //        _uiState.update { current ->
@@ -91,25 +93,25 @@ class FriendsViewModel(
     }
 
     private fun loadAllUsers() = launchWithStateUpdate {
-        val result = repository.getAllUsers()
+        val result = repository.getAllUsers(userId)
         _uiState.value = if (result.isSuccess) {
             _uiState.value.copy(allUsers = result.getOrThrow(), error = null)
         } else {
             _uiState.value.copy(error = result.exceptionOrNull()?.message)
         }
-        Log.d("FriendList", "Friends size: ${uiState.value.allUsers.size}")
+        Log.d("ALL USERS", ": ${uiState.value.allUsers.size}")
     }
 
-    fun onAddFriend(user: UserShortUiModel) {
-        // Create a modified copy of the user
-        val updatedUser = user.copy(isRequestSent = true)
-        // Now you can update your state with the modified user
-        // Update the state, for example:
-        val updatedList = _uiState.value.allUsers.map {
-            if (it.id == updatedUser.id) updatedUser else it
-        }
-        _uiState.value = _uiState.value.copy(allUsers = updatedList)
-    }
+//    fun onAddFriend(user: UserShortUiModel) {
+//        // Create a modified copy of the user
+//        val updatedUser = user.copy(isRequestSent = true)
+//        // Now you can update your state with the modified user
+//        // Update the state, for example:
+//        val updatedList = _uiState.value.allUsers.map {
+//            if (it.id == updatedUser.id) updatedUser else it
+//        }
+//        _uiState.value = _uiState.value.copy(allUsers = updatedList)
+//    }
 
     private fun launchWithStateUpdate(block: suspend () -> Unit) {
         viewModelScope.launch {
@@ -140,6 +142,21 @@ class FriendsViewModel(
                 _uiState.value.copy(error = exception.message)
             }
         )
+    }
+
+    fun sendFriendRequest(user: UserShortUiModel) = launchWithStateUpdate {
+        val request = FriendRequest(userId, user.id)
+        val result = repository.sendFriendRequest(request)
+        if (result.isSuccess) {
+            val updatedUser = user.copy(isRequestSent = true)
+            val updatedList = _uiState.value.allUsers.map {
+                if (it.id == updatedUser.id) updatedUser else it
+            }
+            _uiState.value = _uiState.value.copy(allUsers = updatedList)
+            _messageFlow.emit("Запит до користувача \"${user.nickname}\" надіслано!")
+        } else {
+            _messageFlow.emit("Сталася помилка!")
+        }
     }
 
     fun onSearchQueryChanged(query: String) {

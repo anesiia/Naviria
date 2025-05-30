@@ -3,14 +3,13 @@ package com.example.dyplomproject.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dyplomproject.data.remote.AuthRepository
+import com.example.dyplomproject.data.remote.repository.AuthRepository
 import com.example.dyplomproject.data.remote.request.LoginRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.update
-import java.time.LocalDate
 
 data class LoginUiState(
     val email: String = "",
@@ -38,14 +37,15 @@ class LoginViewModel(
 
     fun onLoginClicked(authViewModel: AuthViewModel) {
         val state = _uiState.value
-        if (!validateAndUpdateErrors(state)) {
-            return
-        }
+//        if (!validateAndUpdateErrors(state)) {
+//            return
+//        }
 
         launchDataLoad {
-            val result = authRepository.login(LoginRequest(state.email, state.password))
+            //val result = authRepository.login(LoginRequest(state.email, state.password))
             //val result = authRepository.login(LoginRequest("elison@gmail.com", "Eli78@son"))
             //val result = authRepository.login(LoginRequest("alexander.davis@example.com", "Alex1234"))
+            val result = authRepository.login(LoginRequest("ben.barnes@gmail.com", "Ben12345"))
             result.onSuccess { response ->
                 val token = response.token
                 authViewModel.onLoginSuccess(token)
