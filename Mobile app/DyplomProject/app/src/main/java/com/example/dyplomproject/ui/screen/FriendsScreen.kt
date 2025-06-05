@@ -1,6 +1,6 @@
 package com.example.dyplomproject.ui.screen
 
-import androidx.compose.foundation.BorderStroke
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,7 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -47,9 +48,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.dyplomproject.data.utils.RetrofitInstance
-import com.example.dyplomproject.data.remote.UserRepository
+import com.example.dyplomproject.data.remote.repository.UserRepository
 import com.example.dyplomproject.ui.components.ButtonStyle
 import com.example.dyplomproject.ui.components.SecondaryButton
+import com.example.dyplomproject.ui.theme.AppColors
 import com.example.dyplomproject.ui.viewmodel.FriendsViewModel
 import com.example.dyplomproject.ui.viewmodel.UserShortUiModel
 
@@ -78,11 +80,18 @@ fun FriendsScreen(
         viewModel.onTabSelected(uiState.selectedTab) // Загрузка при первом старте
         viewModel.checkNewFriendRequests(userId)
     }
+    val context = LocalContext.current
+    val message by viewModel.messageFlow.collectAsState(initial = "")
+    LaunchedEffect(message) {
+        if (message.isNotEmpty()) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFFFFF))
+            .background(AppColors.White)
             .padding(padding)
             .padding(horizontal = 8.dp),
     ) {
@@ -133,6 +142,7 @@ fun FriendsScreen(
                 Text("Reset")
             }
         }
+        Spacer(modifier = Modifier.width(16.dp))
         ////////
         Column(modifier = Modifier.weight(1f)) {
             if (uiState.isLoading) {
@@ -164,13 +174,12 @@ fun FriendsScreen(
                                     FriendItem(user = user, onRemoveClick = { /* Handle remove */ }, onSendSupportRequest = {  })
                                 }
                                 FriendsViewModel.TabType.ALL_USERS -> {
-                                    UserItem(user = user, onAddFriendClick = { viewModel.onAddFriend(user) })
+                                    UserItem(user = user, onAddFriendClick = { viewModel.sendFriendRequest(user) })
                                 }
                             }
                         }
                     }
                 }
-
             }
         }
 
@@ -274,7 +283,8 @@ fun FriendItem(
             text = if (!user.isRequestSent) "Підтримати" else "Підтримано",
             onClick = { onSendSupportRequest() },
             style = if (!user.isRequestSent) ButtonStyle.Secondary else ButtonStyle.Outline(Color(0xFFFF4500)),
-            modifier = Modifier.weight(0.5f)
+            //modifier = Modifier.weight(0.5f)
+            modifier = Modifier.defaultMinSize(minWidth = 96.dp)
         )
     }
 }

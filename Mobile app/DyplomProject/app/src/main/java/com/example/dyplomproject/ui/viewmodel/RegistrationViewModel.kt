@@ -3,8 +3,7 @@ package com.example.dyplomproject.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dyplomproject.data.remote.AuthRepository
-import com.example.dyplomproject.data.remote.request.LoginRequest
+import com.example.dyplomproject.data.remote.repository.AuthRepository
 import com.example.dyplomproject.data.remote.request.UserRegistrationRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

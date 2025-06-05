@@ -72,9 +72,14 @@ dependencies {
     implementation("androidx.compose.material:material:1.5.0")
 
     implementation("com.auth0.android:jwtdecode:2.0.1")
+    implementation(libs.androidx.room.runtime.android)
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     implementation("com.google.accompanist:accompanist-swiperefresh:0.26.5-rc")
+    //flow row and other stuff for tags
+    implementation("com.google.accompanist:accompanist-flowlayout:0.28.0")
+    //json
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0") // or latest version
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

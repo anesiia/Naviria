@@ -1,4 +1,4 @@
-package com.example.dyplomproject.ui.components
+package com.example.dyplomproject.ui.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -41,8 +41,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.dyplomproject.R
-import com.example.dyplomproject.data.remote.UserRepository
+import com.example.dyplomproject.data.remote.repository.UserRepository
 import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.ui.components.UnderlinedText
 import com.example.dyplomproject.ui.viewmodel.FriendRequestsViewModel
 import com.example.dyplomproject.ui.viewmodel.IncomingRequestUiModel
 import com.example.dyplomproject.ui.viewmodel.UserShortUiModel
@@ -103,7 +104,7 @@ fun FriendRequestsScreen(
                     items(requests) { request ->
                         RequestItem(
                             request,
-                            onApproveButtonClick = { /* Handle approve */ },
+                            onApproveButtonClick = { viewModel.acceptFriendRequest(request.requestId) },
                             onDeclineButtonClick = { viewModel.declineFriendRequest(request.requestId) }
                         )
                     }
@@ -143,8 +144,6 @@ fun FriendRequestsScreen(
         }
     }
 }
-
-
 
 @Composable
 fun RequestItem(

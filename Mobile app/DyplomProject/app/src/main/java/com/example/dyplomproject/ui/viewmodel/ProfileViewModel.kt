@@ -1,13 +1,11 @@
 package com.example.dyplomproject.ui.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dyplomproject.data.remote.Achievement
 import com.example.dyplomproject.data.remote.User
 import com.example.dyplomproject.data.remote.UserAchievement
-import com.example.dyplomproject.data.remote.UserRepository
+import com.example.dyplomproject.data.remote.repository.UserRepository
 import com.example.dyplomproject.data.utils.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

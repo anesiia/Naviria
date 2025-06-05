@@ -63,7 +63,12 @@ val Typography = Typography(
 
 data class CustomTypography(
     val exampleText: TextStyle,
-    val profileTitle: TextStyle
+    val profileTitle: TextStyle,
+    val hashTagSign: TextStyle,
+    val hashTagText: TextStyle,
+    val semiboldText: TextStyle,
+    val regularText: TextStyle,
+    val mediumText: TextStyle
 )
 val additionalTypography = CustomTypography(
     exampleText = TextStyle(
@@ -76,5 +81,35 @@ val additionalTypography = CustomTypography(
         fontFamily = MonsterratAlternatesFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp
-    )
+    ),
+
+    hashTagSign = TextStyle(
+        fontFamily = MonsterratAlternatesFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 24.sp
+    ),
+
+    hashTagText = TextStyle(
+        fontFamily = MonsterratAlternatesFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    ),
+
+    semiboldText = TextStyle(
+        fontFamily = MonsterratAlternatesFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp
+    ),
+
+    regularText = TextStyle(
+        fontFamily = MonsterratAlternatesFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    ),
+
+    mediumText = TextStyle(
+        fontFamily = MonsterratAlternatesFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp
+    ),
 )

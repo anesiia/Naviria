@@ -1,10 +1,13 @@
 package com.example.dyplomproject.mappers
 
 
+import com.example.dyplomproject.data.remote.FolderDto
 import com.example.dyplomproject.data.remote.FriendRequestResponse
 import com.example.dyplomproject.data.remote.FriendShortDto
 import com.example.dyplomproject.data.remote.IncomingFriendRequestDto
+import com.example.dyplomproject.data.remote.Tag
 import com.example.dyplomproject.data.remote.User
+import com.example.dyplomproject.ui.viewmodel.Folder
 import com.example.dyplomproject.ui.viewmodel.IncomingRequestUiModel
 import com.example.dyplomproject.ui.viewmodel.UserShortUiModel
 
@@ -35,3 +38,14 @@ fun IncomingFriendRequestDto.toUiModel(): IncomingRequestUiModel {
         sender = sender.toUiModel()
     )
 }
+
+fun FolderDto.toUiModel(): Folder {
+    return Folder(
+        id = this.id,
+        name = this.name
+    )
+}
+
+fun List<String>.toTagList(): List<Tag> = map { Tag(it) }
+
+fun List<Tag>.toStringList(): List<String> = map { it.TagName }

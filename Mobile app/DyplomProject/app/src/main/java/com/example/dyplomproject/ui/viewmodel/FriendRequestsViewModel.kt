@@ -2,7 +2,7 @@ package com.example.dyplomproject.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dyplomproject.data.remote.UserRepository
+import com.example.dyplomproject.data.remote.repository.UserRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,23 +37,26 @@ class FriendRequestsViewModel(
         }
     }
 
-    fun approveFriendRequest() {
-//        viewModelScope.launch {
-//            val result = repository.getIncomingUserRequests(userId)
-//            if (result.isSuccess) {
-//                _requests.value = result.getOrThrow()
-//            }
-//        }
-    }
-
     fun declineFriendRequest(requestId: String) {
         viewModelScope.launch {
-            val result = repository.declineFriendRequest(requestId)
+            val result = repository.respondToFriendRequest(requestId, mapOf("status" to "rejected"))
             if (result.isSuccess) {
                 _requests.value = _requests.value.filterNot { it.requestId == requestId }
                 _messageFlow.emit("Запит успішно відхилено")//Request declined successfully
             } else {
                 _messageFlow.emit("Невдалось відхилити запит у друзі!")//"Failed to decline request"
+            }
+        }
+    }
+
+    fun acceptFriendRequest(requestId: String) {
+        viewModelScope.launch {
+            val result = repository.respondToFriendRequest(requestId, mapOf("status" to "accepted"))
+            if (result.isSuccess) {
+                _requests.value = _requests.value.filterNot { it.requestId == requestId }
+                _messageFlow.emit("Запит успішно підтверджено")//Request declined successfully
+            } else {
+                _messageFlow.emit("Невдалось  підтвердити запит у друзі!")//"Failed to decline request"
             }
         }
     }

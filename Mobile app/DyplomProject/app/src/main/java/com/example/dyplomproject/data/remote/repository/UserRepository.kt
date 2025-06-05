@@ -1,10 +1,17 @@
-package com.example.dyplomproject.data.remote
+package com.example.dyplomproject.data.remote.repository
 
 import android.util.Log
+import com.example.dyplomproject.data.remote.ApiService
+import com.example.dyplomproject.data.remote.FriendRequest
+import com.example.dyplomproject.data.remote.FriendRequestResponse
+import com.example.dyplomproject.data.remote.User
+import com.example.dyplomproject.data.remote.UserAchievement
 import com.example.dyplomproject.mappers.toUiModel
 import com.example.dyplomproject.ui.viewmodel.IncomingRequestUiModel
 import com.example.dyplomproject.ui.viewmodel.UserShortUiModel
 import retrofit2.Response
+import retrofit2.http.Body
+
 //todo:redo the repositories classes logic and handle the server request logic here
 
 class UserRepository(private val apiService: ApiService) {
@@ -40,9 +47,9 @@ class UserRepository(private val apiService: ApiService) {
         }
     }
 
-    suspend fun getAllUsers(): Result<List<UserShortUiModel>> {
+    suspend fun getAllUsers(userId: String): Result<List<UserShortUiModel>> {
         return try {
-            val response = apiService.getAllUsers()
+            val response = apiService.getAllUsers(userId)
             if (response.isSuccessful) {
                 val body = response.body() ?: emptyList()
                 Result.success(body.map { it.toUiModel() })
@@ -56,6 +63,21 @@ class UserRepository(private val apiService: ApiService) {
 //                    )
 //                }
 //                Result.success(mapped)
+            } else {
+                Result.failure(Exception("Failed: ${response.code()} ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun sendFriendRequest(friendRequest: FriendRequest): Result<String> {
+        return try {
+            val response = apiService.sendFriendRequest(friendRequest)
+            if (response.isSuccessful) {
+                val body = response.body()
+                val status = body?.status
+                Result.success(status?: "error")
             } else {
                 Result.failure(Exception("Failed: ${response.code()} ${response.message()}"))
             }
@@ -78,9 +100,9 @@ class UserRepository(private val apiService: ApiService) {
         }
     }
 
-    suspend fun declineFriendRequest(requestId: String): Result<Unit> {
+    suspend fun respondToFriendRequest(requestId: String, status: Map<String, String>): Result<Unit> {
         return try {
-            val response = apiService.declineFriendRequest(requestId)
+            val response = apiService.respondToFriendRequest(requestId, status)
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
@@ -132,7 +154,6 @@ class UserRepository(private val apiService: ApiService) {
                 } else {
                     Log.d("GET USER INFO", "USER: NULLLLLLL")
                     Result.failure(Exception("Response body is null"))
-
                 }
             } else {
                 Result.failure(Exception("Failed: ${response.code()} ${response.message()}"))

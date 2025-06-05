@@ -91,6 +91,7 @@ namespace NaviriaAPI.Services
             {
                 UserId = dto.UserId,
                 Role = "assistant",
+                CreatedAt = DateTime.UtcNow,
                 Content = reply
             };
 
