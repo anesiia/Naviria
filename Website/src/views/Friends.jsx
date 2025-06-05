@@ -1,5 +1,5 @@
 import React from "react";
-// import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   getUserFriends,
@@ -132,11 +132,13 @@ export function Friends() {
             const { request, sender } = friend;
             return (
               <div className="item" key={request.id}>
-                <img
-                  className="avatar"
-                  src={sender.photo || "Ellipse 4.svg"}
-                  alt={sender.nickname || "avatar"}
-                />
+                <Link to={`/profile/${sender.id}`} className="avatar-link">
+                  <img
+                    className="avatar"
+                    src={sender.photo || "Ellipse 4.svg"}
+                    alt={sender.nickname || "avatar"}
+                  />
+                </Link>
                 <div className="info">
                   <div className="name-lvl">
                     <p className="name">{sender.nickname}</p>
@@ -173,11 +175,13 @@ export function Friends() {
           // Для вкладок "my" та "discover" item — це просто користувач
           return (
             <div className="item" key={friend.id}>
-              <img
-                className="avatar"
-                src={friend.photo || "Ellipse 4.svg"}
-                alt={friend.nickname || "avatar"}
-              />
+              <Link to={`/profile/${friend.id}`} className="avatar-link">
+                <img
+                  className="avatar"
+                  src={friend.photo || "Ellipse 4.svg"}
+                  alt={friend.nickname || "avatar"}
+                />
+              </Link>
               <div className="info">
                 <div className="name-lvl">
                   <p className="name">{friend.nickname}</p>
@@ -266,14 +270,14 @@ export function Friends() {
       <div className="friend-list">
         {friends.map((friend, index) => (
           <div className="friend" key={index}>
-            <div className="info">
+            <Link to={`/profile/${friend.id}`} className="info">
               <img
                 className="avatar"
                 src={friend && friend.photo ? friend.photo : "Ellipse 4.svg"}
                 alt={friend ? friend.nickname : "avatar"}
               />
               <div className="name">{friend.nickname}</div>
-            </div>
+            </Link>
             {renderActions(friend, "my")}
           </div>
         ))}

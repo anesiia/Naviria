@@ -37,3 +37,20 @@ export async function awardAchievementGift(achievementId) {
   // Сервер може повернути пустий body
   return res.text();
 }
+
+export async function getAchievementsByUserId(userId) {
+  const res = await fetch(`${API_URL}/api/Achievements/user/${userId}`, {
+    headers: {
+      ...authHeaders(),
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Не вдалося отримати досягнення");
+  }
+
+  return data;
+}
