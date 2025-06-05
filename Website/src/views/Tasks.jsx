@@ -72,7 +72,6 @@ export function Tasks() {
       if (selectedFolderId === folderId) setSelectedFolderId(null); // якщо видалена була вибрана
     } catch (err) {
       console.error("Помилка при видаленні папки:", err);
-      // можеш показати повідомлення користувачу
     }
   };
 

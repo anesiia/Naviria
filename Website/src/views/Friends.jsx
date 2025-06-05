@@ -42,7 +42,7 @@ export function Friends() {
       try {
         if (activeTab === "my") {
           const data = await getUserFriends();
-          setFriends(data); // Повний список для aside
+          setFriends(data);
           setFilteredFriends(data);
         } else if (activeTab === "requests") {
           const data = await getFriendRequests();
@@ -210,41 +210,6 @@ export function Friends() {
       console.error("Не вдалося видалити друга:", e.message);
     }
   };
-
-  // const handleSearchDiscover = async () => {
-  //   if (activeTab !== "discover") return; // ❗ Нічого не робити, якщо вкладка не discover
-  //   if (!searchQuery.trim()) {
-  //     try {
-  //       const data = await getDiscoverUsers();
-  //       setDiscover(data);
-  //     } catch (e) {
-  //       console.error("Помилка завантаження discover:", e.message);
-  //     }
-  //     return;
-  //   }
-  //   try {
-  //     const data = await searchFriends(searchQuery);
-  //     setDiscover(data);
-  //   } catch (e) {
-  //     console.error("Помилка пошуку:", e.message);
-  //   }
-  // };
-
-  // const handleSearchMyFriends = async () => {
-  //   if (!friendSearchQuery.trim() && !selectedCategory) {
-  //     const all = await getUserFriends();
-  //     setFriends(all);
-  //     return;
-  //   }
-
-  //   try {
-  //     // якщо обрана категорія - додаємо до запиту
-  //     const data = await searchMyFriends(friendSearchQuery, selectedCategory);
-  //     setFriends(data);
-  //   } catch (e) {
-  //     console.error("Не вдалося знайти друзів:", e.message);
-  //   }
-  // };
 
   const handleSearch = async () => {
     if (activeTab === "my") {

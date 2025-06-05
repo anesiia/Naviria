@@ -259,7 +259,6 @@ export function TaskEditForm({ task, onCancel, onSave, fetchTasks }) {
 
   return (
     <div className="task-form">
-      {/* Поля — такі ж як у TaskForm, тільки значення з пропсів */}
       <input
         className="title"
         placeholder="Введіть назву задачі"
