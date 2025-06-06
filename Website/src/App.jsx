@@ -27,6 +27,7 @@ function App() {
           <Route path="/assistant" element={<AssistantChat />} />
           <Route path="/statistics" element={<Statistics />} />
           <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/profile/:id" element={<Profile />} />
         </Routes>
       </div>
     </div>

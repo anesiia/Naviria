@@ -13,7 +13,6 @@ export async function updateTask(id, taskData) {
     body: JSON.stringify(taskData),
   });
 
-  // Якщо відповідь пуста (204 або просто без тіла) — не парсимо як JSON
   if (res.status === 204) {
     return;
   }

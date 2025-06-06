@@ -62,3 +62,11 @@ export async function uploadProfilePhoto(file) {
   if (!res.ok) throw new Error("Failed to upload photo");
   return res.json();
 }
+
+export async function getUserById(id) {
+  const res = await fetch(`${API_URL}/api/User/${id}`, {
+    headers: { ...authHeaders() },
+  });
+  if (!res.ok) throw new Error("Користувача не знайдено");
+  return res.json();
+}

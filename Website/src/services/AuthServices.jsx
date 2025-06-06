@@ -1,6 +1,4 @@
-// src/services/auth.js
-
-const API_URL = "http://localhost:5186"; // из .env
+const API_URL = "http://localhost:5186";
 
 export async function login(email, password) {
   const res = await fetch(`${API_URL}/api/Auth/login`, {
@@ -13,16 +11,14 @@ export async function login(email, password) {
 
   const data = await res.json();
   if (!res.ok) {
-    // сервер может вернуть { message: '...' }
     throw new Error(data.message || "Сталася помилка при вході");
   }
 
-  // сохраняем токен, чтобы использовать в других запросах
   localStorage.setItem("token", data.token);
 
   const payload = parseJwt(data.token);
   if (payload?.sub) {
-    localStorage.setItem("id", payload.sub); // сохраняем id из токена
+    localStorage.setItem("id", payload.sub);
   }
 
   return data;

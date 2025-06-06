@@ -1,50 +1,41 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getUserFriends } from "../services/FriendsServices";
-import { getAchievements } from "../services/AchievementsServices";
-import { getProfile } from "../services/ProfileServices";
+import React, { useEffect, useState } from "react";
+import { getAchievementsByUserId } from "../services/AchievementsServices";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { getProfile, getUserById } from "../services/ProfileServices";
+
 import "../styles/profile.css";
 
 export function Profile() {
-  const [user, setUser] = useState(null);
-  const [friends, setFriends] = useState([]);
-  const [achievements, setAchievements] = useState([]);
-
+  const { id } = useParams(); // id undefined → власний профіль
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getProfile()
-      .then(setUser)
-      .catch((err) => {
-        console.error(err.message);
-        navigate("/login");
-      });
-  }, []);
-
-  useEffect(() => {
-    const fetchFriends = async () => {
-      try {
-        const data = await getUserFriends();
-        setFriends(data);
-      } catch (e) {
-        console.error("Помилка при завантаженні друзів:", e.message);
-      }
-    };
-    fetchFriends();
-  }, []);
+  const [user, setUser] = useState(null);
+  const [allAchievements, setAllAchievements] = useState([]);
 
   useEffect(() => {
     const fetchAchievements = async () => {
       try {
-        const data = await getAchievements();
-        setAchievements(data);
-      } catch (e) {
-        console.error("Помилка при завантаженні досягнень:", e.message);
+        const userId = id || localStorage.getItem("id");
+        const data = await getAchievementsByUserId(userId);
+        setAllAchievements(data);
+      } catch {
+        setAllAchievements([]);
       }
     };
     fetchAchievements();
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const userData = id ? await getUserById(id) : await getProfile();
+        setUser(userData);
+      } catch (err) {
+        console.error(err.message);
+        navigate("/login");
+      }
+    };
+    fetchProfile();
+  }, [id, navigate]);
 
   if (!user) return <p>Завантаження…</p>;
   return (
@@ -54,7 +45,7 @@ export function Profile() {
           <img
             className="avatar"
             src={
-              user.photo && user.photo !== "" ? user.photo : "Ellipse 20.svg"
+              user.photo && user.photo !== "" ? user.photo : "/Ellipse 20.svg"
             }
             alt={user.nickname}
           />
@@ -71,9 +62,11 @@ export function Profile() {
               <p className="bold">
                 {user.levelInfo.totalXp}/{user.levelInfo.xpForNextLevel} xp
               </p>
-              <Link to="/edit-profile" className="edit-profile">
-                <img src="fi-rr-pencil.svg" alt="edit" />
-              </Link>
+              {!id && (
+                <Link to="/edit-profile" className="edit-profile">
+                  <img src="/fi-rr-pencil.svg" alt="edit" />
+                </Link>
+              )}
             </div>
             <p className="description">
               {user.description ||
@@ -81,41 +74,36 @@ export function Profile() {
             </p>
           </div>
         </div>
-        <div className="progress-info">
-          <p className="naming">Особистий прогрес</p>
-          <div className="scales">
-            <p className="scale-naming">League of legends rank</p>
-            <div className="scale-info">
-              <div className="scale">
-                <div className="color-scale" style={{ width: "60%" }}></div>
-              </div>
-              <p className="points">1488/3469</p>
-            </div>
-          </div>
-        </div>
         <div className="achievements">
           <p className="naming">Досягнення</p>
           <div className="ach-list">
-            {achievements.map((achievement, index) => (
-              <div className="achievement" key={index}>
-                <img src="Ellipse 21.svg" className="pic" />
-                <div className="ach-info">
-                  <p className="ach-name">{achievement.name}</p>
-                  <p className="ach-desc">{achievement.description}</p>
+            {(user.achievements || []).map((achievement, index) => {
+              const details =
+                allAchievements.find(
+                  (a) => String(a.id) === String(achievement.achievementId)
+                ) || {};
+              return (
+                <div className="achievement" key={index}>
+                  <img src="/Ellipse 21.svg" className="pic" />
+                  <div className="ach-info">
+                    <p className="ach-name">
+                      {details.name || achievement.achievementId}
+                    </p>
+                    <p className="ach-desc">{details.description || ""}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
         <div className="friends">
           <p className="naming">Друзі</p>
-
           <div className="friends-list">
-            {friends.map((friend, index) => (
+            {(user.friends || []).map((friend, index) => (
               <div className="friend" key={index}>
                 <img
                   className="avatar"
-                  src={friend && friend.photo ? friend.photo : "Ellipse 4.svg"}
+                  src={friend && friend.photo ? friend.photo : "/Ellipse 4.svg"}
                   alt={friend ? friend.nickname : "avatar"}
                 />
                 <p className="friend-name">{friend.nickname}</p>

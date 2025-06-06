@@ -57,7 +57,7 @@ export default function Header() {
 
   return (
     <header className="site-header">
-      <img className="logo" src="logo.svg" />
+      <img className="logo" src="/logo.svg" />
       <nav className="links">
         <Link to="/tasks">Навірії</Link>
         <Link to="/assistant">Помічник</Link>
@@ -68,7 +68,7 @@ export default function Header() {
       <div className="actions">
         <button className="notifications" onClick={handleToggleNotifications}>
           <img
-            src={hasUnread ? "new-notif.svg" : "bell.svg"}
+            src={hasUnread ? "/new-notif.svg" : "/bell.svg"}
             alt="notifications"
           />
         </button>
