@@ -26,7 +26,6 @@ namespace NaviriaAPI.DTOs.Task.View
 
         public int Priority { get; set; }
         public string Type { get; set; } = string.Empty;
-        public List<SubtaskDtoBase> Subtasks { get; set; } = new();
 
         public DateTime CreatedAt { get; set; }
         public DateTime? CompletedAt { get; set; }
