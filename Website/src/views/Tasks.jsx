@@ -170,7 +170,7 @@ export function Tasks() {
         <div className="side-header">
           <div className="info">
             <img src="Ellipse 4.svg" />
-            <p className="nickname">Nickname</p>{" "}
+            <p className="nickname">Ваші папки та задачі</p>{" "}
           </div>
           <img src="fi-rr-menu-burger.svg" />
         </div>
