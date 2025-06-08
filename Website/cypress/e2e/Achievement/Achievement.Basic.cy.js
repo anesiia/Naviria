@@ -14,10 +14,8 @@ describe('Сторінка "Досягнення"', () => {
 
         cy.contains('Твої досягнення').should('be.visible');
 
-        // Перевірка, що немає жодного елемента з класом 'achievement'
         cy.get('.achievement').should('have.length', 0);
 
-        // Опційно, якщо на сторінці є повідомлення про відсутність досягнень, перевір його
         cy.contains('Немає досягнень').should('be.visible');
     });
 });

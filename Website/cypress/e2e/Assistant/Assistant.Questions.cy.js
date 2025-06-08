@@ -50,14 +50,11 @@ describe('Сторінка "Персональний помічник"', () => {
             cy.get('.messages .message.assistant')
                 .should('have.length.greaterThan', Math.floor(index / 2));
 
-            // Чекаємо між повідомленнями, щоб уникнути перегрузки
             cy.wait(1500);
         });
 
-        // Перезавантажуємо сторінку після всіх повідомлень
         cy.reload();
 
-        // Переконуємось, що залишилось лише 2 останніх повідомлень
         cy.get('.messages .message').should('have.length', 2);
 
 
@@ -69,7 +66,7 @@ describe('Сторінка "Персональний помічник"', () => {
         cy.get('input[type="text"]').clear().type('Скільки буде 5 + 5?');
         cy.get('.send-button').click();
 
-        cy.wait(3000); // Чекаємо на відповідь
+        cy.wait(3000);
 
         cy.get('.messages .message').then((messages) => {
             expect(messages[0]).to.have.class('user');

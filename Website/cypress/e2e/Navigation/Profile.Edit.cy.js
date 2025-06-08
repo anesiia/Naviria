@@ -6,11 +6,9 @@ describe("Редагування профілю", () => {
         cy.get('.edit-profile img[alt="edit"]').click();
         cy.url().should("include", "/edit-profile");
 
-        // Переконуємося, що перейшли на сторінку редагування (адреса або заголовок)
         cy.url().should("include", "/edit-profile");
         cy.contains("Редагування профілю").should("exist");
 
-        // Перевіряємо наявність елементів форми
         cy.get('input[name="fullName"]').should("exist");
         cy.get('input[name="nickname"]').should("exist");
         cy.get('textarea[name="description"]').should("exist");
@@ -18,15 +16,12 @@ describe("Редагування профілю", () => {
         cy.get('input[name="password"]').should("exist");
         cy.get('button[type="submit"]').should("exist");
 
-        // Перевіряємо блок фото
         cy.get(".photo-section img.photo-preview, .photo-section .photo-placeholder").should("exist");
         cy.get(".photo-section input[type='file']").should("exist");
         cy.get(".photo-section button").contains("Зберегти фото").should("exist");
 
-        // Сабмітимо форму без змін
         cy.get('button[type="submit"]').click();
 
-        // Очікуємо, що з'явиться повідомлення про помилку (в компоненті error)
         cy.get(".error").should("contain.text", "Failed to update profile");
     });
 
@@ -36,14 +31,12 @@ describe("Редагування профілю", () => {
         cy.get('.edit-profile img[alt="edit"]').click();
         cy.url().should("include", "/edit-profile");
 
-        // Змінюємо ім'я
         cy.get('input[name="nickname"]').then(($input) => {
             const currentVal = $input.val();
             const newVal = currentVal === "maria99" ? "maria991" : "maria992";
             cy.wrap($input).clear().type(newVal);
         });
 
-        // Сабмітимо форму
         cy.get('button[type="submit"]').click();
 
         cy.wait(1000);
@@ -53,7 +46,6 @@ describe("Редагування профілю", () => {
             expect(txt).to.contains("Профіль успішно оновлено");
         });
 
-        // Після підтвердження alert переходимо на сторінку профілю
         cy.visit("/profile");
 
         // Перевіряємо, що нове ім'я відображається на сторінці профілю

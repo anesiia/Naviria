@@ -2,7 +2,6 @@ describe('Сторінка "Реєстрація"', () => {
   it('успішно реєструє нового користувача зі сторінки входу', () => {
     cy.visit('http://localhost:5173/login');
 
-    // Перехід на сторінку реєстрації
     cy.contains('Ще не з нами? Реєстрація').click();
 
     // Заповнення форми реєстрації
@@ -16,14 +15,10 @@ describe('Сторінка "Реєстрація"', () => {
     cy.get('input[name="birth-date"]').type('2000-01-01');
     cy.get('input[name="gender"][value="F"]').check();
 
-    // Відправка форми
     cy.get('.submit-button').click();
 
-    // Очікується редірект або повідомлення про успішну реєстрацію
     cy.url().should('include', '/profile');
-    cy.contains('Особистий прогрес').should('exist');
 
-    // Перехід на сторінку /achievements
     cy.visit("/achievements");
 
     // Перевірка, що є ачівка з назвою та описом

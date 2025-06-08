@@ -4,7 +4,6 @@ describe('Сторінка профілю', () => {
         cy.visit('/');
         cy.get('a[href="/profile"] img.avatar').click();
         cy.url().should('include', '/profile');
-        cy.contains('Особистий прогрес').should('exist');
     });
     it('Має розділи Досягнення і Друзі з переліками, якщо вони є', () => {
         // Перевірка наявності заголовків

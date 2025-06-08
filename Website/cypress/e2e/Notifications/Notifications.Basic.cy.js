@@ -30,13 +30,28 @@ describe('Notifications popup', () => {
         cy.get('.notification-item.unread').should('not.exist');
     });
 
-    it('Показує повідомлення про відсутність нових', () => {
+    it('Показує повідомлення зі словом "Підтримка" від bennbarnes та наявність його в списку друзів', () => {
         cy.loginAsNataliya();
 
-        // Клік по іконці
+        // Клік по іконці повідомлень
         cy.get('button.notifications').click();
 
-        // Перевіряємо текст про відсутність повідомлень
-        cy.contains('Немає нових повідомлень').should('be.visible');
+        cy.contains('.notification-item', 'Підтримка')
+            .should('be.visible')
+            .and('contain.text', 'bennbarnes');
+
+        cy.get('body').should('contain.text', 'bennbarnes');
     });
+
+        it('Показує повідомлення про відсутність нових', () => {
+            cy.loginAsNatastya();
+
+            // Клік по іконці
+            cy.get('button.notifications').click();
+
+            // Перевіряємо текст про відсутність повідомлень
+            cy.contains('Немає нових повідомлень').should('be.visible');
+        });
+
+
 });
