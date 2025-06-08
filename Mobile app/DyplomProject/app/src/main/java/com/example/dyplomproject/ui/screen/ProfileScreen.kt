@@ -2,6 +2,7 @@ package com.example.dyplomproject.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -54,6 +57,7 @@ import com.example.dyplomproject.data.remote.UserAchievement
 import com.example.dyplomproject.data.remote.repository.UserRepository
 import com.example.dyplomproject.data.utils.RetrofitInstance
 import com.example.dyplomproject.ui.components.GradientProgressBar
+import com.example.dyplomproject.ui.theme.AppColors
 import com.example.dyplomproject.ui.theme.additionalTypography
 import com.example.dyplomproject.ui.viewmodel.ProfileViewModel
 
@@ -88,27 +92,15 @@ fun ProfileScreen(
 
         state.user != null -> {
             val user = state.user!!
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(AppColors.White)
                     .padding(padding)
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.Start
             ) {
-                item {
-                    if (user.photo.isNotEmpty()) {
-                        AsyncImage(
-                            model = user.photo,
-                            contentDescription = "Profile photo",
-                            modifier = Modifier
-                                .size(120.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
 
 //                item {
 //                    Text("Full Name: ${user.fullName}")
@@ -128,21 +120,18 @@ fun ProfileScreen(
                     )
                 }
 
-//                item {
-//                    Text("Lvl: ${user.levelInfo.level}")
-//                    Text("XP: ${user.levelInfo.totalXp}/${user.levelInfo.xpForNextLevel}, ${user.levelInfo.progress}")
-//                    GradientProgressBar(
-//                        progress = (user.levelInfo.progress).toFloat(),
-//                        height = 12.dp,
-//                        gradientColors = listOf(Color.Green, Color.Yellow)
-//                    )
-//                }
-
                 item {
-                    Image(
-                        painter = painterResource(id = R.drawable.avatar_circle),
-                        contentDescription = "avatar_picture",
-                        modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally).padding(vertical = 0.dp).size(120.dp)//.size(200.dp)
+                    AsyncImage(
+                        model = user.photo,
+                        contentDescription = "Profile photo",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                            .size(120.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(id = R.drawable.avatar),  // your fallback drawable
+                        error = painterResource(id = R.drawable.avatar)         // your fallback drawable
                     )
                 }
 
@@ -181,7 +170,7 @@ fun ProfileScreen(
 
                 item {
                     Text(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vel  ornare neque. Pellentesque venenatis et lectus pretium varius. Nulla  gravida ante at mauris lacinia rutrum.Nulla  gravida ante at mauris lacinia rutrum.",
+                        user.description,
                         style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.fillMaxWidth(),
                         color = Color(0xFF063B52),
@@ -189,21 +178,24 @@ fun ProfileScreen(
                     )
                 }
 
+//                item {
+//                    Text("Особистий прогрес",
+//                        style = additionalTypography.profileTitle,
+//                        color = Color(0xFF023047)
+//                    )
+//                }
+
                 item {
-                    Text("Особистий прогрес",
+                    Text(
+                        "Досягнення",
                         style = additionalTypography.profileTitle,
-                        color = Color(0xFF023047)
+                        color = Color(0xFF023047),
+                        modifier = Modifier.clickable { navController.navigate("achievements") }
                     )
                 }
 
-                state.achievements?.let { achievements ->
-                    item {
-                        Text(
-                            "Досягнення",
-                            style = additionalTypography.profileTitle,
-                            color = Color(0xFF023047)
-                        )
-                    }
+                val achievements = state.achievements
+                if (!achievements.isNullOrEmpty()) {
                     items(achievements.chunked(2)) { rowItems ->
                         Row(
                             Modifier.fillMaxWidth(),
@@ -212,14 +204,21 @@ fun ProfileScreen(
                             rowItems.forEach { achievement ->
                                 AchievementCard(
                                     achievement = achievement,
-                                    modifier = Modifier.weight(1f)  // pass modifier here
+                                    modifier = Modifier.weight(1f)
                                 )
                             }
                             if (rowItems.size == 1) Spacer(Modifier.weight(1f))
                         }
                     }
+                } else {
+                    item {
+                        Text(
+                            "Немає досягнень",
+                            style = additionalTypography.lightText,
+                            color = Color.Gray
+                        )
+                    }
                 }
-
 
                 if (user.friends.isNotEmpty()) {
                     item {
@@ -260,31 +259,83 @@ fun ProfileScreen(
     }
 }
 
+//@Composable
+//fun AchievementCard(
+//    achievement: UserAchievement,
+//    modifier: Modifier = Modifier
+//) {
+//    Card(
+//        modifier = modifier
+//            .shadow(6.dp, RoundedCornerShape(16.dp))
+//            .clip(RoundedCornerShape(16.dp))
+//    ) {
+//        Box(
+//            modifier = Modifier
+//                .background(
+//                    if (achievement.isRare) {
+//                        Brush.verticalGradient(
+//                            colors = listOf(Color(0xFFFFD600), Color(0xFFFF8C00))
+//                        )
+//                    } else {
+//                        SolidColor(Color.White)  // SolidColor wraps a single color as a Brush
+//                    }
+//                )
+//                .padding(12.dp),
+//            contentAlignment = Alignment.TopStart
+//        ) {
+//            Column {
+//                Text(
+//                    achievement.name,
+//                    style = additionalTypography.profileTitle,
+//                    fontWeight = FontWeight.Bold,
+//                )
+//                Spacer(modifier = Modifier.height(8.dp))
+//                Text(
+//                    text = achievement.description,
+//                    style = MaterialTheme.typography.labelMedium,
+//                    color = Color(0xFF333333)
+//                )
+//            }
+//        }
+//    }
+//}
 @Composable
 fun AchievementCard(
     achievement: UserAchievement,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showButton: Boolean = false,
+    onGetPointsClick: (() -> Unit)? = null
 ) {
+    if (showButton) modifier.heightIn(min = 200.dp, max = 250.dp) else modifier.heightIn(min = 200.dp)
     Card(
         modifier = modifier
             .shadow(6.dp, RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
+            //.aspectRatio(1f) // Makes the card square
+            .fillMaxWidth()
+            //.heightIn(min = 200.dp, max = 250.dp)
+            .then(
+                if (showButton)
+                    Modifier.heightIn(min = 200.dp, max = 250.dp)
+                else
+                    Modifier.heightIn(min = 50.dp)
+            )
     ) {
         Box(
-            modifier = Modifier
+            modifier = Modifier.fillMaxSize()
                 .background(
                     if (achievement.isRare) {
                         Brush.verticalGradient(
                             colors = listOf(Color(0xFFFFD600), Color(0xFFFF8C00))
                         )
                     } else {
-                        SolidColor(Color.White)  // SolidColor wraps a single color as a Brush
+                        SolidColor(Color.White)
                     }
                 )
                 .padding(12.dp),
             contentAlignment = Alignment.TopStart
         ) {
-            Column {
+            Column (modifier = Modifier.fillMaxSize()){
                 Text(
                     achievement.name,
                     style = additionalTypography.profileTitle,
@@ -294,13 +345,25 @@ fun AchievementCard(
                 Text(
                     text = achievement.description,
                     style = MaterialTheme.typography.labelMedium,
-                    color = Color(0xFF333333)
+                    color = Color(0xFF333333),
+                    textAlign = TextAlign.Justify
                 )
+                //Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.weight(1f))
+                if (showButton) {
+                    val isReceived = achievement.isPointsReceived == true
+                    Button(
+                        onClick = { if (!isReceived) onGetPointsClick?.invoke() },
+                        enabled = !isReceived,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = if (isReceived) "Отримано" else "Отримати")
+                    }
+                }
             }
         }
     }
 }
-
 @Composable
 fun ProfileFriendItem(
     friendNickname: String,
