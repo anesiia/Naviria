@@ -1,6 +1,6 @@
-package com.example.dyplomproject.data.remote
+package com.example.dyplomproject.data.remote.dto
 
-data class User(
+data class UserDto(
     val id: String,
     val fullName: String,
     val nickname: String,
@@ -12,7 +12,7 @@ data class User(
     val points: Int,
     val levelInfo: LevelInfo,
     val friends: List<FriendShortDto> = emptyList(),
-    val achievements: List<Achievement> = emptyList(),
+    val achievements: List<AchievementDto> = emptyList(),
     val futureMessage: String,
     val photo: String,
     val regitseredAt: String,
@@ -28,7 +28,7 @@ data class LevelInfo(
     val progress: Double
 )
 
-data class Achievement(
+data class AchievementDto(
     val achievementId: String,
     val receivedAt: String,
     val isPointsReceived: Boolean
@@ -46,6 +46,7 @@ data class UserAchievementDto(
     val points: Int,
     val isRare: Boolean
 )
+
 data class UserAchievement(
     val id: String,
     val name: String,

@@ -96,9 +96,9 @@ class MainActivity : ComponentActivity() {
 
 
         val apiService = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:5186/") //Mariam's URL emulator
+            //.baseUrl("http://10.0.2.2:5186/") //Mariam's URL emulator
             //.baseUrl("http://192.168.56.1:5186/")//Mariam's URL Physical device
-            //.baseUrl("http://192.168.1.9:5186/") //Lisa's URL
+            .baseUrl("http://192.168.1.9:5186/") //Lisa's URL
             //.baseUrl("http://10.0.2.2:5186/") //Lisa's URL
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -111,7 +111,7 @@ class MainActivity : ComponentActivity() {
         // Create ViewModel using ViewModelFactory
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(dataStoreManager))
             .get(AuthViewModel::class.java)
-        authViewModel.logout()
+        //authViewModel.logout()
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory(authRepository))
             .get(LoginViewModel::class.java)
         enableEdgeToEdge()

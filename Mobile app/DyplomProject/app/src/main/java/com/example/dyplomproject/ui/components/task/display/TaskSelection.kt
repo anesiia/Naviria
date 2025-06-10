@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,20 +20,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.dyplomproject.data.remote.TaskDto
-import com.example.dyplomproject.data.remote.TaskWithSubtasksDto
+import com.example.dyplomproject.data.remote.dto.TaskDto
+import com.example.dyplomproject.ui.features.friends.DoneTaskDisplay
+import com.example.dyplomproject.ui.theme.additionalTypography
 import com.example.dyplomproject.ui.viewmodel.TasksViewModel
 
 @Composable
 fun TaskSection(title: String, tasks: List<TaskDto>, viewModel: TasksViewModel) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(true) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { expanded = !expanded }
-                .padding(vertical = 8.dp),
+                .padding(vertical = 16.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -42,15 +42,20 @@ fun TaskSection(title: String, tasks: List<TaskDto>, viewModel: TasksViewModel) 
                 contentDescription = null
             )
             Spacer(Modifier.width(8.dp))
-            Text(title, style = MaterialTheme.typography.titleMedium)
+            Text(title, style = additionalTypography.semiboldText)
         }
 
         if (expanded) {
             tasks.forEach { task ->
-                if (task is TaskWithSubtasksDto) {
-                    TaskWithSubtasksDisplay(task, viewModel)
-                } else {
+//                if (task is TaskWithSubtasksDto) {
+//                    TaskWithSubtasksDisplay(task, viewModel)
+//                } else {
+//                    TaskDisplay(task, viewModel)
+//                }
+                if(task.status == "InProgress") {
                     TaskDisplay(task, viewModel)
+                } else {
+                    DoneTaskDisplay(task, viewModel)
                 }
             }
         }

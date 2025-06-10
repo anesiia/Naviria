@@ -3,16 +3,15 @@ package com.example.dyplomproject.data.remote.repository
 import android.util.Log
 import com.example.dyplomproject.data.remote.ApiService
 import com.example.dyplomproject.data.remote.Category
+import com.example.dyplomproject.data.remote.CheckInDateDto
 import com.example.dyplomproject.data.remote.CreateFolderRequest
 import com.example.dyplomproject.data.remote.FolderWithTasksDto
-import com.example.dyplomproject.data.remote.TaskCreateDto
-import com.example.dyplomproject.data.remote.TaskDto
-import com.example.dyplomproject.data.remote.TaskStandardCreateDto
+import com.example.dyplomproject.data.remote.dto.SubtaskDto
+import com.example.dyplomproject.data.remote.dto.TaskCreateDto
+import com.example.dyplomproject.data.remote.dto.TaskDto
 import com.example.dyplomproject.data.remote.UpdateFolderRequest
 import com.example.dyplomproject.mappers.toUiModel
-import com.example.dyplomproject.ui.screen.Task
 import com.example.dyplomproject.ui.viewmodel.Folder
-import com.example.dyplomproject.ui.viewmodel.UserShortUiModel
 
 class TaskRepository(private val apiService: ApiService) {
     suspend fun getUserFolders(userId: String): Result<List<Folder>> {
@@ -134,10 +133,27 @@ class TaskRepository(private val apiService: ApiService) {
             } else {
                 val errorMessage = response.errorBody()?.string() ?: "Невідома помилка"
                 Log.d("TASK UPDATING", errorMessage)
-                Result.failure(Exception("Не вдалось додати завдання: $errorMessage"))
+                Result.failure(Exception("Не вдалось змінити задачу: $errorMessage"))
             }
         } catch (e: Exception) {
             Log.e("TASK UPDATING", e.message?:"")
+            Result.failure(Exception("Помилка з'єднання з сервером: ${e.message}", e))
+        }
+    }
+
+    suspend fun updateSubtask(taskId: String, subtaskId: String, updatedSubtask: SubtaskDto): Result<Unit> {
+        Log.e("SUBTASK UPDATING", updatedSubtask.toString())
+        return try {
+            val response = apiService.updateSubtask(taskId, subtaskId, updatedSubtask)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                val errorMessage = response.errorBody()?.string() ?: "Невідома помилка"
+                Log.d("SUBTASK UPDATING", errorMessage)
+                Result.failure(Exception("Не вдалось змінити підзадачу: $errorMessage"))
+            }
+        } catch (e: Exception) {
+            Log.e("SUBTASK UPDATING", e.message?:"")
             Result.failure(Exception("Помилка з'єднання з сервером: ${e.message}", e))
         }
     }
@@ -156,6 +172,54 @@ class TaskRepository(private val apiService: ApiService) {
         } catch (e: Exception) {
             Log.e("GET FOLDERS WITH TASKS", e.message.toString())
             Result.failure(Exception("Server error: ${e.message}", e))
+        }
+    }
+
+    suspend fun checkInTask(taskId: String, date: String): Result<TaskDto> {
+        Log.d("TASK CHECK IN", "${taskId} ${date}")
+        return try {
+            val checkInDateDto = CheckInDateDto(date)
+            val response = apiService.checkInTask(taskId, checkInDateDto)
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+                    Result.success(body)
+                } else {
+                    Log.d("TASK CHECK IN", "NULL")
+                    Result.failure(Exception("Response body is null"))
+                }
+            } else {
+                val errorMessage = response.errorBody()?.string() ?: "Невідома помилка"
+                Log.d("TASK CHECK IN", errorMessage)
+                Result.failure(Exception("Не вдалось : $errorMessage"))
+            }
+        } catch (e: Exception) {
+            Log.e("TASK CHECK IN", e.message?:"")
+            Result.failure(Exception("Помилка з'єднання з сервером: ${e.message}", e))
+        }
+    }
+
+    suspend fun checkInSubtask(taskId: String, subtaskId: String, date: String): Result<TaskDto> {
+        Log.d("SUBTASK CHECK IN", "${subtaskId} ${date}")
+        return try {
+            val checkInDateDto = CheckInDateDto(date)
+            val response = apiService.checkInSubtask(taskId,subtaskId, checkInDateDto)
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+                    Result.success(body)
+                } else {
+                    Log.d("SUBTASK CHECK IN", "NULL")
+                    Result.failure(Exception("Response body is null"))
+                }
+            } else {
+                val errorMessage = response.errorBody()?.string() ?: "Невідома помилка"
+                Log.d("SUBTASK CHECK IN", errorMessage)
+                Result.failure(Exception("Не вдалось : $errorMessage"))
+            }
+        } catch (e: Exception) {
+            Log.e("SUBTASK CHECK IN", e.message?:"")
+            Result.failure(Exception("Помилка з'єднання з сервером: ${e.message}", e))
         }
     }
 }

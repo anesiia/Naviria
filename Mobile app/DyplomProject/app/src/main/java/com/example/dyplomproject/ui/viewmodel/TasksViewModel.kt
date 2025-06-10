@@ -6,20 +6,21 @@ import androidx.lifecycle.viewModelScope
 import com.example.dyplomproject.data.remote.Category
 import com.example.dyplomproject.data.remote.CreateFolderRequest
 import com.example.dyplomproject.data.remote.FolderWithTasksDto
-import com.example.dyplomproject.data.remote.SubtaskCreateDto
-import com.example.dyplomproject.data.remote.SubtaskRepeatableCreateDto
-import com.example.dyplomproject.data.remote.SubtaskScaleCreateDto
-import com.example.dyplomproject.data.remote.SubtaskStandardCreateDto
-import com.example.dyplomproject.data.remote.TaskCreateDto
-import com.example.dyplomproject.data.remote.TaskDto
-import com.example.dyplomproject.data.remote.TaskRepeatableCreateDto
-import com.example.dyplomproject.data.remote.TaskRepeatableDto
-import com.example.dyplomproject.data.remote.TaskScaleCreateDto
-import com.example.dyplomproject.data.remote.TaskScaleDto
-import com.example.dyplomproject.data.remote.TaskStandardCreateDto
-import com.example.dyplomproject.data.remote.TaskStandardDto
-import com.example.dyplomproject.data.remote.TaskWithSubtasksCreateDto
-import com.example.dyplomproject.data.remote.TaskWithSubtasksDto
+import com.example.dyplomproject.data.remote.dto.SubtaskCreateDto
+import com.example.dyplomproject.data.remote.dto.SubtaskRepeatableCreateDto
+import com.example.dyplomproject.data.remote.dto.SubtaskScaleCreateDto
+import com.example.dyplomproject.data.remote.dto.SubtaskScaleDto
+import com.example.dyplomproject.data.remote.dto.SubtaskStandardCreateDto
+import com.example.dyplomproject.data.remote.dto.TaskCreateDto
+import com.example.dyplomproject.data.remote.dto.TaskDto
+import com.example.dyplomproject.data.remote.dto.TaskRepeatableCreateDto
+import com.example.dyplomproject.data.remote.dto.TaskRepeatableDto
+import com.example.dyplomproject.data.remote.dto.TaskScaleCreateDto
+import com.example.dyplomproject.data.remote.dto.TaskScaleDto
+import com.example.dyplomproject.data.remote.dto.TaskStandardCreateDto
+import com.example.dyplomproject.data.remote.dto.TaskStandardDto
+import com.example.dyplomproject.data.remote.dto.TaskWithSubtasksCreateDto
+import com.example.dyplomproject.data.remote.dto.TaskWithSubtasksDto
 import com.example.dyplomproject.data.remote.UpdateFolderRequest
 import com.example.dyplomproject.data.remote.repository.TaskRepository
 import com.example.dyplomproject.mappers.toTagList
@@ -283,6 +284,7 @@ class TasksViewModel(
             else -> null
         }
     }
+
     fun addSubtaskForm(): String {
         val form = SubtaskFormState(type = "standard")
         updateTaskCreation { copy(subtaskCreationForms = subtaskCreationForms + form) }
@@ -323,6 +325,7 @@ class TasksViewModel(
 
         val titleError = if (task.title.isBlank()) {
             isValid = false
+            Log.d("VALIDATION","Назва завдання об'язкова!")
             "Назва завдання об'язкова!"
         } else null
 
@@ -334,31 +337,37 @@ class TasksViewModel(
 
         val unitValueError = if (task.type == "scale" && task.unit.isBlank()) {
             isValid = false
+            Log.d("VALIDATION","\"Одиниця вимірювання обов'язкова!\"")
             "Одиниця вимірювання обов'язкова!"
         } else null
 
-        val targetValueError = if (task.type == "scale" && task.targetValue <= 0f) {
+        val targetValueError = if (task.type == "scale" && task.targetValue <= 0.0) {
             isValid = false
+            Log.d("VALIDATION","\"Значення цілі повинно бути вказано цілою цифрою більшу за 0\"")
             "Значення цілі повинно бути вказано цілою цифрою більшу за 0"//
         } else null
 
         val repeatDaysError = if (task.type == "repeatable" && task.repeatDays.isEmpty()) {
             isValid = false
+            Log.d("VALIDATION","Оберіть що найменше один день для відмітки практикування задачі або змініть тип головної задачі!")
             "Оберіть що найменше один день для відмітки практикування задачі або змініть тип головної задачі!"
         } else null
 
         val subtasksError = if (task.type == "with_subtasks" && task.subtaskCreationForms.isEmpty()) {
             isValid = false
+            Log.d("VALIDATION","Задача типу список повинна містити прийнамні одну підзадачу! Додайте задачу за допомогою кнопки \"Додати підзадачу\" або змініть тип головної задачі!")
             "Задача типу список повинна містити прийнамні одну підзадачу! Додайте задачу за допомогою кнопки \"Додати підзадачу\" або змініть тип головної задачі!"
         } else null
 
         val notificationDateError = if (task.isNotificationsOn && task.notificationDate.isBlank()) {
             isValid = false
+            Log.d("VALIDATION","Оберіть дату дня та час нагадування!")
             "Оберіть дату дня та час нагадування!"
         } else null
 
         val deadlineDateError = if (task.isDeadlineOn && task.deadline.isBlank()) {
             isValid = false
+            Log.d("VALIDATION"," \"Оберіть дату дня та час для дедлайну!\"")
             "Оберіть дату дня та час для дедлайну!"
         } else null
         updateTaskCreation {
@@ -377,21 +386,25 @@ class TasksViewModel(
             subtasks.forEach{ subtask ->
                 val subtaskTitleError = if (subtask.title.isBlank()) {
                     isValid = false
+                    Log.d("VALIDATION","\"Назва підзадачі об'язкова!\"")
                     "Назва підзадачі об'язкова!"
                 } else null
 
                 val subtaskUnitValueError = if (subtask.type == "scale" && subtask.unit.isBlank()) {
                     isValid = false
+                    Log.d("VALIDATION","\"Одиниця вимірювання обов'язкова!\"")
                     "Одиниця вимірювання обов'язкова!"
                 } else null
 
-                val subtaskTargetValueError = if (subtask.type == "scale" && subtask.targetValue <= 0f) {
+                val subtaskTargetValueError = if (subtask.type == "scale" && subtask.targetValue <= 0.0) {
                     isValid = false
+                    Log.d("VALIDATION","\"Значення цілі повинно бути вказано цілою цифрою більшу за 0\"//")
                     "Значення цілі повинно бути вказано цілою цифрою більшу за 0"//
                 } else null
 
                 val subtaskRepeatDaysError = if (subtask.type == "repeatable" && subtask.repeatDays.isEmpty()) {
                     isValid = false
+                    Log.d("VALIDATION","\"Оберіть що найменше один день для відмітки практикування підзадачі або змініть тип підзадачі!\"")
                     "Оберіть що найменше один день для відмітки практикування підзадачі або змініть тип підзадачі!"
                 } else null
 
@@ -462,7 +475,7 @@ class TasksViewModel(
                 notificationDate = if(taskCreationState.isNotificationsOn) state.taskCreation.notificationDate else null,
                 priority = taskCreationState.priority.level,
                 unit = taskCreationState.unit,
-                currentValue = 0,
+                currentValue = 0.0,
                 targetValue = taskCreationState.targetValue
             )
         }
@@ -602,7 +615,7 @@ class TasksViewModel(
         )
     }
 
-    fun updateCurrentValue(task: TaskScaleDto, value: Int, onComplete: () -> Unit = {}) {
+    fun updateTaskCurrentValue(task: TaskScaleDto, value: Int, onComplete: () -> Unit = {}) {
         val newValue = task.currentValue + value
         val updated = task.copy(currentValue = newValue)
         launchWithLoading(
@@ -618,24 +631,61 @@ class TasksViewModel(
                 _uiState.update { it.copy(error = "Failed to create task: $msg") }
             }
         )
+    }
 
-        fun updateCurrentValue(task: TaskScaleDto, value: Int, onComplete: () -> Unit = {}) {
-            val newValue = task.currentValue + value
-            val updated = task.copy(currentValue = newValue)
-            launchWithLoading(
-                block = {
-                    val result = repository.updateTask(task.id, updated)
-                    if (result.isFailure) {
-                        throw result.exceptionOrNull()
-                            ?: Exception("Unknown error while creating task")
-                    }
-                    loadTasks()
-                    onComplete()
-                },
-                onError = { msg ->
-                    _uiState.update { it.copy(error = "Failed to create task: $msg") }
+    fun updateSubtaskCurrentValue(taskId: String, subtask: SubtaskScaleDto, value: Int, onComplete: () -> Unit = {}) {
+        val newValue = subtask.currentValue + value
+        val updated = subtask.copy(currentValue = newValue)
+        launchWithLoading(
+            block = {
+                val result = repository.updateSubtask(taskId, updated.id, updated)
+                if (result.isFailure) {
+                    throw result.exceptionOrNull()
+                        ?: Exception("Unknown error while creating task")
                 }
-            )
+                loadTasks()
+                onComplete()
+            },
+            onError = { msg ->
+                _uiState.update { it.copy(error = "Failed to create task: $msg") }
+            }
+        )
+    }
+
+    fun checkInTask(taskId: String, date:String, onComplete: () -> Unit = {} ) {
+        launchWithLoading(
+            block = {
+                val result = repository.checkInTask(taskId, date)
+                if (result.isFailure) {
+                    throw result.exceptionOrNull()
+                        ?: Exception("Помилка відмітки задачі!")
+                }
+                //loadTasks()
+                val updatedTask = result.getOrNull()
+                if (updatedTask != null) {
+                    updateTaskInUiState(updatedTask)
+                }
+                onComplete()
+            },
+            onError = { msg ->
+                _uiState.update { it.copy(error = "Помилка відмітки задачі!: $msg") }
+            }
+        )
+    }
+
+    private fun updateTaskInUiState(updatedTask: TaskDto) {
+        _uiState.update { currentState ->
+            val updatedFoldersWithTasks = currentState.foldersWithTasks.map { folder ->
+                val updatedTasks = folder.tasks.map { task ->
+                    if (task.id == updatedTask.id) {
+                        updatedTask
+                    } else {
+                        task
+                    }
+                }
+                folder.copy(tasks = updatedTasks)
+            }
+            currentState.copy(foldersWithTasks = updatedFoldersWithTasks)
         }
     }
 }

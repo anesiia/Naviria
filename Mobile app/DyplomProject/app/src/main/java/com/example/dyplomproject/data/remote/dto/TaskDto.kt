@@ -1,6 +1,6 @@
-package com.example.dyplomproject.data.remote
+package com.example.dyplomproject.data.remote.dto
 
-import com.google.gson.annotations.Expose
+import com.example.dyplomproject.data.remote.Tag
 
 //Sealed Interface
 interface TaskDto {
@@ -22,7 +22,7 @@ interface TaskDto {
     val createdAt: String
     val completedAt: String?
     val status: String
-    val type: String
+    //val type: String
 }
 
 //TaskStandardDto.kt
@@ -46,11 +46,12 @@ data class TaskStandardDto(
     override val completedAt: String?,
     override val status: String,
     //override val type: String = "standard"
-) : TaskDto {
-    @Expose(serialize = false, deserialize = false)
-    @Transient
-    override val type: String = "standard"
-}
+) : TaskDto
+//{
+//    @Expose(serialize = false, deserialize = false)
+//    @Transient
+//    override val type: String = "standard"
+//}
 
 //TaskRepeatableDto.kt
 data class TaskRepeatableDto(
@@ -75,11 +76,12 @@ data class TaskRepeatableDto(
     val repeatDays: List<String>,
     val checkedInDays: List<String>,
     //override val type: String = "repeatable"
-) : TaskDto {
-    @Expose(serialize = false, deserialize = false)
-    @Transient
-    override val type: String = "repeatable"
-}
+) : TaskDto
+//{
+//    @Expose(serialize = false, deserialize = false)
+//    @Transient
+//    override val type: String = "repeatable"
+//}
 
 //TaskScaleDto.kt
 data class TaskScaleDto(
@@ -105,11 +107,12 @@ data class TaskScaleDto(
     val currentValue: Double,
     val targetValue: Double,
     //override val type: String = "scale"
-) : TaskDto {
-    @Expose(serialize = false, deserialize = false)
-    @Transient
-    override val type: String = "scale"
-}
+) : TaskDto
+//{
+//    @Expose(serialize = false, deserialize = false)
+//    @Transient
+//    override val type: String = "scale"
+//}
 
 //TaskWithSubtasksDto.kt
 data class TaskWithSubtasksDto(
@@ -132,8 +135,9 @@ data class TaskWithSubtasksDto(
     override val completedAt: String?,
     override val status: String,
     //override val type: String = "with_subtasks"
-) : TaskDto {
-    @Expose(serialize = false, deserialize = false)
-    @Transient
-    override val type: String = "with_subtasks"
-}
+) : TaskDto
+//{
+//    @Expose(serialize = false, deserialize = false)
+//    @Transient
+//    override val type: String = "with_subtasks"
+//}

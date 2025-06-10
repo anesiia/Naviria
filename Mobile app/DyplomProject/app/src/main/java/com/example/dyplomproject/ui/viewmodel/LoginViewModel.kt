@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dyplomproject.data.remote.repository.AuthRepository
-import com.example.dyplomproject.data.remote.request.LoginRequest
+import com.example.dyplomproject.data.remote.dto.LoginRequestDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,12 +37,12 @@ class LoginViewModel(
 
     fun onLoginClicked(authViewModel: AuthViewModel) {
         val state = _uiState.value
-//        if (!validateAndUpdateErrors(state)) {
-//            return
-//        }
+        if (!validateAndUpdateErrors(state)) {
+            return
+        }
 
         launchDataLoad {
-            val result = authRepository.login(LoginRequest(state.email, state.password))
+            val result = authRepository.login(LoginRequestDto(state.email, state.password))
             //val result = authRepository.login(LoginRequest("elison@gmail.com", "Eli78@son"))
             //val result = authRepository.login(LoginRequest("alexander.davis@example.com", "Alex1234"))
             //val result = authRepository.login(LoginRequest("ben.barnes@gmail.com", "Ben12345"))

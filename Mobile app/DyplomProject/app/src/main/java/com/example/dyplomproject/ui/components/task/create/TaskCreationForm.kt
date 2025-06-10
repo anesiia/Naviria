@@ -35,7 +35,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dyplomproject.data.remote.Category
 import com.example.dyplomproject.data.remote.repository.TaskRepository
-import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.utils.RetrofitInstance
 import com.example.dyplomproject.ui.components.ButtonStyle
 import com.example.dyplomproject.ui.components.DateField
 import com.example.dyplomproject.ui.components.DateTimeState
@@ -71,8 +71,8 @@ data class TaskCreationState(
     val repeatDays: List<Int> = emptyList(),
     //scale
     val unit: String = "",
-    val currentValue: Int = 0,
-    val targetValue: Int = 0,
+    val currentValue: Double = 0.0,
+    val targetValue: Double = 0.0,
     //validation
     val titleError: String? = null,
     //val categoryError: String? = null,
@@ -97,36 +97,20 @@ fun TaskCreationForm(
     viewModel: TasksViewModel
 ) {
     val taskCreationState = viewModel.uiState.collectAsState().value.taskCreation
-
-//    //var title by remember { mutableStateOf("") }
-//    //var description by remember { mutableStateOf("") }
-//    //var category by remember { mutableStateOf(Category("", "Категорія")) }
-//    //var priority by remember { mutableStateOf(Priority("Низький", 1)) }
-//    var dueDate by remember { mutableStateOf("") }
-//    //var typeTask by remember { mutableStateOf("standart") }
-//    var isDeadlineOn by remember { mutableStateOf(true) }
-//    var toShowProgressOnPage by remember { mutableStateOf(false) }
-//    var isNotificationsOn by remember { mutableStateOf(true) }
-//    //val dateTimeState = remember {
-//        //mutableStateOf(DateTimeState(date = null, time = null))
-//    //}
-//    //val dateTime = dateTimeState.value.toLocalDateTime()
-
-    val tags = remember { mutableStateListOf<String>() }//remember { mutableStateListOf<String>() }
+    val tags = remember { mutableStateListOf<String>() }
     val deadlineDateState = remember { mutableStateOf(DateTimeState(null, null)) }
     val notificationDateTimeState = remember { mutableStateOf(DateTimeState(null, null)) }
-    //var markedDays by remember { mutableStateOf(listOf(0, 2, 4)) }
     val showErrorTime = 5000L
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
             .border(1.dp, Color(0xFF023047), RoundedCornerShape(12.dp))
-            .background(Color.Transparent/*(0xFFF7F7F7)*/, RoundedCornerShape(12.dp))
+            .background(Color.Transparent, RoundedCornerShape(12.dp))
             .padding(horizontal = 16.dp)
     ) {
         TextField(
-            value = taskCreationState.title,//title,
+            value = taskCreationState.title,
             onValueChange = {viewModel.updateTaskCreation { copy(title = it) }},//{ title = it },
             //label = { Text("Назва") },
             placeholder = { Text("Введіть назву задачі", style = MaterialTheme.typography.labelLarge) },
@@ -155,11 +139,6 @@ fun TaskCreationForm(
         )
 
         Spacer(Modifier.height(8.dp))
-//        DropdownMenuCategory(
-//            options = categories,
-//            selected = creationState.selectedCategory,//category,
-//            onSelected = {viewModel.updateTaskCreation{copy(selectedCategory = it)}}//{ category = it }
-//        )
         if(taskCreationState.selectedCategory.id == ""){
             viewModel.updateTaskCreation{copy(selectedCategory = categories[0])}
         }
@@ -197,10 +176,6 @@ fun TaskCreationForm(
         if(taskCreationState.isDeadlineOn) {//(isDeadlineOn) {
             Spacer(Modifier.height(8.dp))
             DateField(
-//                selectedDate = deadlineDateState.value.date,
-//                onDateSelected = {
-//                    deadlineDateState.value = deadlineDateState.value.copy(date = it)
-//                }
                 selectedDate = deadlineDateState.value.date,
                 onDateSelected = {
                     val updated = deadlineDateState.value.copy(date = it)
@@ -239,19 +214,18 @@ fun TaskCreationForm(
         Spacer(Modifier.height(8.dp))
         Row (verticalAlignment = Alignment.CenterVertically){
             SwitchButton(
-                isOn = taskCreationState.isNotificationsOn,//isNotificationsOn,
-                onToggle = { viewModel.updateTaskCreation { copy(isNotificationsOn = it) }}//{ isNotificationsOn = it }
+                isOn = taskCreationState.isNotificationsOn,
+                onToggle = { viewModel.updateTaskCreation { copy(isNotificationsOn = it) }}
             )
             Spacer(Modifier.width(16.dp))
             Text("Нагадування",color = AppColors.DarkBlue)
         }
 
-        if(taskCreationState.isNotificationsOn) {//(isNotificationsOn) {
+        if(taskCreationState.isNotificationsOn) {
             Spacer(Modifier.height(16.dp))
             DateField(
                 selectedDate = notificationDateTimeState.value.date,
                 onDateSelected = {
-                    //dateTimeState.value = dateTimeState.value.copy(date = it)
                     val updated = notificationDateTimeState.value.copy(date = it)
                     notificationDateTimeState.value = updated
                     viewModel.updateTaskCreation {
@@ -265,7 +239,6 @@ fun TaskCreationForm(
             TimeField(
                 selectedTime = notificationDateTimeState.value.time,
                 onTimeSelected = {
-                    //dateTimeState.value = dateTimeState.value.copy(time = it)
                     val updated = notificationDateTimeState.value.copy(time = it)
                     notificationDateTimeState.value = updated
                     viewModel.updateTaskCreation {
@@ -325,7 +298,6 @@ fun TaskCreationForm(
                 onClick = { viewModel.updateTaskCreation { copy(type = "repeatable") }})
             Spacer(modifier = Modifier.height(8.dp))
         }
-        //Spacer(Modifier.height(16.dp))
 
         if (taskCreationState.type == "repeatable") {
             HorizontalDivider(modifier = Modifier.fillMaxWidth(), 1.dp, AppColors.Orange)
@@ -415,9 +387,9 @@ fun TaskCreationForm(
                 onValueChange = { input ->
                     //in case the input value has to be integer value
                     targetValueInput = input
-                    val intValue = input.toIntOrNull()
-                    if (intValue != null) {
-                        viewModel.updateTaskCreation { copy(targetValue = intValue) }
+                    val doubleValue = input.toDoubleOrNull()
+                    if (doubleValue != null) {
+                        viewModel.updateTaskCreation { copy(targetValue = doubleValue) }
                     }
                     //in case the input value has to be float value
 //                    targetValueInput = input

@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -19,19 +20,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dyplomproject.data.remote.Tag
-import com.example.dyplomproject.data.remote.TaskDto
-import com.example.dyplomproject.data.remote.TaskRepeatableDto
-import com.example.dyplomproject.data.remote.TaskScaleDto
-import com.example.dyplomproject.data.remote.TaskStandardDto
-import com.example.dyplomproject.data.remote.TaskWithSubtasksDto
+import com.example.dyplomproject.data.remote.dto.TaskDto
+import com.example.dyplomproject.data.remote.dto.TaskRepeatableDto
+import com.example.dyplomproject.data.remote.dto.TaskScaleDto
+import com.example.dyplomproject.data.remote.dto.TaskStandardDto
+import com.example.dyplomproject.data.remote.dto.TaskWithSubtasksDto
 import com.example.dyplomproject.data.remote.repository.TaskRepository
-import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.utils.RetrofitInstance
 import com.example.dyplomproject.ui.components.ButtonStyle
 import com.example.dyplomproject.ui.components.DateField
 import com.example.dyplomproject.ui.components.DateTimeState
 import com.example.dyplomproject.ui.components.SecondaryButton
 import com.example.dyplomproject.ui.components.SwitchButton
 import com.example.dyplomproject.ui.components.TimeField
+import com.example.dyplomproject.ui.components.task.WeekdayEditSelectorFromNames
 import com.example.dyplomproject.ui.components.task.create.TaskCreationTextFieldColors
 import com.example.dyplomproject.ui.components.toIsoUtcString
 import com.example.dyplomproject.ui.theme.AppColors
@@ -81,11 +83,11 @@ fun TaskModificationForm(
             colors = TaskCreationTextFieldColors()
         )
 
-        Spacer(Modifier.height(8.dp))
+//        Spacer(Modifier.height(8.dp))
 //        Text("Teги",color = AppColors.DarkBlue)
 //        Spacer(Modifier.height(8.dp))
 //        TagInputComponent(
-//            tags = taskCreationState.tags,//tags,
+//            tags = editState.tags,//tags,
 //            onTagsChange = { updatedTags ->
 //                tags.clear()
 //                tags.addAll(updatedTags)
@@ -168,66 +170,19 @@ fun TaskModificationForm(
             Text("Тип задачі: звичайна", style = MaterialTheme.typography.bodyLarge,color = AppColors.DarkBlue)
         }
 
-//        Spacer(modifier = Modifier.height(4.dp))
-//        Column {
-//            RadioButton(selected = taskCreationState.type == "standard",//typeTask == "standard",
-//                text = "Звичайна",
-//                onClick = { viewModel.updateTaskCreation { copy(type = "standard") }})//{ typeTask = "standart" })//{ registrationViewModel.updateField("gender", "f") })
+        if (task is TaskRepeatableDto) {
+            HorizontalDivider(modifier = Modifier.fillMaxWidth(), 1.dp, AppColors.Orange)
+            Spacer(Modifier.height(8.dp))
+            Box () {
+                WeekdayEditSelectorFromNames(
+                    modifier = Modifier,
+                    markedDayNames = editState.repeatDays,
+                    onMarkedDayNamesChange = { editState = editState.copy(repeatDays = it)}
+                )
+            }
+            Spacer(Modifier.height(16.dp))
+        }
 //
-//            Spacer(modifier = Modifier.height(8.dp))
-//            RadioButton(selected = taskCreationState.type == "with_subtasks",
-//                text = "Список",
-//                onClick = { viewModel.updateTaskCreation { copy(type = "with_subtasks") }})
-//
-//            Spacer(modifier = Modifier.height(8.dp))
-//            RadioButton(selected = taskCreationState.type == "scale",
-//                text = "Шкала",
-//                onClick = { viewModel.updateTaskCreation { copy(type = "scale") }})
-//
-//            Spacer(modifier = Modifier.height(8.dp))
-//            RadioButton(selected = taskCreationState.type == "repeatable",
-//                text = "Повторювальна",
-//                onClick = { viewModel.updateTaskCreation { copy(type = "repeatable") }})
-//            Spacer(modifier = Modifier.height(8.dp))
-//        }
-        //Spacer(Modifier.height(16.dp))
-
-//        if (task.type == "repeatable") {
-//            HorizontalDivider(modifier = Modifier.fillMaxWidth(), 1.dp, AppColors.Orange)
-//            Spacer(Modifier.height(8.dp))
-//            Box () {
-////                WeekdayEditSelector(
-////                    markedDays = markedDays,
-////                    onMarkedDaysChange = { markedDays = it }
-////                )
-//                WeekdayEditSelector(
-//                    markedDays = editState.repeatDays,
-//                    onMarkedDaysChange = { viewModel.updateTaskCreation { copy(repeatDays = it) }}
-//                )
-//            }
-//            Spacer(Modifier.height(16.dp))
-//        }
-
-//        if (task.type == "with_subtasks") {
-//            HorizontalDivider(modifier = Modifier.fillMaxWidth(), 1.dp, AppColors.Orange)
-//            Spacer(Modifier.height(8.dp))
-//            Column {
-//                taskCreationState.subtaskForms.forEach { form ->
-//                    SubtaskCreationForm(
-//                        subtaskId = form.id,
-//                        viewModel = viewModel,
-//                        onCancel = {
-//                            viewModel.removeSubtaskForm(form.id)
-//                        }
-//                    )
-//                }
-//                AddTaskButton(
-//                    onClick = {
-//                        viewModel.addSubtaskForm()
-//                    }
-//                )
-//            }
-//        }
 
 //        if (task.type == "scale") {
 //            HorizontalDivider(modifier = Modifier.fillMaxWidth(), 1.dp, AppColors.Orange)

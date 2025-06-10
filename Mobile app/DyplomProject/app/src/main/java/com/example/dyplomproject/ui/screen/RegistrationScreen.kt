@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -47,7 +48,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dyplomproject.R
 import androidx.navigation.NavHostController
 import com.example.dyplomproject.data.remote.repository.AuthRepository
-import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.utils.RetrofitInstance
 import com.example.dyplomproject.ui.components.RadioButton
 import com.example.dyplomproject.ui.components.LabeledTextField
 import com.example.dyplomproject.ui.components.PrimaryButton
@@ -91,12 +92,12 @@ fun RegistrationScreen(
     var confirmPasswordVisible by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(top = 32.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.registeration_background),
             contentDescription = null,
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Fit,
             modifier = Modifier.fillMaxSize()
         )
         Column(

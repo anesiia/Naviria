@@ -33,12 +33,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dyplomproject.data.remote.repository.TaskRepository
-import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.utils.RetrofitInstance
 import com.example.dyplomproject.ui.components.task.folder.FolderContent
 import com.example.dyplomproject.ui.components.task.folder.FolderTabs
 import com.example.dyplomproject.ui.components.task.folder.FolderEditBottomSheet
 import com.example.dyplomproject.ui.theme.AppColors
-
 
 @Composable
 fun TaskScreen(navController: NavHostController,

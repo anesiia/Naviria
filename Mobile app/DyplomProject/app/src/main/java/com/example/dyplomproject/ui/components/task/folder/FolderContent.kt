@@ -23,11 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.dyplomproject.data.remote.FolderWithTasksDto
-import com.example.dyplomproject.data.remote.TaskDto
+import com.example.dyplomproject.data.remote.dto.TaskDto
 import com.example.dyplomproject.ui.components.task.create.ShowTaskCreationFormButton
 import com.example.dyplomproject.ui.components.task.create.TaskCreationForm
 import com.example.dyplomproject.ui.components.task.display.TaskSection
-import com.example.dyplomproject.ui.screen.AddTaskButton
 import com.example.dyplomproject.ui.viewmodel.TasksUiState
 import com.example.dyplomproject.ui.viewmodel.TasksViewModel
 
@@ -37,7 +36,6 @@ fun FolderContent(uiState: TasksUiState, viewModel: TasksViewModel) {
     if (selectedFolder == null) {
         Box(
             modifier = Modifier.padding(32.dp),
-            //contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "Жодна папка не обрана! \nЯкщо на разі жодної папки не створено, створіть папку для подальшого створення задач!",
@@ -49,8 +47,6 @@ fun FolderContent(uiState: TasksUiState, viewModel: TasksViewModel) {
         }
         return
     }
-    //Log.e("FOLDER CONTENT","${uiState.foldersWithTasks.find { it.folderId == selectedFolder.id }}")
-    //Log.e("FOLDER CONTENT","Selected folder ID: ${selectedFolder.id}")
     uiState.foldersWithTasks.forEach {
         Log.e("FOLDER CONTENT","Checking folder ID: ${it.folderId}")
     }
@@ -64,14 +60,11 @@ fun FolderContent(uiState: TasksUiState, viewModel: TasksViewModel) {
         tasks = emptyList()
         groupedTasks = emptyMap()
     }
-    //val tasks = folderWithTasks.tasks//emptyList<Task>()//selectedFolder.tasks
-    //val groupedTasks = tasks.groupBy { it.status } // "TODO", "IN_PROGRESS", "DONE"
     var showTaskCreationForm by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            //.padding(16.dp)
             .fillMaxSize()
     ) {
         Box(modifier = Modifier.padding(horizontal = 16.dp)){
@@ -97,14 +90,12 @@ fun FolderContent(uiState: TasksUiState, viewModel: TasksViewModel) {
                 Text(
                     "Папка порожня!",
                     style = MaterialTheme.typography.titleMedium,
-                    //modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
 
         } else {
             Spacer(Modifier.height(8.dp))
             val completedTasks = groupedTasks["Completed"].orEmpty() + groupedTasks["DeadlineMissed"].orEmpty() + groupedTasks["CompletedInTime"].orEmpty() + groupedTasks["CompletedNotInTime"].orEmpty()
-            //TaskSection(title = "До виконання", tasks = groupedTasks[""].orEmpty(), viewModel = viewModel)
             TaskSection(title = "В процесі", tasks = groupedTasks["InProgress"].orEmpty(), viewModel = viewModel)
             TaskSection(title = "Виконано", tasks = completedTasks, viewModel = viewModel)
         }

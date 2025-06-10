@@ -6,6 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.style.TextDecoration
 import com.example.dyplomproject.R
 
 val MonsterratAlternatesFamily = FontFamily(
@@ -68,7 +69,11 @@ data class CustomTypography(
     val hashTagText: TextStyle,
     val semiboldText: TextStyle,
     val regularText: TextStyle,
-    val mediumText: TextStyle
+    val mediumText: TextStyle,
+    val lightText: TextStyle,
+    val mediumTextUnderlined: TextStyle,
+    val semiboldTextUnderlined: TextStyle,
+    val boldText: TextStyle
 )
 val additionalTypography = CustomTypography(
     exampleText = TextStyle(
@@ -112,4 +117,31 @@ val additionalTypography = CustomTypography(
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp
     ),
+
+    lightText = TextStyle(
+        fontFamily = MonsterratAlternatesFamily,
+        fontWeight = FontWeight.Light,
+        fontSize = 16.sp
+    ),
+
+    mediumTextUnderlined = TextStyle(
+        fontFamily = MonsterratAlternatesFamily,
+        fontWeight = FontWeight.Medium,
+        textDecoration = TextDecoration.Underline,
+        fontSize = 16.sp,
+    ),
+
+    semiboldTextUnderlined = TextStyle(
+        fontFamily = MonsterratAlternatesFamily,
+        fontWeight = FontWeight.SemiBold,
+        textDecoration = TextDecoration.Underline,
+        fontSize = 16.sp,
+    ),
+
+    boldText = TextStyle(
+        fontFamily = MonsterratAlternatesFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp
+    ),
+
 )
