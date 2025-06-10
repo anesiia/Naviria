@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dyplomproject.data.remote.repository.AuthRepository
-import com.example.dyplomproject.data.remote.request.UserRegistrationRequest
+import com.example.dyplomproject.data.remote.dto.RegistrationRequestDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -157,7 +157,7 @@ class RegistrationViewModel(private val authRepository: AuthRepository) : ViewMo
         if (!validateAndUpdateErrors(state)) {
             return
         }
-        val request = UserRegistrationRequest(
+        val request = RegistrationRequestDto(
             fullName = state.fullName,
             nickname = state.nickname,
             gender = state.gender,

@@ -3,17 +3,17 @@ package com.example.dyplomproject.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dyplomproject.data.remote.User
-import com.example.dyplomproject.data.remote.UserAchievement
+import com.example.dyplomproject.data.remote.dto.UserDto
+import com.example.dyplomproject.data.remote.dto.UserAchievement
 import com.example.dyplomproject.data.remote.repository.UserRepository
-import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.utils.RetrofitInstance
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 data class ProfileViewState(
-    val user: User? = null,
+    val userDto: UserDto? = null,
     val achievements: List<UserAchievement>? = emptyList(),
     val isLoading: Boolean = true,
     val error: String? = null
@@ -29,7 +29,7 @@ class ProfileViewModel(
 
     init {
         loadProfile()
-        loadAchievements()
+        //loadAchievements()
     }
 
     private fun loadProfile() {
@@ -38,7 +38,7 @@ class ProfileViewModel(
 
             if (result.isSuccess) {
                 _state.value = _state.value.copy(
-                    user = result.getOrNull(),
+                    userDto = result.getOrNull(),
                     isLoading = false
                 )
             } else {
@@ -48,9 +48,10 @@ class ProfileViewModel(
                 )
             }
 
-            Log.d("Profile", "Profile: ${state.value.user}")
+            Log.d("Profile", "Profile: ${state.value.userDto}")
         }
     }
+
 
     private fun loadAchievements() {
         viewModelScope.launch {
@@ -62,11 +63,13 @@ class ProfileViewModel(
                     achievements = achievements,
                     isLoading = false
                 )
+                Log.d("Profile", "IS SUCCESS: ${state.value.achievements}")
             } else {
                 _state.value = _state.value.copy(
                     error = result.exceptionOrNull()?.message,
                     isLoading = false
                 )
+                Log.d("Profile", "ERROR : ${state.value.achievements}")
             }
             Log.d("Profile", "ACHIEVEMENTS: ${state.value.achievements}")
         }

@@ -1,4 +1,4 @@
-package com.example.dyplomproject.data.utils;
+package com.example.dyplomproject.utils;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;

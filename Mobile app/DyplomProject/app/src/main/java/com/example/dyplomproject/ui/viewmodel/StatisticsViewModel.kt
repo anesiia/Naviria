@@ -2,9 +2,9 @@ package com.example.dyplomproject.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dyplomproject.data.remote.api.CategoryPieCharSliceDto
-import com.example.dyplomproject.data.remote.api.CompletedTasksLineChartElementDto
-import com.example.dyplomproject.data.remote.api.TopUserDto
+import com.example.dyplomproject.data.remote.dto.CategoryPieCharSliceDto
+import com.example.dyplomproject.data.remote.dto.CompletedTasksLineChartElementDto
+import com.example.dyplomproject.data.remote.dto.TopUserDto
 import com.example.dyplomproject.data.remote.repository.StatisticsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

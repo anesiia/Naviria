@@ -1,11 +1,11 @@
 package com.example.dyplomproject.ui.components.task.update
 
 import com.example.dyplomproject.data.remote.Tag
-import com.example.dyplomproject.data.remote.TaskDto
-import com.example.dyplomproject.data.remote.TaskRepeatableDto
-import com.example.dyplomproject.data.remote.TaskScaleDto
-import com.example.dyplomproject.data.remote.TaskStandardDto
-import com.example.dyplomproject.data.remote.TaskWithSubtasksDto
+import com.example.dyplomproject.data.remote.dto.TaskDto
+import com.example.dyplomproject.data.remote.dto.TaskRepeatableDto
+import com.example.dyplomproject.data.remote.dto.TaskScaleDto
+import com.example.dyplomproject.data.remote.dto.TaskStandardDto
+import com.example.dyplomproject.data.remote.dto.TaskWithSubtasksDto
 
 data class TaskModificationState(
     val title: String = "",

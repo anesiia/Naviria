@@ -42,8 +42,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.dyplomproject.R
 import com.example.dyplomproject.data.remote.repository.UserRepository
-import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.utils.RetrofitInstance
 import com.example.dyplomproject.ui.components.UnderlinedText
+import com.example.dyplomproject.ui.theme.AppColors
 import com.example.dyplomproject.ui.viewmodel.FriendRequestsViewModel
 import com.example.dyplomproject.ui.viewmodel.IncomingRequestUiModel
 import com.example.dyplomproject.ui.viewmodel.UserShortUiModel
@@ -77,6 +78,7 @@ fun FriendRequestsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(AppColors.White)
             .padding(padding)
             .padding(horizontal = 24.dp),
     ) {

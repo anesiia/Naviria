@@ -41,7 +41,7 @@ namespace NaviriaAPI.Services.GamificationLogic
             var achievement = await _achievementRepository.GetByIdAsync(achievementId);
             if (achievement == null) throw new NotFoundException("Achievement not found");
 
-            _logger.LogInformation("Грант досягнення {AchievementId} для користувача {UserId}", achievementId, userId);
+            _logger.LogInformation("Achievement {AchievementId} for user {UserId}", achievementId, userId);
 
             user.Achievements.Add(new UserAchievementInfo
             {

@@ -1,6 +1,5 @@
 package com.example.dyplomproject.ui.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +28,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,20 +53,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.dyplomproject.R
-import com.example.dyplomproject.data.remote.UserAchievement
+import com.example.dyplomproject.data.remote.dto.UserAchievement
 import com.example.dyplomproject.data.remote.repository.UserRepository
-import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.utils.RetrofitInstance
 import com.example.dyplomproject.ui.components.GradientProgressBar
 import com.example.dyplomproject.ui.theme.AppColors
 import com.example.dyplomproject.ui.theme.additionalTypography
+import com.example.dyplomproject.ui.viewmodel.AuthViewModel
 import com.example.dyplomproject.ui.viewmodel.ProfileViewModel
-
 
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
+    authViewModel: AuthViewModel,
     userId: String,
-    padding: PaddingValues
+    padding: PaddingValues,
 )  {
     val repository = remember { UserRepository(RetrofitInstance.api) }
     val viewModel: ProfileViewModel = viewModel(factory = object : ViewModelProvider.Factory {
@@ -89,9 +90,8 @@ fun ProfileScreen(
         state.error != null -> {
             Text("Error: ${state.error}")
         }
-
-        state.user != null -> {
-            val user = state.user!!
+        state.userDto != null -> {
+            val user = state.userDto!!
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -101,17 +101,6 @@ fun ProfileScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.Start
             ) {
-
-//                item {
-//                    Text("Full Name: ${user.fullName}")
-//                    Text("Nickname: ${user.nickname}")
-//                    Text("Email: ${user.email}")
-//                    Text("Gender: ${user.gender.uppercase()}")
-//                    Text("Birthdate: ${user.birthDate.take(10)}")
-//                    Text("Description: ${user.description.ifBlank { "N/A" }}")
-//                    Text("Online: ${if (user.isOnline) "🟢" else "⚪"}")
-//                    Text("Pro User: ${user.isProUser}")
-//                }
                 item {
                     Text(
                         user.nickname,
@@ -130,8 +119,8 @@ fun ProfileScreen(
                             .size(120.dp)
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop,
-                        placeholder = painterResource(id = R.drawable.avatar),  // your fallback drawable
-                        error = painterResource(id = R.drawable.avatar)         // your fallback drawable
+                        placeholder = painterResource(id = R.drawable.avatar),
+                        error = painterResource(id = R.drawable.avatar)
                     )
                 }
 
@@ -163,7 +152,7 @@ fun ProfileScreen(
                             gradientColors = listOf(Color(0xFF023047), Color(0xFF219DBB))
                         )
                     }
-                    Text("XP: ${user.levelInfo.totalXp}/${user.levelInfo.xpForNextLevel}",//, ${user.levelInfo.progress}",
+                    Text("XP: ${user.levelInfo.totalXp} / ${user.levelInfo.xpForNextLevel}",//, ${user.levelInfo.progress}",
                         modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.End).padding(end = 16.dp)
                     )
                 }
@@ -177,13 +166,6 @@ fun ProfileScreen(
                         textAlign = TextAlign.Justify
                     )
                 }
-
-//                item {
-//                    Text("Особистий прогрес",
-//                        style = additionalTypography.profileTitle,
-//                        color = Color(0xFF023047)
-//                    )
-//                }
 
                 item {
                     Text(
@@ -233,16 +215,6 @@ fun ProfileScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             rowItems.forEach { friend ->
-//                                Card(
-//                                    Modifier
-//                                        .weight(1f)
-//                                        .aspectRatio(1f)
-//                                ) {
-//                                    Box(contentAlignment = Alignment.Center) {
-//                                        Text(friend.nickname)
-//                                    }
-//                                }
-//                                ProfileFriendItem(friend.nickname, {})
                                 ProfileFriendItem(
                                     friendNickname = friend.nickname,
                                     onProfileFriendItemClick = {},
@@ -254,51 +226,28 @@ fun ProfileScreen(
                         }
                     }
                 }
+
+                item {
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ){
+                        TextButton(onClick = { authViewModel.logout()}) {
+                            Text(
+                                text = "Вийти",
+                                style = additionalTypography.semiboldTextUnderlined,
+                                modifier = Modifier.padding(16.dp),
+                                color = AppColors.DarkBlue
+                            )
+                        }
+                    }
+
+                }
             }
         }
     }
 }
 
-//@Composable
-//fun AchievementCard(
-//    achievement: UserAchievement,
-//    modifier: Modifier = Modifier
-//) {
-//    Card(
-//        modifier = modifier
-//            .shadow(6.dp, RoundedCornerShape(16.dp))
-//            .clip(RoundedCornerShape(16.dp))
-//    ) {
-//        Box(
-//            modifier = Modifier
-//                .background(
-//                    if (achievement.isRare) {
-//                        Brush.verticalGradient(
-//                            colors = listOf(Color(0xFFFFD600), Color(0xFFFF8C00))
-//                        )
-//                    } else {
-//                        SolidColor(Color.White)  // SolidColor wraps a single color as a Brush
-//                    }
-//                )
-//                .padding(12.dp),
-//            contentAlignment = Alignment.TopStart
-//        ) {
-//            Column {
-//                Text(
-//                    achievement.name,
-//                    style = additionalTypography.profileTitle,
-//                    fontWeight = FontWeight.Bold,
-//                )
-//                Spacer(modifier = Modifier.height(8.dp))
-//                Text(
-//                    text = achievement.description,
-//                    style = MaterialTheme.typography.labelMedium,
-//                    color = Color(0xFF333333)
-//                )
-//            }
-//        }
-//    }
-//}
 @Composable
 fun AchievementCard(
     achievement: UserAchievement,
@@ -311,9 +260,7 @@ fun AchievementCard(
         modifier = modifier
             .shadow(6.dp, RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
-            //.aspectRatio(1f) // Makes the card square
             .fillMaxWidth()
-            //.heightIn(min = 200.dp, max = 250.dp)
             .then(
                 if (showButton)
                     Modifier.heightIn(min = 200.dp, max = 250.dp)
@@ -348,7 +295,6 @@ fun AchievementCard(
                     color = Color(0xFF333333),
                     textAlign = TextAlign.Justify
                 )
-                //Spacer(modifier = Modifier.height(12.dp))
                 Spacer(modifier = Modifier.weight(1f))
                 if (showButton) {
                     val isReceived = achievement.isPointsReceived == true
@@ -364,6 +310,7 @@ fun AchievementCard(
         }
     }
 }
+
 @Composable
 fun ProfileFriendItem(
     friendNickname: String,

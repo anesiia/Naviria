@@ -20,49 +20,27 @@ import androidx.compose.ui.unit.dp
 import com.example.dyplomproject.ui.theme.additionalTypography
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
-
+//val tags = remember { mutableStateListOf<String>() }
+//val tags = remember { mutableStateListOf("Kotlin", "Kotlin","Kotliasdasdn","Kotlin","Kotdsdalin","Koddtlin","Kotlddin") }
 @Composable
 fun TagInputComponent(
     tags: List<String>,
-    onTagsChange: (List<String>) -> Unit// = {}
+    onTagsChange: (List<String>) -> Unit
 ) {
-    //val tags = remember { mutableStateListOf<String>() }
-    //val tags = remember { mutableStateListOf("Kotlin", "Kotlin","Kotliasdasdn","Kotlin","Kotdsdalin","Koddtlin","Kotlddin") }
     var newTagText by remember { mutableStateOf("") }
     var editingTagIndex by remember { mutableStateOf(-1) }
     var editingTagText by remember { mutableStateOf("") }
 
     FlowRow(
-        modifier = Modifier
-            .fillMaxWidth(),
-        //.padding(8.dp),
-        mainAxisSpacing = 8.dp,
-        crossAxisSpacing = 8.dp,
-        mainAxisAlignment = FlowMainAxisAlignment.Start
+        modifier = Modifier.fillMaxWidth(),
+        mainAxisSpacing = 8.dp, crossAxisSpacing = 8.dp, mainAxisAlignment = FlowMainAxisAlignment.Start
     ) {
         tags.forEachIndexed { index, tag ->
             if (editingTagIndex == index) {
-//                OutlinedTextField(
-//                    value = editingTagText,
-//                    onValueChange = { editingTagText = it },
-//                    modifier = Modifier.width(IntrinsicSize.Min),
-//                    trailingIcon = {
-//                        IconButton(onClick = {
-//                            tags[index] = editingTagText
-//                            editingTagIndex = -1
-//                            editingTagText = ""
-//                        }) {
-//                            Icon(Icons.Default.Check, contentDescription = "Save")
-//                        }
-//                    }
-//                )
                 TagModification(
                     text = editingTagText,
                     onTextChange = { editingTagText = it },
                     onSaveButtonClick = {
-//                        tags[index] = editingTagText
-//                        editingTagIndex = -1
-//                        editingTagText = ""
                         val updatedTags = tags.toMutableList()
                         updatedTags[index] = editingTagText
                         onTagsChange(updatedTags)
@@ -78,7 +56,7 @@ fun TagInputComponent(
                         editingTagIndex = index
                         editingTagText = tag
                     },
-                    onDelete = { //tags.removeAt(index)
+                    onDelete = {
                         val updatedTags = tags.toMutableList()
                         updatedTags.removeAt(index)
                         onTagsChange(updatedTags)
@@ -86,34 +64,11 @@ fun TagInputComponent(
                 )
             }
         }
-
-        // Add new tag field
-//        OutlinedTextField(
-//            value = newTagText,
-//            onValueChange = { newTagText = it },
-//            label = { Text("New tag") },
-//            trailingIcon = {
-//                IconButton(onClick = {
-//                    if (newTagText.isNotBlank()) {
-//                        tags.add(newTagText.trim())
-//                        newTagText = ""
-//                    }
-//                }) {
-//                    Icon(Icons.Default.Add, contentDescription = "Add tag")
-//                }
-//            },
-//            modifier = Modifier.width(IntrinsicSize.Min)
-//        )
-
         TagCreationTextField(
-//            newTagText,
-//            { newTagText = it },#
             text = newTagText,
             onTextChange = { newTagText = it },
             onClick = {
                 if (newTagText.isNotBlank()) {
-//                    tags.add(newTagText.trim())
-//                    newTagText = ""
                     if (newTagText.isNotBlank()) {
                         onTagsChange(tags + newTagText.trim())
                         newTagText = ""

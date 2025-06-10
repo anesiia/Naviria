@@ -37,20 +37,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dyplomproject.R
-import com.example.dyplomproject.data.remote.SubtaskRepeatableDto
-import com.example.dyplomproject.data.remote.SubtaskStandardDto
+import com.example.dyplomproject.data.remote.dto.SubtaskRepeatableDto
+import com.example.dyplomproject.data.remote.dto.SubtaskScaleDto
+import com.example.dyplomproject.data.remote.dto.SubtaskStandardDto
 import com.example.dyplomproject.data.remote.Tag
-import com.example.dyplomproject.data.remote.TaskWithSubtasksDto
+import com.example.dyplomproject.data.remote.dto.TaskWithSubtasksDto
 import com.example.dyplomproject.data.remote.repository.TaskRepository
-import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.utils.RetrofitInstance
 import com.example.dyplomproject.ui.theme.AppColors
 import com.example.dyplomproject.ui.theme.additionalTypography
 import com.example.dyplomproject.ui.viewmodel.TasksViewModel
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-class TaskWithSubtaskDisplay {
-}
 @Composable
 fun TaskWithSubtasksDisplay(task: TaskWithSubtasksDto, viewModel: TasksViewModel) {
     var taskInfoVisible by remember { mutableStateOf(true) }//var subtasksVisible by remember { mutableStateOf(false) }
@@ -188,7 +187,7 @@ fun TaskWithSubtasksDisplay(task: TaskWithSubtasksDto, viewModel: TasksViewModel
             Column(modifier = Modifier.padding(start = 16.dp)) {
                 task.subtasks.forEach { subtask ->
                     Spacer(Modifier.height(8.dp))
-                    SubtaskDisplay(subtask, viewModel, task.createdAt, task.deadline)
+                    SubtaskDisplay(task.id, subtask, viewModel, task.createdAt, task.deadline)
                 }
             }
         }
@@ -227,7 +226,8 @@ fun TaskWithSubtasksDisplayPreview() {
         //subtasks = emptyList(),
         subtasks = listOf(
             SubtaskStandardDto("sub4", "Скласти схему електроніки", "Гарний опис - це короткий опис!", false),
-            SubtaskRepeatableDto("sub5", "Закодувати поведінку", "Гарний опис - короткий", repeatDays = listOf("Sunday")),
+            SubtaskRepeatableDto("sub5", "Закодувати поведінку", "Гарний опис - короткий", repeatDays = listOf("Sunday"), checkedInDays = emptyList()),
+            SubtaskScaleDto("sub5", "Закодувати поведінку", "Гарний опис - короткий", unit = "к", currentValue = 100.toDouble(), targetValue = 1000.toDouble()),
 //            SubtaskCreateDto("sub6", "Зібрати корпус", false)
         ),
         createdAt = "2025-04-01T10:00:00Z",

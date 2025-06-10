@@ -1,6 +1,6 @@
-package com.example.dyplomproject.data.remote.request
+package com.example.dyplomproject.data.remote.dto
 
-data class UserRegistrationRequest(
+data class RegistrationRequestDto(
     val fullName: String,
     val nickname: String,
     val gender: String,

@@ -1,9 +1,9 @@
-package com.example.dyplomproject.data.remote
+package com.example.dyplomproject.data.remote.dto
 
-import com.google.gson.annotations.Expose
+import com.example.dyplomproject.data.remote.Tag
 
 interface TaskCreateDto {
-    val type: String
+    //val type: String
     val userId: String
     val folderId: String
     val title: String
@@ -34,11 +34,12 @@ data class TaskWithSubtasksCreateDto(
     override val notificationDate: String?,
     override val priority: Int,
     val subtasks: List<SubtaskCreateDto>
-) : TaskCreateDto{
-    @Expose(serialize = false, deserialize = false)
-    @Transient
-    override val type: String = "with_subtasks"
-}
+) : TaskCreateDto
+//{
+//    @Expose(serialize = false, deserialize = false)
+//    @Transient
+//    override val type: String = "with_subtasks"
+//}
 //Повторювана задача
 
 data class TaskRepeatableCreateDto(
@@ -57,11 +58,12 @@ data class TaskRepeatableCreateDto(
     override val priority: Int,
     //override val subtasks: List<SubtaskCreateDto>,
     val repeatDays: List<Int>
-) : TaskCreateDto {
-    @Expose(serialize = false, deserialize = false)
-    @Transient
-    override val type: String = "repeatable"
-}
+) : TaskCreateDto
+//{
+//    @Expose(serialize = false, deserialize = false)
+//    @Transient
+//    override val type: String = "repeatable"
+//}
 
 //Scale задача
 data class TaskScaleCreateDto(
@@ -80,13 +82,14 @@ data class TaskScaleCreateDto(
     override val priority: Int,
     //override val subtasks: List<SubtaskCreateDto>,
     val unit: String,
-    val currentValue: Int,
-    val targetValue: Int
-) : TaskCreateDto {
-    @Expose(serialize = false, deserialize = false)
-    @Transient
-    override val type: String = "scale"
-}
+    val currentValue: Double,//Int,
+    val targetValue: Double//Int
+) : TaskCreateDto
+//{
+//    @Expose(serialize = false, deserialize = false)
+//    @Transient
+//    override val type: String = "scale"
+//}
 
 //Стандартна задача
 data class TaskStandardCreateDto(
@@ -104,9 +107,10 @@ data class TaskStandardCreateDto(
     override val notificationDate: String?,
     override val priority: Int,
     //override val subtasks: List<SubtaskCreateDto>
-) : TaskCreateDto {
-    @Expose(serialize = false, deserialize = false)
-    @Transient
-    override val type: String = "standard"
-}
+) : TaskCreateDto
+//{
+//    @Expose(serialize = false, deserialize = false)
+//    @Transient
+//    override val type: String = "standard"
+//}
 

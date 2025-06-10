@@ -6,17 +6,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
@@ -41,6 +42,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -49,13 +51,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.example.dyplomproject.data.remote.api.ApiService
+import com.example.dyplomproject.data.remote.ApiService
 import com.example.dyplomproject.data.remote.repository.AuthRepository
 import com.example.dyplomproject.data.remote.repository.NotificationRepository
-import com.example.dyplomproject.data.remote.repository.UserRepository
-import com.example.dyplomproject.data.utils.DataStoreManager
-import com.example.dyplomproject.data.utils.RetrofitInstance
-import com.example.dyplomproject.ui.screen.AchievementCard
+import com.example.dyplomproject.utils.DataStoreManager
+import com.example.dyplomproject.utils.RetrofitInstance
 import com.example.dyplomproject.ui.screen.AchievementsScreen
 import com.example.dyplomproject.ui.screen.AssistantChatScreen
 import com.example.dyplomproject.ui.screen.FriendRequestsScreen
@@ -63,11 +63,10 @@ import com.example.dyplomproject.ui.screen.FriendsScreen
 import com.example.dyplomproject.ui.screen.NotificationScreen
 import com.example.dyplomproject.ui.screen.ProfileScreen
 import com.example.dyplomproject.ui.screen.RegistrationScreen
+import com.example.dyplomproject.ui.screen.SettingsScreen
 import com.example.dyplomproject.ui.screen.StatisticsScreen
 import com.example.dyplomproject.ui.screen.TaskScreen
 import com.example.dyplomproject.ui.theme.AppColors
-import com.example.dyplomproject.ui.theme.additionalTypography
-import com.example.dyplomproject.ui.viewmodel.FriendsViewModel
 import com.example.dyplomproject.ui.viewmodel.LoginViewModel
 import com.example.dyplomproject.ui.viewmodel.NotificationViewModel
 import retrofit2.Retrofit
@@ -92,7 +91,7 @@ class MainActivity : ComponentActivity() {
 
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(dataStoreManager))
             .get(AuthViewModel::class.java)
-        //authViewModel.logout()
+            //authViewModel.logout()
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory(authRepository))
             .get(LoginViewModel::class.java)
         enableEdgeToEdge()
@@ -139,7 +138,6 @@ fun MainScaffold(
         notificationViewModel?.let {
             NaviriaTopAppBar(navController, it)
         }
-//            NaviriaTopAppBar(navController)
     }, bottomBar = {
         NaviriaBottomNavigationMenu(
             navController = navController, items = bottomNavItems
@@ -162,11 +160,9 @@ fun NaviriaBottomNavigationMenu(
     items: List<BottomNavItem>,
     modifier: Modifier = Modifier
 ) {
-    // Box to draw the gradient background behind the NavigationBar
     Box(
         modifier = modifier
             .fillMaxWidth()
-            //.height(64.dp) // Typical height for bottom nav
             .background(
                 Brush.linearGradient(
                     colors = listOf(AppColors.Orange, AppColors.Yellow)
@@ -184,14 +180,6 @@ fun NaviriaBottomNavigationMenu(
                     selected = currentRoute == item.route,
                     onClick = {
                         if (currentRoute != item.route) {
-//                            navController.navigate(item.route) {
-//                                // Optional: Avoid multiple copies of the same destination
-//                                launchSingleTop = true
-//                                restoreState = true
-//                                popUpTo(navController.graph.findStartDestination().id) {
-//                                    saveState = true
-//                                }
-//                            }
                             navController.popBackStack(navController.graph.findStartDestination().id, false)
                             navController.navigate(item.route) {
                                 launchSingleTop = true
@@ -206,20 +194,21 @@ fun NaviriaBottomNavigationMenu(
                             tint = AppColors.White
                         )
                     },
-                    label = {
-                        Text(
-                            text = item.label,
-                            maxLines = 1,
-                            color = AppColors.White,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
+//                    label = {
+//                        Text(
+//                            text = item.label,
+//                            maxLines = 1,
+//                            color = AppColors.White,
+//                            style = MaterialTheme.typography.labelSmall
+//                        )
+//                    }
                 )
             }
         }
     }
 }
 
+//where?
 @Composable
 fun NaviriaTopAppBar(
     navController: NavController,
@@ -269,13 +258,24 @@ fun NaviriaTopAppBar(
                         tint = Color.White
                     )
                 }
-                IconButton(onClick = { navController.navigate("profile") }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_avatar),
-                        contentDescription = "Profile",
-                        tint = Color.White
-                    )
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.avatar),
+                    contentDescription = "profile photo",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                            navController.navigate("profile")
+                        },
+                    contentScale = ContentScale.Crop
+                )
+//                IconButton(onClick = { navController.navigate("profile") }) {
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.ic_avatar),
+//                        contentDescription = "Profile",
+//                        tint = Color.White
+//                    )
+//                }
             }
         }
     }
@@ -322,13 +322,6 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
         viewModel(factory = NotificationViewModelFactory(repo, it))
     }
 
-//    // Create UserRepository instance
-//    val userRepository = UserRepository(RetrofitInstance.api)
-//
-//    // Create FriendsViewModel instance with userId, assuming userId is now non-null
-//    val friendsViewModel: FriendsViewModel = viewModel(
-//        factory = FriendsViewModelFactory(userRepository, userId!!)
-//    )
     NavHost(
         navController = navController,
         startDestination = if (isAuthenticated && userId != null) "main" else "login"
@@ -337,28 +330,15 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
         composable("register") { RegistrationScreen(navController, authViewModel) }
 
         navigation(startDestination = "friends", route = "main") {
-            // Main Tabs nested graph:
             composable("friends") {
                 MainScaffold(navController, notificationViewModel) { padding ->
                     RequireUserId(userId, padding) { id ->
                         FriendsScreen(navController, id, padding)
                     }
-//                    userId?.let {
-//                        FriendsScreen(navController, it, padding)
-//                        //} ?: Text("Loading user info...")
-//                    } ?: Box(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(padding),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        Text("Завантаження інформації...")
-//                    }
                 }
             }
             composable("statistics") {
                 MainScaffold(navController, notificationViewModel) { padding ->
-                    //StatisticsScreen(navController)
                     RequireUserId(userId, padding) { id ->
                         StatisticsScreen(navController, id, padding)
                     }
@@ -367,7 +347,6 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
 
             composable("tasks") {
                 MainScaffold(navController, notificationViewModel) { padding ->
-                    //userId?.let { it1 -> TaskScreen(navController, it1, padding = padding) }
                     RequireUserId(userId, padding) { id ->
                         TaskScreen(navController, id, padding)
                     }
@@ -379,16 +358,6 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
                     RequireUserId(userId, padding) { id ->
                         AssistantChatScreen(navController, id, padding)
                     }
-//                    userId?.let {
-//                        AssistantChatScreen(navController, it, padding)
-//                    } ?: Box(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(padding),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        Text("Завантаження інформації...")
-//                    }
                 }
             }
 
@@ -396,18 +365,8 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
                 composable("profile") {
                     MainScaffold(navController, notificationViewModel) { padding ->
                         RequireUserId(userId, padding) { id ->
-                            ProfileScreen(navController, id, padding)
+                            ProfileScreen(navController,authViewModel, id, padding)
                         }
-//                        userId?.let {
-//                            ProfileScreen(navController, it, padding)
-//                        } ?: Box(
-//                            modifier = Modifier
-//                                .fillMaxSize()
-//                                .padding(padding),
-//                            contentAlignment = Alignment.Center
-//                        ) {
-//                            Text("Завантаження інформації...")
-//                        }
                     }
                 }
                 composable("friend_requests") {
@@ -415,17 +374,6 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
                         RequireUserId(userId, padding) { id ->
                             FriendRequestsScreen(navController, id, padding)
                         }
-//                        userId?.let {
-//                            FriendRequestsScreen(navController, it, padding) //, friendsViewModel)
-//                            //} ?: Text("Loading user info...")
-//                        } ?:Box(
-//                            modifier = Modifier
-//                                .fillMaxSize()
-//                                .padding(padding),
-//                            contentAlignment = Alignment.Center
-//                        ) {
-//                            Text("Завантаження запитів у друзі ...")
-//                        }
                     }
                 }
                 composable("notifications") {
@@ -433,17 +381,6 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
                         RequireUserId(userId, padding) { id ->
                             NotificationScreen(navController, id, padding)
                         }
-//                        userId?.let {
-//                            NotificationScreen(it, padding)//(navController, it, padding) //, friendsViewModel)
-//                            //} ?: Text("Loading user info...")
-//                        } ?:Box(
-//                            modifier = Modifier
-//                                .fillMaxSize()
-//                                .padding(padding),
-//                            contentAlignment = Alignment.Center
-//                        ) {
-//                            Text("Завантаження запитів у друзі ...")
-//                        }
                     }
                 }
                 composable("achievements") {
@@ -451,24 +388,25 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
                         RequireUserId(userId, padding) { id ->
                             AchievementsScreen(navController, id, padding)
                         }
-//                        userId?.let {
-//                            AchievementsScreen(navController, it, padding)//(navController, it, padding) //, friendsViewModel)
-//                            //} ?: Text("Loading user info...")
-//                        } ?:Box(
-//                            modifier = Modifier
-//                                .fillMaxSize()
-//                                .padding(padding),
-//                            contentAlignment = Alignment.Center
-//                        ) {
-//                            Text("Завантаження запитів у друзі ...")
-//                        }
                     }
                 }
 
                 composable("settings") {
-
+                    MainScaffold(navController, notificationViewModel) { padding ->
+                        RequireUserId(userId, padding) { id ->
+                            SettingsScreen(navController, id, padding)
+                        }
+                    }
                 }
             }
         }
     }
+}
+sealed class Screen(val route: String) {
+    object Login : Screen("login")
+    object Register : Screen("register")
+    object Main : Screen("main")
+    object Profile : Screen("profile")
+    object Notifications : Screen("notifications")
+    // etc...
 }
