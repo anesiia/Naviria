@@ -1,9 +1,18 @@
 package com.example.dyplomproject.ui.features.statistics
 
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.dyplomproject.data.remote.dto.CompletedTasksLineChartElementDto
+import com.example.dyplomproject.ui.theme.AppColors
+import com.example.dyplomproject.ui.theme.additionalTypography
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -23,21 +32,34 @@ fun completedTasksToLineEntries(data: List<CompletedTasksLineChartElementDto>): 
 
 @Composable
 fun LineChartView(data: List<Entry>, xLabels: List<String>) {
-    AndroidView(
-        factory = { context ->
-            LineChart(context).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    600
-                )
-
-                setChartProperties(this, data, xLabels)
-            }
-        },
-        update = { chart ->
-            setChartProperties(chart, data, xLabels)
+    if (data.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize().padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "На разі cтатистика відсутня! \nПочни діяти та сторювати завдання!",
+                style = additionalTypography.regularText.copy(color = AppColors.Orange)
+            )
         }
-    )
+    } else {
+        AndroidView(
+            factory = { context ->
+                LineChart(context).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        600
+                    )
+
+                    setChartProperties(this, data, xLabels)
+                }
+            },
+            update = { chart ->
+                setChartProperties(chart, data, xLabels)
+            }
+        )
+    }
 }
 
 

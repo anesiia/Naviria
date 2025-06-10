@@ -29,7 +29,7 @@ class ProfileViewModel(
 
     init {
         loadProfile()
-        //loadAchievements()
+        loadAchievements()
     }
 
     private fun loadProfile() {

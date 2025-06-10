@@ -34,7 +34,8 @@ data class UserShortUiModel(
     val nickname: String,
     val isOnline: Boolean,
     val isProUser: Boolean,
-    val isRequestSent: Boolean
+    val isRequestSent: Boolean,
+    val photo: String
 )
 
 class FriendsViewModel(

@@ -104,6 +104,7 @@ fun StatisticsScreen(
                     style = additionalTypography.regularText,
                     textAlign = TextAlign.Justify,
                     modifier = Modifier.padding(16.dp))
+
                 PieChartView(
                     data = categoryToPieEntries(
                         when (uiState.selectedTab) {

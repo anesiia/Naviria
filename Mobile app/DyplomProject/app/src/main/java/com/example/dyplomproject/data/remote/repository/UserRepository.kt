@@ -201,13 +201,15 @@ class UserRepository(private val apiService: ApiService) {
         return try {
             val userResponse = apiService.getUserInfo(userId)
             val achievementsResponse = apiService.getUserAchievements(userId)
-
+            Log.e("ACHIEVEMENTS user", userResponse.toString())
+            Log.e("ACHIEVEMENTS ACHIEVEMENTS", achievementsResponse.toString())
             if (userResponse.isSuccessful && achievementsResponse.isSuccessful) {
                 val user = userResponse.body()
                 val achievementMetaList = achievementsResponse.body()
-
+                Log.e("ACHIEVEMENTS", user.toString())
+                Log.e("ACHIEVEMENTS", achievementMetaList.toString())
                 if (user != null && achievementMetaList != null) {
-                    val userAchievementsMap = user.achievementDtos.associateBy { it.achievementId }
+                    val userAchievementsMap = user.achievements.associateBy { it.achievementId }
                     val completeAchievements = achievementMetaList.map { meta ->
                         val userAchievement = userAchievementsMap[meta.id]
                         UserAchievement(
@@ -220,17 +222,20 @@ class UserRepository(private val apiService: ApiService) {
                             isPointsReceived = userAchievement?.isPointsReceived
                         )
                     }
-
+                    Log.e("ACHIEVEMENTS AAAA", completeAchievements.toString())
                     Result.success(completeAchievements)
                 } else {
+
                     Result.failure(Exception("Response body is null"))
                 }
             } else {
+                Log.e("ACHIEVEMENTS", achievementsResponse.code().toString())
                 Result.failure(
                     Exception("API call failed: ${userResponse.code()} / ${achievementsResponse.code()}")
                 )
             }
         } catch (e: Exception) {
+            Log.e("ACHIEVEMENTS", e.toString())
             Result.failure(e)
         }
     }

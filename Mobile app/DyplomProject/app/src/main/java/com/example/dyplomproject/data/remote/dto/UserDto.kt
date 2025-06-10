@@ -12,7 +12,7 @@ data class UserDto(
     val points: Int,
     val levelInfo: LevelInfo,
     val friends: List<FriendShortDto> = emptyList(),
-    val achievementDtos: List<AchievementDto> = emptyList(),
+    val achievements: List<AchievementDto> = emptyList(),
     val futureMessage: String,
     val photo: String,
     val regitseredAt: String,

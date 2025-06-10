@@ -179,13 +179,20 @@ interface ApiService {
 
     @GET("/api/Leaderboard/top")
     suspend fun getLeaderboard(): Response<List<TopUserDto>>
-
+/*
     @Multipart
     @POST("api/User/{userId}/upload-profile-photo")
     suspend fun uploadProfilePhoto(
         @Path("userId") userId: String,
         @Part file: MultipartBody.Part
     ): Response<String>
+*/
+    @Multipart
+    @POST("api/User/{userId}/upload-profile-photo")
+    suspend fun uploadProfilePhoto(
+        @Path("userId") userId: String,
+        @Part photo: MultipartBody.Part
+    ): Response<Unit>
 }
 
 data class UserNotification(

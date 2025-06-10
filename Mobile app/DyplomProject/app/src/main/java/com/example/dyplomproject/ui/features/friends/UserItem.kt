@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.dyplomproject.ui.components.ButtonStyle
 import com.example.dyplomproject.ui.components.SecondaryButton
 import com.example.dyplomproject.ui.theme.AppColors
@@ -38,15 +39,20 @@ fun UserItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                //.background(if (user.isOnline) Color.Green else Color.Gray) -
-                // CURRENTLY THE SERVER DON'T HANDLE THIS STATE(STATE OF USERS THAT ARE ONLINE)
-                // So basically All users online
-                .background(Color(0xFF005580))
+        AsyncImage(
+            model = user.photo,
+            contentDescription = null,
+            modifier = Modifier.size(40.dp).clip(CircleShape)
         )
+//        Box(
+//            modifier = Modifier
+//                .size(40.dp)
+//                .clip(CircleShape)
+//                //.background(if (user.isOnline) Color.Green else Color.Gray) -
+//                // CURRENTLY THE SERVER DON'T HANDLE THIS STATE(STATE OF USERS THAT ARE ONLINE)
+//                // So basically All users online
+//                .background(Color(0xFF005580))
+//        )
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -98,7 +104,8 @@ fun PreviewUserItem() {
                 fullName = "John Doe",
                 isOnline = true,
                 isProUser = false,
-                isRequestSent = false
+                isRequestSent = false,
+                photo = ""
             ),
             onAddFriendClick = {},
             false

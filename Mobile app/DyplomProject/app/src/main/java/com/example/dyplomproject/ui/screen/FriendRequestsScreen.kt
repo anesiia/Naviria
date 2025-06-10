@@ -212,7 +212,8 @@ fun RequestItemPreview() {
             fullName = "John Doe",
             isOnline = true,
             isProUser = false,
-            isRequestSent = false
+            isRequestSent = false,
+            photo = ""
         )
     )
     Column {

@@ -5,7 +5,16 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.*
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.dyplomproject.data.remote.dto.CategoryPieCharSliceDto
+import com.example.dyplomproject.ui.theme.AppColors
+import com.example.dyplomproject.ui.theme.additionalTypography
 import com.github.mikephil.charting.components.Legend
 
 fun categoryToPieEntries(data: List<CategoryPieCharSliceDto>): List<PieEntry> {
@@ -14,20 +23,34 @@ fun categoryToPieEntries(data: List<CategoryPieCharSliceDto>): List<PieEntry> {
 
 @Composable
 fun PieChartView(data: List<PieEntry>) {
-    AndroidView(
-        factory = { context ->
-            PieChart(context).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    600
-                )
-                setPieChartProperties(this, data)
-            }
-        },
-        update = { chart ->
-            setPieChartProperties(chart, data)
+    if (data.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize().padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "На разі cтатистика відсутня! \nПочни діяти та сторювати завдання!",
+                style = additionalTypography.regularText.copy(color = AppColors.Orange)
+            )
         }
-    )
+    } else {
+        AndroidView(
+            factory = { context ->
+                PieChart(context).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        600
+                    )
+                    setPieChartProperties(this, data)
+                }
+            },
+            update = { chart ->
+                setPieChartProperties(chart, data)
+            }
+        )
+    }
+
 }
 
 private fun setPieChartProperties(chart: PieChart, data: List<PieEntry>) {

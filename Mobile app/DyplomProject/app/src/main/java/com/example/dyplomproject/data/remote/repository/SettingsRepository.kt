@@ -9,9 +9,11 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.InputStream
 
 class SettingsRepository(private val api: ApiService) {
+    /*
     suspend fun uploadProfilePhoto(
         userId: String,
         imageUri: Uri,
@@ -45,8 +47,21 @@ class SettingsRepository(private val api: ApiService) {
                 Result.failure(e)
             }
         }
-    }
+    }*/
+    suspend fun uploadProfilePhoto(userId: String, imageUri: Uri, context: Context): Boolean {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(imageUri) ?: return false
+            val bytes = inputStream.readBytes()
+            val requestBody = bytes.toRequestBody("image/*".toMediaTypeOrNull())
+            val photoPart = MultipartBody.Part.createFormData("file", "profile.jpg", requestBody)
 
+            val response = api.uploadProfilePhoto(userId, photoPart)
+            response.isSuccessful
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
     suspend fun modifyUser(id: String, modifiedUserDto: UserDto): Result<Unit> {
         return try {
             val response = api.modifyUser(id, modifiedUserDto)

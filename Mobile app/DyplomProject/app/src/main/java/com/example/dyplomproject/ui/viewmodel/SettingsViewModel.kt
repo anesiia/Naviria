@@ -38,22 +38,22 @@ class SettingsViewModel(
         uploadPhoto(uri)
     }
 
-//    private fun uploadPhoto(uri: Uri) {
-//        viewModelScope.launch {
-//            _uiState.value = _uiState.value.copy(isUploading = true)
-//
-//            val success = repository.uploadProfilePhoto(
-//                userId = userId, // or pass as param
-//                imageUri = uri,
-//                context = context
-//            )
-//
-//            _uiState.value = _uiState.value.copy(
-//                isUploading = false,
-//                uploadSuccess = success
-//            )
-//        }
+    private fun uploadPhoto(uri: Uri) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isUploading = true)
 
+            val success = repository.uploadProfilePhoto(
+                userId = userId, // or pass as param
+                imageUri = uri,
+                context = context
+            )
+
+            _uiState.value = _uiState.value.copy(
+                isUploading = false,
+                uploadSuccess = success
+            )
+        }
+        /*
     private fun uploadPhoto(uri: Uri) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
@@ -85,5 +85,6 @@ class SettingsViewModel(
                 }
             }
         }
+    }*/
     }
 }

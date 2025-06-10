@@ -16,7 +16,8 @@ fun FriendShortDto.toUiModel(): UserShortUiModel = UserShortUiModel(
     nickname = this.nickname,
     isOnline = false,
     isProUser = false,
-    isRequestSent = false
+    isRequestSent = false,
+    photo = ""
 )
 
 fun UserDto.toUiModel(): UserShortUiModel = UserShortUiModel(
@@ -25,7 +26,8 @@ fun UserDto.toUiModel(): UserShortUiModel = UserShortUiModel(
     nickname = this.nickname,
     isOnline = this.isOnline,
     isProUser = this.isProUser,
-    isRequestSent = false
+    isRequestSent = false,
+    photo = photo
 )
 
 fun IncomingFriendRequestDto.toUiModel(): IncomingRequestUiModel {

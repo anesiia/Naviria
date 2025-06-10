@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -20,8 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.example.dyplomproject.R
 import com.example.dyplomproject.ui.components.ButtonStyle
 import com.example.dyplomproject.ui.components.SecondaryButton
 import com.example.dyplomproject.ui.theme.AppColors
@@ -81,7 +86,8 @@ fun PreviewFriendItem() {
             fullName = "John Doe",
             isOnline = true,
             isProUser = false,
-            isRequestSent = false
+            isRequestSent = false,
+            photo = ""
         ),
         onRemoveClick = {},
         onSendSupportRequest = {}
