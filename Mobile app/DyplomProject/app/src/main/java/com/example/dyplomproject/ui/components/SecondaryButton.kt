@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextOverflow
+import com.example.dyplomproject.ui.theme.AppColors
+import com.example.dyplomproject.ui.theme.additionalTypography
 
 @Composable
 fun SecondaryButton(
@@ -77,12 +79,12 @@ fun SecondaryButton(
         Text(
             text = text,
             color = contentColor,
-            style = MaterialTheme.typography.labelSmall,
+            style = additionalTypography.regularText,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(12.dp)
+                .padding(8.dp)
         )
     }
 }
@@ -125,13 +127,13 @@ sealed class ButtonStyle(
     object Primary : ButtonStyle(
         gradient = Brush.linearGradient(listOf(Color(0xFF023047), Color(0xFF219DBB))),
         contentColor = Color.White,
-        cornerRadius = 10.dp
+        cornerRadius = 8.dp
     )
 
     object Secondary : ButtonStyle(
-        gradient = Brush.linearGradient(listOf(Color(0xFFFFA500), Color(0xFFFF4500))),
+        gradient = Brush.linearGradient(listOf(AppColors.Orange, AppColors.Yellow)),
         contentColor = Color.White,
-        cornerRadius = 12.dp
+        cornerRadius = 8.dp
     )
 
     object Tertiary : ButtonStyle(
@@ -180,6 +182,4 @@ fun SecondaryButtonPreview() {
         SecondaryButton(text = "Outline Blue", onClick = {}, style = ButtonStyle.Outline(Color(0xFF0072FF)))
         SecondaryButton(text = "Outline Red", onClick = {}, style = ButtonStyle.Outline(Color(0xFFFF0000)))
     }
-
-
 }

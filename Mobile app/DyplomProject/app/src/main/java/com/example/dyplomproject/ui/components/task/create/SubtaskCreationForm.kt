@@ -30,7 +30,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dyplomproject.data.remote.repository.TaskRepository
-import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.utils.RetrofitInstance
 import com.example.dyplomproject.ui.components.ButtonStyle
 import com.example.dyplomproject.ui.components.RadioButton
 import com.example.dyplomproject.ui.components.SecondaryButton
@@ -52,8 +52,8 @@ data class SubtaskFormState(
     val repeatDays: List<Int> = emptyList(),
     // Scale
     val unit: String = "",
-    val currentValue: Float = 0f,
-    val targetValue: Float = 0f,
+    val currentValue: Double = 0.0,
+    val targetValue: Double = 0.0,
     // Validation
     val titleError: String? = null,
     val targetValueError: String? = null,
@@ -164,9 +164,9 @@ fun SubtaskCreationForm(
                 value = targetValueInput,
                 onValueChange = { input ->
                     targetValueInput = input
-                    val intValue = input.toIntOrNull()
-                    if (intValue != null) {
-                        viewModel.updateTaskCreation { copy(targetValue = intValue) }
+                    val doubleValue = input.toDoubleOrNull()
+                    if (doubleValue != null) {
+                        viewModel.updateSubtaskForm(subtaskId) { copy(targetValue = doubleValue)}
                     }
 //                    val floatValue = input.toFloatOrNull()
 //                    if (floatValue != null) {

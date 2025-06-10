@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
@@ -29,77 +33,55 @@ import androidx.navigation.navigation
 import com.example.dyplomproject.ui.screen.LoginScreen
 import com.example.dyplomproject.ui.theme.DyplomProjectTheme
 import com.example.dyplomproject.ui.viewmodel.AuthViewModel
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Text
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.dyplomproject.data.remote.ApiService
 import com.example.dyplomproject.data.remote.repository.AuthRepository
-import com.example.dyplomproject.data.remote.repository.UserRepository
-import com.example.dyplomproject.data.utils.DataStoreManager
+import com.example.dyplomproject.data.remote.repository.NotificationRepository
+import com.example.dyplomproject.utils.DataStoreManager
+import com.example.dyplomproject.utils.RetrofitInstance
+import com.example.dyplomproject.ui.screen.AchievementsScreen
+import com.example.dyplomproject.ui.screen.AssistantChatScreen
 import com.example.dyplomproject.ui.screen.FriendRequestsScreen
 import com.example.dyplomproject.ui.screen.FriendsScreen
+import com.example.dyplomproject.ui.screen.NotificationScreen
 import com.example.dyplomproject.ui.screen.ProfileScreen
 import com.example.dyplomproject.ui.screen.RegistrationScreen
+import com.example.dyplomproject.ui.screen.SettingsScreen
 import com.example.dyplomproject.ui.screen.StatisticsScreen
 import com.example.dyplomproject.ui.screen.TaskScreen
-import com.example.dyplomproject.ui.viewmodel.FriendsViewModel
+import com.example.dyplomproject.ui.theme.AppColors
 import com.example.dyplomproject.ui.viewmodel.LoginViewModel
-import okhttp3.OkHttpClient
+import com.example.dyplomproject.ui.viewmodel.NotificationViewModel
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
-//testing git
 class MainActivity : ComponentActivity() {
     private lateinit var authViewModel: AuthViewModel
     private lateinit var loginViewModel: LoginViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val trustAllCerts = arrayOf<TrustManager>(
-            object : X509TrustManager {
-                override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-                override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
-                override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-            }
-        )
-
-        val sslContext = SSLContext.getInstance("SSL")
-        sslContext.init(null, trustAllCerts, SecureRandom())
-
-        val okHttpClient = OkHttpClient.Builder()
-            .sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
-            .hostnameVerifier { _, _ -> true } // Don't use in production!
-            .build()
-
-//        val retrofit = Retrofit.Builder()
-//            ////.baseUrl("https://192.168.1.7:7172/")
-//            //.baseUrl("https://10.0.2.2:7172/") //Lisa's URL
-//            .baseUrl("https://192.168.1.6:7172/")
-//            .client(okHttpClient)
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
-//        val apiService = retrofit.create(ApiService::class.java)
-
-
         val apiService = Retrofit.Builder()
             //.baseUrl("http://10.0.2.2:5186/") //Mariam's URL emulator
             //.baseUrl("http://192.168.56.1:5186/")//Mariam's URL Physical device
-            .baseUrl("http://192.168.1.9:5186/") //Lisa's URL
-            //.baseUrl("http://10.0.2.2:5186/") //Lisa's URL
+            //.baseUrl("http://192.168.1.9:5186/") //Lisa's URL
+            .baseUrl("http://10.0.2.2:5186/") //Lisa's URL
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
@@ -107,11 +89,9 @@ class MainActivity : ComponentActivity() {
         val authRepository = AuthRepository(apiService)
         val dataStoreManager = DataStoreManager(applicationContext)
 
-
-        // Create ViewModel using ViewModelFactory
         authViewModel = ViewModelProvider(this, AuthViewModelFactory(dataStoreManager))
             .get(AuthViewModel::class.java)
-        //authViewModel.logout()
+            //authViewModel.logout()
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory(authRepository))
             .get(LoginViewModel::class.java)
         enableEdgeToEdge()
@@ -141,88 +121,114 @@ class LoginViewModelFactory(private val authRepository: AuthRepository) : ViewMo
     }
 }
 
-class FriendsViewModelFactory(
-    private val repository: UserRepository,
-    private val userId: String
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(FriendsViewModel::class.java)) {
-            return FriendsViewModel(repository, userId) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
 @Composable
 fun MainScaffold(
     navController: NavHostController,
+    notificationViewModel: NotificationViewModel? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
-    Scaffold(
-        topBar = { NaviriaTopAppBar(navController) },
-        bottomBar = {
-            BottomNavigation (
-                backgroundColor = Color(0xFFFF8F01),
-                contentColor = Color.White
-            ){
-                BottomNavigationItem(
-                    selected = navController.currentDestination?.route == "statistics",
-                    onClick = { navController.navigate("statistics") },
-//                    icon = { Icon(Icons.Default.StackedLineChart, contentDescription = null) },
-                    {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_statatistics),
-                            contentDescription = "statistics"
-                        )
-                    },
-                    label = { /*Text("statistics")*/ }
+    val bottomNavItems = listOf(
+        BottomNavItem("statistics", "Статистика", R.drawable.ic_statatistics),
+        BottomNavItem("tasks", "Задачі", R.drawable.ic_tasks),
+        BottomNavItem("friends", "Друзі", R.drawable.ic_friends),
+        BottomNavItem("assistant_chat", "Помічник", R.drawable.ic_chat_assistant)
+    )
+
+    Scaffold(topBar = {
+        notificationViewModel?.let {
+            NaviriaTopAppBar(navController, it)
+        }
+    }, bottomBar = {
+        NaviriaBottomNavigationMenu(
+            navController = navController, items = bottomNavItems
+        )
+    }) { innerPadding ->
+        content(innerPadding)
+    }
+}
+
+// Data model for navigation items
+data class BottomNavItem(
+    val route: String,
+    val label: String,
+    val iconResId: Int
+)
+
+@Composable
+fun NaviriaBottomNavigationMenu(
+    navController: NavHostController,
+    items: List<BottomNavItem>,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(AppColors.Orange, AppColors.Yellow)
                 )
-                BottomNavigationItem(
-                    selected = navController.currentDestination?.route == "tasks",
-                    onClick = { navController.navigate("tasks") },
-//                    icon = { Icon(Icons.Default.Task, contentDescription = null) },
-                    {
+            )
+    ) {
+        NavigationBar(
+            containerColor = Color.Transparent, //Make NavigationBar background transparent so gradient shows through
+            contentColor = AppColors.White,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            val currentRoute = navController.currentDestination?.route
+            items.forEach { item ->
+                NavigationBarItem(
+                    selected = currentRoute == item.route,
+                    onClick = {
+                        if (currentRoute != item.route) {
+                            navController.popBackStack(navController.graph.findStartDestination().id, false)
+                            navController.navigate(item.route) {
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    },
+                    icon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_tasks),
-                            contentDescription = "Friends"
+                            painter = painterResource(id = item.iconResId),
+                            contentDescription = item.label,
+                            tint = AppColors.White
                         )
                     },
-                    label = { /*Text("tasks")*/ }
-                )
-                BottomNavigationItem(
-                    selected = navController.currentDestination?.route == "friends",
-                    onClick = { navController.navigate("friends") },
-                    {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_friends),
-                            contentDescription = "Friends"
-                        )
-                    },
-                    label = { /*Text("friends")*/ }
+//                    label = {
+//                        Text(
+//                            text = item.label,
+//                            maxLines = 1,
+//                            color = AppColors.White,
+//                            style = MaterialTheme.typography.labelSmall
+//                        )
+//                    }
                 )
             }
         }
-    ) { innerPadding ->
-        content(innerPadding)
     }
-
 }
 
+//where?
 @Composable
-fun NaviriaTopAppBar(navController: NavController) {
+fun NaviriaTopAppBar(
+    navController: NavController,
+    notificationViewModel: NotificationViewModel
+) {
+    val hasUnread by notificationViewModel.hasUnread
+    LaunchedEffect(Unit) {
+        notificationViewModel.loadNotifications()
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(90.dp)
-            .statusBarsPadding() // Prevent overlap with system bar
+            .statusBarsPadding()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(AppColors.Yellow, AppColors.Orange)
+                )
+            )
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.topbar_nav_bg),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize()
-        )
-
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -233,25 +239,74 @@ fun NaviriaTopAppBar(navController: NavController) {
             Text(
                 text = "naviria",
                 style = MaterialTheme.typography.titleLarge,
-                color = Color.White // Title text in white
+                color = Color.White
             )
-
             Row {
+                IconButton(onClick = { navController.navigate("settings") }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_settings),
+                        contentDescription = "Settings",
+                        tint = Color.White,
+                    )
+                }
                 IconButton(onClick = { navController.navigate("notifications") }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_bell_active),
+                        painter = painterResource(
+                            id = if (hasUnread) R.drawable.ic_bell_active else R.drawable.ic_bell_inactive
+                        ),
                         contentDescription = "Notifications",
-                        tint = Color.White // Icon in white
+                        tint = Color.White
                     )
                 }
-                IconButton(onClick = { navController.navigate("profile") }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_avatar),
-                        contentDescription = "Profile",
-                        tint = Color.White // Icon in white
-                    )
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.avatar),
+                    contentDescription = "profile photo",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                            navController.navigate("profile")
+                        },
+                    contentScale = ContentScale.Crop
+                )
+//                IconButton(onClick = { navController.navigate("profile") }) {
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.ic_avatar),
+//                        contentDescription = "Profile",
+//                        tint = Color.White
+//                    )
+//                }
             }
+        }
+    }
+}
+
+class NotificationViewModelFactory(
+    private val repository: NotificationRepository,
+    private val userId: String
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return NotificationViewModel(repository, userId) as T
+    }
+}
+
+@Composable
+fun RequireUserId(
+    userId: String?,
+    padding: PaddingValues = PaddingValues(0.dp),
+    loadingText: String = "Завантаження...",
+    content: @Composable (String) -> Unit
+) {
+    if (userId != null) {
+        content(userId)
+    } else {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(loadingText)
         }
     }
 }
@@ -262,226 +317,96 @@ fun MyApp(authViewModel: AuthViewModel, loginViewModel: LoginViewModel) {
 
     val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
     val userId by authViewModel.userId.collectAsState()
+    val notificationViewModel: NotificationViewModel? = userId?.let {
+        val repo = NotificationRepository(RetrofitInstance.api)
+        viewModel(factory = NotificationViewModelFactory(repo, it))
+    }
 
-//    // Create UserRepository instance
-//    val userRepository = UserRepository(RetrofitInstance.api)
-//
-//    // Create FriendsViewModel instance with userId, assuming userId is now non-null
-//    val friendsViewModel: FriendsViewModel = viewModel(
-//        factory = FriendsViewModelFactory(userRepository, userId!!)
-//    )
     NavHost(
         navController = navController,
         startDestination = if (isAuthenticated && userId != null) "main" else "login"
     ) {
-        // Auth graph
-        composable("login") {
-            LoginScreen(navController, loginViewModel, authViewModel)
-        }
+        composable("login") { LoginScreen(navController, loginViewModel, authViewModel) }
+        composable("register") { RegistrationScreen(navController, authViewModel) }
 
-        composable("register") {
-            RegistrationScreen(navController, authViewModel)
-        }
-        // Main graph
         navigation(startDestination = "friends", route = "main") {
-//            composable("friends") {
-//                MainScaffold(navController) {
-//                    FriendsScreen(navController, userId!!)
-//                }
-//            }
             composable("friends") {
-//                MainScaffold(navController) {
-//                    userId?.let {
-//                        FriendsScreen(navController, it)
-//                    } ?: run {
-//                        // Show a loading screen or navigate back to login if this is unexpected
-//                        Text("Loading user info...")
-//                    }
-//                }
-                MainScaffold(navController) { padding ->
-                    userId?.let {
-                        FriendsScreen(navController, it, padding)
-                        //} ?: Text("Loading user info...")
-                    } ?: Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Завантаження інформації...")
+                MainScaffold(navController, notificationViewModel) { padding ->
+                    RequireUserId(userId, padding) { id ->
+                        FriendsScreen(navController, id, padding)
                     }
                 }
             }
             composable("statistics") {
-                MainScaffold(navController) {
-                    StatisticsScreen(navController)
-                }
-            }
-            composable("tasks") {
-                MainScaffold(navController) { padding ->
-                    userId?.let { it1 -> TaskScreen(navController, it1, padding = padding) }
-                }
-            }
-            composable("friend_requests") {
-                MainScaffold(navController) { padding ->
-                    userId?.let {
-                        FriendRequestsScreen(navController, it, padding) //, friendsViewModel)
-                        //} ?: Text("Loading user info...")
-                    } ?:Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Завантаження запитів у друзі ...")
+                MainScaffold(navController, notificationViewModel) { padding ->
+                    RequireUserId(userId, padding) { id ->
+                        StatisticsScreen(navController, id, padding)
                     }
                 }
             }
-            composable("profile") {
-                MainScaffold(navController) { padding ->
-                    userId?.let {
-                        ProfileScreen(navController, it, padding)
-                    } ?: Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("Завантаження інформації...")
+
+            composable("tasks") {
+                MainScaffold(navController, notificationViewModel) { padding ->
+                    RequireUserId(userId, padding) { id ->
+                        TaskScreen(navController, id, padding)
+                    }
+                }
+            }
+
+            composable("assistant_chat") {
+                MainScaffold(navController, notificationViewModel) { padding ->
+                    RequireUserId(userId, padding) { id ->
+                        AssistantChatScreen(navController, id, padding)
+                    }
+                }
+            }
+
+            navigation(route = "secondary", startDestination = "profile") {
+                composable("profile") {
+                    MainScaffold(navController, notificationViewModel) { padding ->
+                        RequireUserId(userId, padding) { id ->
+                            ProfileScreen(navController,authViewModel, id, padding)
+                        }
+                    }
+                }
+                composable("friend_requests") {
+                    MainScaffold(navController, notificationViewModel) { padding ->
+                        RequireUserId(userId, padding) { id ->
+                            FriendRequestsScreen(navController, id, padding)
+                        }
+                    }
+                }
+                composable("notifications") {
+                    MainScaffold(navController, notificationViewModel) { padding ->
+                        RequireUserId(userId, padding) { id ->
+                            NotificationScreen(navController, id, padding)
+                        }
+                    }
+                }
+                composable("achievements") {
+                    MainScaffold(navController, notificationViewModel) { padding ->
+                        RequireUserId(userId, padding) { id ->
+                            AchievementsScreen(navController, id, padding)
+                        }
+                    }
+                }
+
+                composable("settings") {
+                    MainScaffold(navController, notificationViewModel) { padding ->
+                        RequireUserId(userId, padding) { id ->
+                            SettingsScreen(navController, id, padding)
+                        }
                     }
                 }
             }
         }
     }
 }
-
-object Routes {
-    const val SPLASH = "splash_screen"
-    const val LOGIN = "login_screen"
-    const val HOME = "home_screen"
-    const val REGISTER = "register_screen"
-    const val PROFILE_SCREEN = "profile_screen"
-    const val SETTINGS_SCREEN = "settings_screen"
-    const val DETAIL_SCREEN = "detail_screen"
+sealed class Screen(val route: String) {
+    object Login : Screen("login")
+    object Register : Screen("register")
+    object Main : Screen("main")
+    object Profile : Screen("profile")
+    object Notifications : Screen("notifications")
+    // etc...
 }
-//
-//@Composable
-//fun MyApp() {
-//    val navController = rememberNavController()
-//    val authViewModel: AuthViewModel = hiltViewModel()
-//    val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
-//
-//    LaunchedEffect(Unit) {
-//        authViewModel.checkAuthentication()
-//    }
-//
-//    when (isAuthenticated) {
-//        null -> LoadingScreen()
-//        true -> MainApp(navController)
-//        false -> AuthNavHost(navController)
-//    }
-//}
-//
-////@HiltViewModel
-////class AuthViewModel @Inject constructor(
-////    private val tokenManager: TokenManager
-////) : ViewModel() {
-////
-////    private val _isAuthenticated = MutableStateFlow<Boolean?>(null)
-////    val isAuthenticated: StateFlow<Boolean?> = _isAuthenticated
-////
-////    fun checkAuthentication() {
-////        viewModelScope.launch {
-////            _isAuthenticated.value = !tokenManager.getToken().isNullOrBlank()
-////        }
-////    }
-////
-////    fun login(token: String) {
-////        viewModelScope.launch {
-////            tokenManager.saveToken(token)
-////            _isAuthenticated.value = true
-////        }
-////    }
-////}
-//class AuthViewModel(application: Application) : AndroidViewModel(application) {
-//
-//    private val userPrefs = UserPreferences(application.applicationContext)
-//
-//    private val _isLoggedIn = MutableStateFlow(false)
-//    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
-//
-//    init {
-//        viewModelScope.launch {
-//            val token = userPrefs.token.first()
-//            _isLoggedIn.value = !token.isNullOrEmpty()
-//        }
-//    }
-//
-//    fun login(token: String) {
-//        viewModelScope.launch {
-//            userPrefs.saveToken(token)
-//            _isLoggedIn.value = true
-//        }
-//    }
-//
-//    fun logout() {
-//        viewModelScope.launch {
-//            userPrefs.clearToken()
-//            _isLoggedIn.value = false
-//        }
-//    }
-//}
-//
-//@Singleton
-//class TokenManager @Inject constructor(@ApplicationContext context: Context) {
-//
-//    private val Context.dataStore by preferencesDataStore("user_prefs")
-//    private val dataStore = context.dataStore
-//
-//    companion object {
-//        val TOKEN_KEY = stringPreferencesKey("auth_token")
-//    }
-//
-//    suspend fun saveToken(token: String) {
-//        dataStore.edit { it[TOKEN_KEY] = token }
-//    }
-//
-//    suspend fun getToken(): String? {
-//        return dataStore.data.map { it[TOKEN_KEY] }.firstOrNull()
-//    }
-//
-//    suspend fun clearToken() {
-//        dataStore.edit { it.remove(TOKEN_KEY) }
-//    }
-//}
-//
-//@Composable
-//fun BottomBar(navController: NavController) {
-//    val items = listOf(
-//        BottomNavItem("Home", "home", Icons.Default.Home),
-//        BottomNavItem("Profile", "profile", Icons.Default.Person),
-//        BottomNavItem("Settings", "settings", Icons.Default.Settings)
-//    )
-//
-//    BottomNavigation {
-//        val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
-//
-//        items.forEach { item ->
-//            BottomNavigationItem(
-//                icon = { Icon(item.icon, contentDescription = item.label) },
-//                label = { Text(item.label) },
-//                selected = currentDestination == item.route,
-//                onClick = {
-//                    if (currentDestination != item.route) {
-//                        navController.navigate(item.route) {
-//                            popUpTo("home") { inclusive = false }
-//                            launchSingleTop = true
-//                        }
-//                    }
-//                }
-//            )
-//        }
-//    }
-//}
-//
-//data class BottomNavItem(val label: String, val route: String, val icon: ImageVector)

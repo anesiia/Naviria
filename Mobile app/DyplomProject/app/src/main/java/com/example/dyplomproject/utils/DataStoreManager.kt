@@ -1,4 +1,4 @@
-package com.example.dyplomproject.data.utils
+package com.example.dyplomproject.utils
 
 import android.content.Context
 import android.util.Base64

@@ -1,5 +1,6 @@
 package com.example.dyplomproject.ui.components.task.display
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,14 +42,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dyplomproject.R
+import com.example.dyplomproject.data.remote.dto.SubtaskStandardDto
 import com.example.dyplomproject.data.remote.Tag
-import com.example.dyplomproject.data.remote.TaskDto
-import com.example.dyplomproject.data.remote.TaskRepeatableDto
-import com.example.dyplomproject.data.remote.TaskScaleDto
-import com.example.dyplomproject.data.remote.TaskStandardDto
-import com.example.dyplomproject.data.remote.TaskWithSubtasksDto
+import com.example.dyplomproject.data.remote.dto.TaskDto
+import com.example.dyplomproject.data.remote.dto.TaskRepeatableDto
+import com.example.dyplomproject.data.remote.dto.TaskScaleDto
+import com.example.dyplomproject.data.remote.dto.TaskStandardDto
+import com.example.dyplomproject.data.remote.dto.TaskWithSubtasksDto
 import com.example.dyplomproject.data.remote.repository.TaskRepository
-import com.example.dyplomproject.data.utils.RetrofitInstance
+import com.example.dyplomproject.utils.RetrofitInstance
 import com.example.dyplomproject.ui.components.GradientProgressBar
 import com.example.dyplomproject.ui.components.task.ValueInput
 import com.example.dyplomproject.ui.components.task.WeekdayCheckInView
@@ -56,14 +58,12 @@ import com.example.dyplomproject.ui.components.task.update.TaskModificationForm
 import com.example.dyplomproject.ui.theme.AppColors
 import com.example.dyplomproject.ui.theme.additionalTypography
 import com.example.dyplomproject.ui.viewmodel.TasksViewModel
-import kotlinx.coroutines.delay
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-
 @Composable
 fun TaskDisplay(task: TaskDto, viewModel: TasksViewModel) {
-    var taskInfoVisible by remember { mutableStateOf(true) }//var subtasksVisible by remember { mutableStateOf(false) }
+    var taskInfoVisible by remember { mutableStateOf(false) }//var subtasksVisible by remember { mutableStateOf(false) }
     var isChecked by remember { mutableStateOf(false) }
     var isEnabled by remember { mutableStateOf(true) }
     var isEditing by remember { mutableStateOf(false) } // NEW: edit mode flag
@@ -72,31 +72,45 @@ fun TaskDisplay(task: TaskDto, viewModel: TasksViewModel) {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     if(isEditing) {
-        // Show the edit form
         TaskModificationForm(
             task = task,
             onSave = { updatedTask ->
-                viewModel.updateTask(updatedTask) // call your update method
-                isEditing = false // exit edit mode
+                viewModel.updateTask(updatedTask)
+                isEditing = false
             },
             onCancel = {
-                isEditing = false // cancel edit mode without saving
+                isEditing = false
             },
             viewModel
         )
     } else {
+        //before modifaction
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(8.dp)
+//                .background(AppColors.Gray, RoundedCornerShape(8.dp))
+//                .border(0.dp, AppColors.Orange, RoundedCornerShape(12.dp))
+//                .padding(8.dp)
+//            //.padding(end = 8.dp)
+//        )
+        val borderModifier = if (taskInfoVisible) {
+            Modifier.border(1.dp, AppColors.Orange, RoundedCornerShape(8.dp))
+        } else {
+            Modifier.border(0.dp, Color.Companion.Transparent, RoundedCornerShape(8.dp))
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
-                .background(AppColors.Gray, RoundedCornerShape(8.dp))
-                .border(0.dp, AppColors.Orange, RoundedCornerShape(12.dp))
+                .background(AppColors.White, RoundedCornerShape(8.dp))
+                .then(borderModifier)
                 .padding(8.dp)
-            //.padding(end = 8.dp)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    //.background(AppColors.Gray)
                     .clickable {
                         if (!task.subtasks.isNullOrEmpty()) {
                             //subtasksVisible = !subtasksVisible??
@@ -110,10 +124,9 @@ fun TaskDisplay(task: TaskDto, viewModel: TasksViewModel) {
                     onCheckedChange = { checked ->
                         if (checked) {
                             isChecked = true
-                            isEnabled = false // Disable further changes
+                            isEnabled = false
                         }
                         viewModel.updateTaskStatus(task)
-                        // If unchecked is attempted, ignore it
                     },
                     enabled = isEnabled,
                     modifier = Modifier
@@ -161,7 +174,7 @@ fun TaskDisplay(task: TaskDto, viewModel: TasksViewModel) {
                     }
                 }
             }
-            if (task is TaskScaleDto) {
+            if (task is TaskScaleDto && taskInfoVisible) {
                 var valueToAdd by remember { mutableStateOf("") }
                 Spacer(Modifier.height(8.dp))
                 ValueInput(valueToAdd,
@@ -175,17 +188,13 @@ fun TaskDisplay(task: TaskDto, viewModel: TasksViewModel) {
                         val newValue = if (current > 0) current - 1 else 0
                         valueToAdd = newValue.toString()
                     },
-                    { viewModel.updateCurrentValue(task, valueToAdd.toInt())}
+                    { viewModel.updateTaskCurrentValue(task, valueToAdd.toInt())}
                 )
             }
-            HorizontalDivider()
             if (taskInfoVisible) {
                 Column(modifier = Modifier
-                    .background(AppColors.White)
+                    .background(AppColors.Gray, RoundedCornerShape(8.dp))
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
-//                tasks.forEach { task ->
-//                    Text("- ${task.title}", style = MaterialTheme.typography.bodySmall)
-//                }
                     if (task is TaskScaleDto) {
                         Spacer(Modifier.height(16.dp))
                         Row (
@@ -209,15 +218,43 @@ fun TaskDisplay(task: TaskDto, viewModel: TasksViewModel) {
                         }
                         Spacer(Modifier.height(16.dp))
                     }
-                    if (task.description != null) {
+                    if (task.description != null && task.description != "") {
+                        Spacer(Modifier.height(8.dp))
                         Text(
                             task.description!!,
                             style = additionalTypography.regularText,
                             textAlign = TextAlign.Justify
                         )
                         Spacer(Modifier.height(8.dp))
+                    } else {
+                        Spacer(Modifier.height(8.dp))
                     }
-
+                    if (task is TaskRepeatableDto && taskInfoVisible) {
+                        Spacer(Modifier.height(8.dp))
+                        Text("Дні для занять", style = additionalTypography.semiboldText, modifier = Modifier.align(Alignment.Start))
+                        Spacer(Modifier.height(8.dp))
+                        val context = LocalContext.current
+                        WeekdayCheckInView(
+                            markedDays = task.repeatDays,
+                            checkedInDates = task.checkedInDays,
+                            onCheckIn = { message, date ->
+                                if (message == "Відмітка успішна!") {
+                                    viewModel.checkInTask(task.id, date)
+                                }
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                        Spacer(Modifier.height(8.dp).align(Alignment.CenterHorizontally))
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "Відмічайте дні, натиснувши на них",
+                                style = additionalTypography.regularText
+                            )
+                        }
+                    }
                     Row (
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -239,41 +276,15 @@ fun TaskDisplay(task: TaskDto, viewModel: TasksViewModel) {
                             )
                         }
                     }
-                    var message by remember { mutableStateOf("") }
-                    LaunchedEffect(message) {
-                        if (message.isNotBlank()) {
-                            delay(3000)
-                            message = ""
-                        }
-                    }
-                    if (task is TaskRepeatableDto) {
-                        Spacer(Modifier.height(8.dp))
-                        Text("Дні для занять", style = additionalTypography.semiboldText)
-                        Spacer(Modifier.height(8.dp))
-                        WeekdayCheckInView(
-                            markedDays = task.repeatDays,
-                            onCheckIn = { message = it }
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        if (message.isNotBlank()) {
-                            Text(text = message, color = Color.Red)
-                        }
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                "Відмічайте дні, натиснувши на них",
-                                style = additionalTypography.regularText
-                            )
-                        }
-                    }
                 }
+            } else {
+                HorizontalDivider()
             }
-            if (taskInfoVisible && !task.subtasks.isNullOrEmpty()) {
+            if (task is TaskWithSubtasksDto &&!task.subtasks.isNullOrEmpty()) {
                 Column(modifier = Modifier.padding(start = 16.dp)) {
                     task.subtasks.forEach { subtask ->
-                        Text("- ${subtask.title}", style = MaterialTheme.typography.bodySmall)
+                        Spacer(Modifier.height(8.dp))
+                        SubtaskDisplay(task.id, subtask, viewModel, task.createdAt, task.deadline)
                     }
                 }
             }
@@ -388,20 +399,20 @@ fun TaskDisplayPreview() {
         notificationDate = null,
         notificationSent = false,
         priority = 8,
-        subtasks = emptyList(),
-//        subtasks = listOf(
-//            SubtaskCreateDto("sub4", "Скласти схему електроніки", true),
+//        subtasks = emptyList(),
+        subtasks = listOf(
+            SubtaskStandardDto("sub4", "Скласти схему електроніки", null, false),
 //            SubtaskCreateDto("sub5", "Закодувати поведінку", false),
 //            SubtaskCreateDto("sub6", "Зібрати корпус", false)
-//        ),
+        ),
         createdAt = "2025-04-01T10:00:00Z",
         completedAt = null,
         status = "розробка",
         //type = "with_subtasks"
     )
     Column {
-        TaskDisplay(task1, viewModel)
-        Spacer(Modifier.height(8.dp))
+        //TaskDisplay(task1, viewModel)
+        //Spacer(Modifier.height(8.dp))
         TaskDisplay(task2, viewModel)
         Spacer(Modifier.height(8.dp))
         TaskDisplay(task3, viewModel)

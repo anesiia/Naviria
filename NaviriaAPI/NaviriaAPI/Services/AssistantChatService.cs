@@ -158,7 +158,8 @@ namespace NaviriaAPI.Services
                 {
                     UserId = dto.UserId,
                     Role = "assistant",
-                    Content = confirmation
+                    Content = confirmation,
+                    CreatedAt = DateTime.UtcNow
                 });
 
                 return confirmation;
