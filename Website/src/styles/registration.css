@@ -59,6 +59,9 @@
   cursor: pointer;
   padding: 0.3rem;
 }
+.registration-page .horizontal .registration-form .column1 .password .show-hide img {
+  width: 1.5rem;
+}
 .registration-page .horizontal .registration-form .column2 {
   display: flex;
   flex-direction: column;

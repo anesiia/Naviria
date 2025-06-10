@@ -67,6 +67,9 @@
   cursor: pointer;
   padding: 0.3rem;
 }
+.login-page .login .login-form .password .show-hide img {
+  width: 1.5rem;
+}
 .login-page .login .login-submit {
   display: flex;
   flex-direction: column;

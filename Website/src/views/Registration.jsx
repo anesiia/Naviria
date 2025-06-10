@@ -14,6 +14,10 @@ export function Registration() {
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [errors, setErrors] = useState({});
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordCheck, setShowPasswordCheck] = useState(false);
+
   const registration = useRegistration();
 
   const isAtLeast18 = (dateString) => {
@@ -125,7 +129,7 @@ export function Registration() {
               <label>
                 Пароль
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="********"
                   pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$"
@@ -133,8 +137,18 @@ export function Registration() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </label>
-              <button className="show-hide">
-                <img src="fi-rr-eye-crossed.svg" />
+              <button
+                type="button"
+                className="show-hide"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                <img
+                  src={
+                    showPassword
+                      ? "eyeball-open-view.svg"
+                      : "fi-rr-eye-crossed.svg"
+                  }
+                />
               </button>
             </div>
             {errors.password && (
@@ -144,15 +158,25 @@ export function Registration() {
               <label>
                 Підтвердіть пароль
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="repeat-password"
                   placeholder="********"
                   onChange={(e) => setPasswordCheck(e.target.value)}
                   value={passwordCheck}
                 />
               </label>
-              <button className="show-hide">
-                <img src="fi-rr-eye-crossed.svg" />
+              <button
+                type="button"
+                className="show-hide"
+                onClick={() => setShowPasswordCheck((prev) => !prev)}
+              >
+                <img
+                  src={
+                    showPasswordCheck
+                      ? "eyeball-open-view.svg"
+                      : "fi-rr-eye-crossed.svg"
+                  }
+                />
               </button>
             </div>
             {errors.passwordCheck && (

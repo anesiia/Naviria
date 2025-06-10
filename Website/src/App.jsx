@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Header from "./views/Header";
 import { HideHeader } from "./hooks/HideHeader";
 import { EditProfile } from "./views/EditProfile";
@@ -18,6 +18,7 @@ function App() {
       {!hideHeader && <Header />}
       <div className="page-content">
         <Routes>
+          <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/friends" element={<Friends />} />

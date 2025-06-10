@@ -10,6 +10,9 @@ import "../styles/login.css";
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+
   const login = useLogin();
   const navigate = useNavigate();
 
@@ -68,15 +71,25 @@ export function Login() {
             <label>
               Пароль
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="********"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </label>
-            <button className="show-hide">
-              <img src="fi-rr-eye-crossed.svg" />
+            <button
+              type="button"
+              className="show-hide"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              <img
+                src={
+                  showPassword
+                    ? "eyeball-open-view.svg"
+                    : "fi-rr-eye-crossed.svg"
+                }
+              />
             </button>
           </div>
         </div>
