@@ -72,7 +72,6 @@ export function Tasks() {
       if (selectedFolderId === folderId) setSelectedFolderId(null); // якщо видалена була вибрана
     } catch (err) {
       console.error("Помилка при видаленні папки:", err);
-      // можеш показати повідомлення користувачу
     }
   };
 
@@ -171,7 +170,7 @@ export function Tasks() {
         <div className="side-header">
           <div className="info">
             <img src="Ellipse 4.svg" />
-            <p className="nickname">Nickname</p>{" "}
+            <p className="nickname">Ваші папки та задачі</p>{" "}
           </div>
           <img src="fi-rr-menu-burger.svg" />
         </div>

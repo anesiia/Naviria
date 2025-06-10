@@ -13,7 +13,7 @@ export default function Notifications({ notifications, onMarkRead }) {
 
   const handleMarkAllRead = async () => {
     await markAllNotificationsRead();
-    onMarkRead(); // викликає перезавантаження списку з батьківського компонента
+    onMarkRead();
   };
 
   const formatTime = (isoString) => {
