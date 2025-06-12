@@ -4,6 +4,7 @@ using NaviriaAPI.IServices.IStatisticServices;
 
 namespace NaviriaAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class StatisticsTaskByDateController : ControllerBase
@@ -26,8 +27,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the user ID is missing.</response>
         /// <response code="404">If the user has no completed tasks.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("user/{userId}/completed/monthly")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetUserTasksCompletedPerMonth(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -56,8 +57,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the user ID is missing.</response>
         /// <response code="404">If there are no completed tasks for the user and friends.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("user/{userId}/friends/completed/monthly")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetUserAndFriendsTasksCompletedPerMonth(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -83,8 +84,8 @@ namespace NaviriaAPI.Controllers
         /// <returns>Line chart data for completed tasks per month for all users.</returns>
         /// <response code="200">Returns the global completed tasks per month statistics.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("global/completed/monthly")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetGlobalTasksCompletedPerMonth()
         {
             try

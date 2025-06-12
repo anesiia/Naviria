@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ICloudStorage;
 
@@ -7,6 +8,7 @@ namespace NaviriaAPI.Controllers
     /// <summary>
     /// Controller for managing user friendships, searching friends, and finding shared interests.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class FriendsController : ControllerBase
@@ -33,6 +35,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="200">Returns the list of friends.</response>
         /// <response code="400">If user ID is missing.</response>
         /// <response code="500">If an error occurs while retrieving friends.</response>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFriends(string id)
         {
@@ -60,6 +63,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="204">If the friend was deleted successfully.</response>
         /// <response code="400">If either ID is missing.</response>
         /// <response code="500">If an error occurs during deletion.</response>
+        [Authorize]
         [HttpDelete("{fromUserId}/to/{friendId}")]
         public async Task<IActionResult> DeleteFriend(string fromUserId, string friendId)
         {
@@ -87,6 +91,7 @@ namespace NaviriaAPI.Controllers
         /// <returns>A list of users who are not currently friends with the specified user.</returns>
         /// <response code="200">Returns the list of potential friends.</response>
         /// <response code="500">If an error occurs while retrieving potential friends.</response>
+        [Authorize]
         [HttpGet("{id}/potential-friends")]
         public async Task<IActionResult> GetPotentialFriends(string id)
         {
@@ -111,6 +116,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="200">Returns the list of found users.</response>
         /// <response code="400">If the search query is empty.</response>
         /// <response code="500">If an error occurs while searching for users.</response>
+        [Authorize]
         [HttpGet("{userId}/search-friends")]
         public async Task<IActionResult> SearchFriendsByNickname(string userId, [FromQuery] string query)
         {
@@ -140,6 +146,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="200">Returns the shared interests.</response>
         /// <response code="400">If either user ID is missing.</response>
         /// <response code="500">If an error occurs while retrieving shared interests.</response>
+        [Authorize]
         [HttpGet("shared-interests/{userId1}/{userId2}")]
         public async Task<IActionResult> GetSharedInterests(string userId1, string userId2)
         {

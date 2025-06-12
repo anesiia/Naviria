@@ -10,6 +10,7 @@ namespace NaviriaAPI.Controllers
     /// Controller for uploading images to cloud storage (Cloudinary).
     /// Provides an endpoint for uploading images and retrieving the cloud URL.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CloudUploadingController : ControllerBase

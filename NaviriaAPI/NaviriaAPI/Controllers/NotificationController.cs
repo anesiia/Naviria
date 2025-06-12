@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NaviriaAPI.DTOs.Notification;
 using NaviriaAPI.IServices;
 
@@ -8,6 +9,7 @@ namespace NaviriaAPI.Controllers
     /// API controller for managing user notifications.
     /// Provides endpoints to create, retrieve, update, and delete notifications.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class NotificationController : ControllerBase
@@ -33,6 +35,7 @@ namespace NaviriaAPI.Controllers
         /// 200: Returns a list of notifications.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -49,6 +52,7 @@ namespace NaviriaAPI.Controllers
         /// 400: If the notification ID is missing.<br/>
         /// 404: If the notification is not found.
         /// </returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -68,6 +72,7 @@ namespace NaviriaAPI.Controllers
         /// 400: If input data is invalid.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] NotificationCreateDto notificationDto)
         {
@@ -95,6 +100,7 @@ namespace NaviriaAPI.Controllers
         /// 400: If the user ID is missing.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpPut("user/{userId}/mark-all-read")]
         public async Task<IActionResult> MarkAllAsRead(string userId)
         {
@@ -123,6 +129,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the notification is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -150,6 +157,7 @@ namespace NaviriaAPI.Controllers
         /// 400: If the user ID is missing.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetAllUserNotifications(string userId)
         {

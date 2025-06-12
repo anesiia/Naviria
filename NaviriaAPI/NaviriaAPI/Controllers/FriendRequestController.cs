@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NaviriaAPI.DTOs.FriendRequest;
 using NaviriaAPI.IServices;
 
@@ -8,6 +9,7 @@ namespace NaviriaAPI.Controllers
     /// API controller for managing friend requests.
     /// Provides endpoints to create, retrieve, update, and delete friend requests.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class FriendRequestController : ControllerBase
@@ -33,6 +35,7 @@ namespace NaviriaAPI.Controllers
         /// 200: Returns a list of friend requests.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -57,6 +60,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the friend request is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -82,6 +86,7 @@ namespace NaviriaAPI.Controllers
         /// 400: If input data is invalid.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] FriendRequestCreateDto friendRequestDto)
         {
@@ -111,6 +116,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the friend request is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] FriendRequestUpdateDto friendRequestDto)
         {
@@ -138,6 +144,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the friend request is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -162,6 +169,7 @@ namespace NaviriaAPI.Controllers
         /// 400: If the user ID is missing.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet("incoming/{userId}")]
         public async Task<IActionResult> GetIncomingRequests(string userId)
         {

@@ -2,6 +2,7 @@
 using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ICleanupServices;
 using NaviriaAPI.DTOs.Achievement;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NaviriaAPI.Controllers
 {
@@ -10,6 +11,7 @@ namespace NaviriaAPI.Controllers
     /// Provides endpoints to create, retrieve, update, and delete achievements,
     /// as well as assign achievements to users.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AchievementsController : ControllerBase
@@ -34,6 +36,7 @@ namespace NaviriaAPI.Controllers
         /// 200: Returns a list of achievements.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -58,6 +61,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the achievement is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -82,6 +86,7 @@ namespace NaviriaAPI.Controllers
         /// 201: The created achievement with its ID.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AchievementCreateDto achievementDto)
         {
@@ -107,6 +112,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the achievement is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] AchievementUpdateDto achievementDto)
         {
@@ -131,6 +137,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the achievement is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -155,6 +162,7 @@ namespace NaviriaAPI.Controllers
         /// 400: If the userId is missing.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetAllUserAchievements(string userId)
         {
@@ -184,6 +192,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the user or achievement is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpPut("{userId}/award-achievement-points/{achievementId}")]
         public async Task<IActionResult> AwardAchievementPointsToUser(string userId, string achievementId)
         {

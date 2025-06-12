@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using System.Diagnostics;
 
@@ -8,6 +9,7 @@ namespace NaviriaAPI.Controllers
     /// API controller for database backup and restore operations.
     /// Provides endpoints to export, import, and list backups of the database or collections.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class BackupController : ControllerBase
@@ -35,6 +37,7 @@ namespace NaviriaAPI.Controllers
         /// 200: The backup file in gzip format.<br/>
         /// 500: If the backup could not be created or an internal error occurred.
         /// </returns>
+        [Authorize]
         [HttpPost("export-db-data")]
         public async Task<IActionResult> CreateBackup()
         {
@@ -73,6 +76,7 @@ namespace NaviriaAPI.Controllers
         /// 200: A list of backup folders.<br/>
         /// 500: If an error occurs while retrieving the list.
         /// </returns>
+        [Authorize]
         [HttpGet("list")]
         public IActionResult GetBackupList()
         {
@@ -104,6 +108,7 @@ namespace NaviriaAPI.Controllers
         /// 400: If the backup file name is missing.<br/>
         /// 500: If an error occurs during restoration.
         /// </returns>
+        [Authorize]
         [HttpPost("import-db-data")]
         public async Task<IActionResult> RestoreDBBackup([FromForm] string backupFileName)
         {
@@ -134,6 +139,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If no backup for the collection is found.<br/>
         /// 500: If an error occurs during restoration.
         /// </returns>
+        [Authorize]
         [HttpPost("import-collection")]
         public async Task<IActionResult> RestoreBackup([FromQuery] string collectionName)
         {

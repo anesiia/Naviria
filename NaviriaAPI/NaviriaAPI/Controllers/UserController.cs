@@ -11,7 +11,7 @@ namespace NaviriaAPI.Controllers
     /// <summary>
     /// Controller for managing users data.
     /// </summary>
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
@@ -39,7 +39,7 @@ namespace NaviriaAPI.Controllers
         /// <returns>List of all users.</returns>
         /// <response code="200">Returns a list of all users.</response>
         /// <response code="500">If an error occurs while getting users.</response>
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -63,7 +63,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="200">Returns the user.</response>
         /// <response code="404">If user is not found.</response>
         /// <response code="500">If an error occurs while getting the user.</response>
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -133,7 +133,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the model state is invalid or ID is missing.</response>
         /// <response code="404">If the user is not found.</response>
         /// <response code="500">If an error occurs while updating the user.</response>
-        [AllowAnonymous]
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] UserUpdateDto UserDto)
         {
@@ -164,6 +164,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the ID is missing.</response>
         /// <response code="404">If the user is not found.</response>
         /// <response code="500">If an error occurs while deleting the user.</response>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -192,6 +193,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If IDs are missing.</response>
         /// <response code="404">If the user or achievement is not found.</response>
         /// <response code="500">If an error occurs while giving the achievement.</response>
+        [Authorize]
         [HttpPut("{userId}/give-achievement/{achievementId}")]
         public async Task<IActionResult> GiveAchievementToUser(string userId, string achievementId)
         {
@@ -219,6 +221,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="200">If support message sent.</response>
         /// <response code="400">If IDs are missing or invalid.</response>
         /// <response code="500">If an error occurs while sending support.</response>
+        [Authorize]
         [HttpPost("support/from-{senderId}/to-{receiverId}")]
         public async Task<IActionResult> SendSupport(string senderId, string receiverId)
         {
@@ -250,6 +253,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the request is invalid or missing data.</response>
         /// <response code="404">If user is not found.</response>
         /// <response code="500">If an error occurs during upload.</response>
+        [Authorize]
         [HttpPost("{id}/upload-profile-photo")]
         public async Task<IActionResult> UploadProfilePhoto(string id, IFormFile file)
         {
@@ -286,6 +290,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the user ID is missing or update data is not provided.</response>
         /// <response code="404">If the user is not found.</response>
         /// <response code="500">If an error occurs while patching the user.</response>
+        [Authorize]
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchUser(string id, [FromBody] UserPatchDto patchDto)
         {

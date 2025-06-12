@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NaviriaAPI.DTOs.Quote;
 using NaviriaAPI.IServices;
 
@@ -8,6 +9,7 @@ namespace NaviriaAPI.Controllers
     /// API controller for managing motivational quotes.
     /// Provides endpoints to create, retrieve, update, and delete quotes.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class QuoteController : ControllerBase
@@ -30,6 +32,7 @@ namespace NaviriaAPI.Controllers
         /// 200: Returns a list of all quotes.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -45,6 +48,7 @@ namespace NaviriaAPI.Controllers
         /// 200: Returns the quote.<br/>
         /// 404: If the quote is not found.
         /// </returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -62,6 +66,7 @@ namespace NaviriaAPI.Controllers
         /// 400: If the input data is invalid.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] QuoteCreateDto quoteDto)
         {
@@ -79,6 +84,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the quote is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] QuoteUpdateDto quoteDto)
         {
@@ -95,6 +101,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the quote is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {

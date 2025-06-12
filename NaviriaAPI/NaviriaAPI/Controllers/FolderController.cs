@@ -10,6 +10,7 @@ namespace NaviriaAPI.Controllers
     /// API controller for managing user folders.
     /// Provides endpoints to create, retrieve, update, and delete folders.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class FolderController : ControllerBase
@@ -41,6 +42,7 @@ namespace NaviriaAPI.Controllers
         /// 200: Returns a list of folders.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetAll(string id)
         {
@@ -66,6 +68,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the folder is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -94,7 +97,7 @@ namespace NaviriaAPI.Controllers
         /// 400: If the request body is invalid.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] FolderCreateDto folderDto)
         {
@@ -124,7 +127,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the folder is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
-        [AllowAnonymous]
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] FolderUpdateDto folderDto)
         {
@@ -156,6 +159,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the folder is not found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {

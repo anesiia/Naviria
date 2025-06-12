@@ -4,6 +4,7 @@ using NaviriaAPI.IServices.IStatisticServices;
 
 namespace NaviriaAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class LeaderboardController : ControllerBase
@@ -25,8 +26,8 @@ namespace NaviriaAPI.Controllers
         /// <returns>Leaderboard of users with their stats.</returns>
         /// <response code="200">Returns the leaderboard.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("top")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetTopLeaderboardUsers()
         {
             try

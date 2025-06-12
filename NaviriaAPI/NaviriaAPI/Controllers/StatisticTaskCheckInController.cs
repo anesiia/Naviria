@@ -7,6 +7,7 @@ namespace NaviriaAPI.Controllers
     /// <summary>
     /// Controller for statistics and analytics.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class StatisticTaskCheckInController : ControllerBase
@@ -30,8 +31,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="200">Returns the total checked-in days count.</response>
         /// <response code="404">If the user has no tasks or repeatable subtasks.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("checkedin/total/{userId}")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetTotalCheckedInDaysForUser(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -58,8 +59,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="200">Returns the checked-in days count for the subtask.</response>
         /// <response code="404">If the subtask is not found or is not repeatable.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("checkedin/{userId}/{subtaskId}")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetCheckedInDaysForSubtask(string userId, string subtaskId)
         {
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(subtaskId))

@@ -10,6 +10,7 @@ namespace NaviriaAPI.Controllers
     /// <summary>
     /// Controller for managing subtasks within a task.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/tasks/{taskId}/subtasks")]
     public class SubtaskController : ControllerBase
@@ -35,8 +36,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the request is invalid.</response>
         /// <response code="404">If the task is not found.</response>
         /// <response code="500">If an internal error occurs.</response>
+        [Authorize]
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> AddSubtask(string taskId, [FromBody] SubtaskCreateDtoBase subtaskDto)
         {
             if (string.IsNullOrWhiteSpace(taskId))
@@ -68,8 +69,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the request is invalid.</response>
         /// <response code="404">If the task or subtask is not found.</response>
         /// <response code="500">If an internal error occurs.</response>
+        [Authorize]
         [HttpPut("{subtaskId}")]
-        [AllowAnonymous]
         public async Task<IActionResult> UpdateSubtask(
             string taskId,
             string subtaskId,
@@ -103,8 +104,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the request is invalid.</response>
         /// <response code="404">If the task or subtask is not found.</response>
         /// <response code="500">If an internal error occurs.</response>
+        [Authorize]
         [HttpDelete("{subtaskId}")]
-        [AllowAnonymous]
         public async Task<IActionResult> RemoveSubtask(string taskId, string subtaskId)
         {
             if (string.IsNullOrWhiteSpace(taskId) || string.IsNullOrWhiteSpace(subtaskId))
@@ -133,8 +134,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the request is invalid.</response>
         /// <response code="404">If the task or subtask is not found.</response>
         /// <response code="500">If an internal error occurs.</response>
+        [Authorize]
         [HttpPost("{subtaskId}/checkin")]
-        [AllowAnonymous]
         public async Task<IActionResult> MarkRepeatableSubtaskCheckedIn(
             string taskId,
             string subtaskId,

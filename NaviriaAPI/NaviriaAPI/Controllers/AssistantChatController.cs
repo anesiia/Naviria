@@ -2,6 +2,7 @@
 using NaviriaAPI.IServices;
 using NaviriaAPI.DTOs.FeaturesDTOs;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NaviriaAPI.Controllers
 {
@@ -9,6 +10,7 @@ namespace NaviriaAPI.Controllers
     /// API controller for interaction with the Assistant Chat (AI-powered chat).
     /// Provides endpoints to get the chat history for a user and to send a new message to the assistant.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AssistantChatController : ControllerBase
@@ -39,6 +41,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If the user has no chat history.<br/>
         /// 500: If an error occurs while retrieving the chat.
         /// </returns>
+        [Authorize]
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetChatForUser(string userId)
         {
@@ -68,6 +71,7 @@ namespace NaviriaAPI.Controllers
         /// 400: If the request body or user ID is invalid.<br/>
         /// 500: If an error occurs while processing the message.
         /// </returns>
+        [Authorize]
         [HttpPost("ask")]
         public async Task<IActionResult> Ask([FromBody] AssistantChatMessageDto dto)
         {

@@ -8,6 +8,7 @@ namespace NaviriaAPI.Controllers
     /// <summary>
     /// Controller for system-wide statistics and analytics.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class StatisticGeneralController : ControllerBase
@@ -29,8 +30,8 @@ namespace NaviriaAPI.Controllers
         /// <returns>Total user count.</returns>
         /// <response code="200">Returns the total user count.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("users/count")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetTotalUserCount()
         {
             try
@@ -51,8 +52,8 @@ namespace NaviriaAPI.Controllers
         /// <returns>Total task count.</returns>
         /// <response code="200">Returns the total task count.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("tasks/count")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetTotalTaskCount()
         {
             try
@@ -73,8 +74,8 @@ namespace NaviriaAPI.Controllers
         /// <returns>Percentage of completed tasks (0..100).</returns>
         /// <response code="200">Returns the percentage of completed tasks.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("tasks/completed-percentage")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetCompletedTasksPercentage()
         {
             try
@@ -98,8 +99,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If userId is missing.</response>
         /// <response code="404">If the user is not found.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("users/{userId}/days-since-registration")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetDaysSinceUserRegistration(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -125,8 +126,8 @@ namespace NaviriaAPI.Controllers
         /// <returns>Days since the app's birthday.</returns>
         /// <response code="200">Returns the number of days since the app's birthday.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("days-since-birthday")]
-        [AllowAnonymous]
         public IActionResult GetDaysSinceAppBirthday()
         {
             try

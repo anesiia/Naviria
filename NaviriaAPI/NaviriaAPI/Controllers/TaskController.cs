@@ -12,6 +12,7 @@ namespace NaviriaAPI.Controllers
     /// <summary>
     /// Controller for managing user tasks.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TaskController : ControllerBase
@@ -32,6 +33,7 @@ namespace NaviriaAPI.Controllers
         /// <returns>A list of the user's tasks.</returns>
         /// <response code="200">Returns a list of tasks.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetAllByUser(string userId)
         {
@@ -55,6 +57,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="200">Returns the task.</response>
         /// <response code="404">If the task is not found.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -81,8 +84,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="201">Returns the created task.</response>
         /// <response code="400">If the model state is invalid.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Create([FromBody] TaskCreateDto dto)
         {
             if (!ModelState.IsValid)
@@ -110,8 +113,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the model state is invalid or ID is missing.</response>
         /// <response code="404">If the task is not found.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpPut("{id}")]
-        [AllowAnonymous]
         public async Task<IActionResult> Update(string id, [FromBody] TaskUpdateDto dto)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -141,6 +144,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the ID is missing.</response>
         /// <response code="404">If the task is not found.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -166,6 +170,7 @@ namespace NaviriaAPI.Controllers
         /// <returns>Grouped tasks by folders.</returns>
         /// <response code="200">Returns grouped tasks.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("grouped/user/{userId}")]
         public async Task<IActionResult> GetGroupedByFolders(string userId)
         {
@@ -192,6 +197,7 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the task ID is missing, or the date is invalid/not allowed.</response>
         /// <response code="404">If the task is not found or is not a repeatable task.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpPost("{taskId}/checkin")]
         public async Task<ActionResult<TaskRepeatableDto>> MarkRepeatableTaskCheckedIn(
             string taskId,

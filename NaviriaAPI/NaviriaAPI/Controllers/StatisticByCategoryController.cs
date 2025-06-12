@@ -7,6 +7,7 @@ namespace NaviriaAPI.Controllers
     /// <summary>
     /// Controller for category-based task statistics (pie chart data).
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class StatisticByCategoryController : ControllerBase
@@ -31,8 +32,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the user ID is missing.</response>
         /// <response code="404">If the user has no tasks.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("user/{userId}/piechart")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetUserPieChart(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -59,8 +60,8 @@ namespace NaviriaAPI.Controllers
         /// <response code="400">If the user ID is missing.</response>
         /// <response code="404">If there are no tasks for the user and friends.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("user/{userId}/friends/piechart")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetUserAndFriendsPieChart(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -84,8 +85,8 @@ namespace NaviriaAPI.Controllers
         /// <returns>Pie chart data for all users' tasks by categories.</returns>
         /// <response code="200">Returns the global pie chart statistics.</response>
         /// <response code="500">If an error occurs.</response>
+        [Authorize]
         [HttpGet("global/piechart")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetGlobalPieChart()
         {
             try

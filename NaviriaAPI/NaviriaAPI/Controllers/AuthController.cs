@@ -9,6 +9,7 @@ namespace NaviriaAPI.Controllers
     /// API controller for authentication and authorization.
     /// Provides endpoints for user login and Google OAuth authentication.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
@@ -43,8 +44,8 @@ namespace NaviriaAPI.Controllers
         /// 401: If authentication fails (invalid email or password).<br/>
         /// 500: If an internal error occurs.
         /// </returns>
-        [HttpPost("login")]
         [AllowAnonymous]
+        [HttpPost("login")] 
         public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
         {
             if (!ModelState.IsValid)
@@ -72,8 +73,8 @@ namespace NaviriaAPI.Controllers
         /// 401: If Google authentication fails.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
-        [HttpPost("google-login")]
         [AllowAnonymous]
+        [HttpPost("google-login")]
         public async Task<IActionResult> GoogleLogin([FromBody] GoogleAuthDto dto)
         {
             if (!ModelState.IsValid)

@@ -3,6 +3,7 @@ using NaviriaAPI.IServices;
 using NaviriaAPI.Exceptions;
 using Microsoft.Extensions.Logging;
 using NaviriaAPI.DTOs.User;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NaviriaAPI.Controllers
 {
@@ -10,6 +11,7 @@ namespace NaviriaAPI.Controllers
     /// Provides search and filtering operations for users, friends, and incoming friend requests
     /// by optional category and/or name (nickname or full name).
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserSearchController : ControllerBase
@@ -37,6 +39,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If no users found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet("search-all")]
         public async Task<IActionResult> SearchAllUsers(
             [FromQuery] string userId,
@@ -75,6 +78,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If no friends found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet("search-friends")]
         public async Task<IActionResult> SearchFriends(
             [FromQuery] string userId,
@@ -113,6 +117,7 @@ namespace NaviriaAPI.Controllers
         /// 404: If no incoming friend requests found.<br/>
         /// 500: If an internal error occurs.
         /// </returns>
+        [Authorize]
         [HttpGet("search-incoming-requests")]
         public async Task<IActionResult> SearchIncomingFriendRequests(
             [FromQuery] string userId,

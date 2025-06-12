@@ -2,6 +2,7 @@
 using NaviriaAPI.IServices;
 using NaviriaAPI.IServices.ICleanupServices;
 using NaviriaAPI.DTOs.Category;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NaviriaAPI.Controllers
 {
@@ -9,6 +10,7 @@ namespace NaviriaAPI.Controllers
     /// API controller for managing categories.
     /// Provides endpoints to create, retrieve, update, and delete categories.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CategoryController : ControllerBase
@@ -36,6 +38,7 @@ namespace NaviriaAPI.Controllers
         /// Gets a list of all categories.
         /// </summary>
         /// <returns>A list of categories.</returns>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -56,6 +59,7 @@ namespace NaviriaAPI.Controllers
         /// </summary>
         /// <param name="id">The category identifier.</param>
         /// <returns>The requested category, or 404 if not found.</returns>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -77,6 +81,7 @@ namespace NaviriaAPI.Controllers
         /// </summary>
         /// <param name="categoryDto">The category creation DTO.</param>
         /// <returns>The created category with its ID.</returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CategoryCreateDto categoryDto)
         {
@@ -98,6 +103,7 @@ namespace NaviriaAPI.Controllers
         /// <param name="id">The category identifier.</param>
         /// <param name="categoryDto">The updated category data.</param>
         /// <returns>No content if successful; 404 if category not found.</returns>
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] CategoryUpdateDto categoryDto)
         {
@@ -118,6 +124,7 @@ namespace NaviriaAPI.Controllers
         /// </summary>
         /// <param name="id">The category identifier.</param>
         /// <returns>No content if successful; 404 if category not found.</returns>
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
