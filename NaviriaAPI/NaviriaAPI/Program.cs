@@ -4,8 +4,7 @@ using NaviriaAPI.Services.SignalRHub;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Здесь можно добавить указание URL для прослушивания
-builder.WebHost.UseUrls("http://0.0.0.0:5186"); // слушать все интерфейсы на порту 5186
+//builder.WebHost.UseUrls("http://0.0.0.0:5186");
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddAuthorization();
