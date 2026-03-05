@@ -215,23 +215,23 @@ Create `appsettings.Development.json` (recommended) or use environment variables
 </div>
 
 <p align="center">
-  <a href="Screenshots/web/login-web.png"><img src="docs/screens/web/login-web.png" height="250"/></a> 
-  <a href="Screenshots/web/registration-web.png"><img src="docs/screens/web/registration-web.png" height="250"/></a>
+  <a href="Screenshots/web/login-web.png"><img src="Screenshots/web/login-web.png" height="250"/></a> 
+  <a href="Screenshots/web/registration-web.png"><img src="Screenshots/web/registration-web.png" height="250"/></a>
 </p>
 
 <p align="center">
-  <a href="Screenshots/web/user-profile.png"><img src="docs/screens/web/user-profile.png" width="400"/></a> 
-  <a href="Screenshots/web/community-web.png"><img src="docs/screens/web/community-web.png" width="400"/></a>
+  <a href="Screenshots/web/user-profile.png"><img src="Screenshots/web/user-profile.png" width="400"/></a> 
+  <a href="Screenshots/web/community-web.png"><img src="Screenshots/web/community-web.png" width="400"/></a>
 </p>
 
 <p align="center">
-  <a href="Screenshots/web/task-example-web.png"><img src="docs/screens/web/task-example-web.png" width="400"/></a> 
-  <a href="Screenshots/web/task-creating-example-web.png"><img src="docs/screens/web/task-creating-example-web.png" width="400"/></a>
+  <a href="Screenshots/web/task-example-web.png"><img src="Screenshots/web/task-example-web.png" width="400"/></a> 
+  <a href="Screenshots/web/task-creating-example-web.png"><img src="Screenshots/web/task-creating-example-web.png" width="400"/></a>
 </p>
 
 <p align="center">
-  <a href="Screenshots/web/analytics-web.png"><img src="docs/screens/web/analytics-web.png" height="190"/></a> 
-  <a href="Screenshots/web/analytics-web-2.png"><img src="docs/screens/web/analytics-web-2.png" height="190"/></a>
+  <a href="Screenshots/web/analytics-web.png"><img src="Screenshots/web/analytics-web.png" height="190"/></a> 
+  <a href="Screenshots/web/analytics-web-2.png"><img src="Screenshots/web/analytics-web-2.png" height="190"/></a>
 </p>
 
 <div align="center">
@@ -241,15 +241,15 @@ Create `appsettings.Development.json` (recommended) or use environment variables
 </div>
 
 <p align="center">
-  <a href="Screenshots/mobile/login-mobile.png"><img src="docs/screens/mobile/login-mobile.png" height="400"/></a> 
-  <a href=Screenshots/mobile/user-profile-mobile.png"><img src="docs/screens/mobile/user-profile-mobile.png" height="400"/></a> 
-  <a href="Screenshots/mobile/analytics-mobile.png"><img src="docs/screens/mobile/analytics-mobile.png" height="400"/></a> 
-  <a href="Screenshots/mobile/ai-task-mobile.png"><img src="docs/screens/mobile/ai-task-mobile.png" height="400"/></a>
+  <a href="Screenshots/mobile/login-mobile.png"><img src="Screenshots/mobile/login-mobile.png" height="400"/></a> 
+  <a href=Screenshots/mobile/user-profile-mobile.png"><img src="Screenshots/mobile/user-profile-mobile.png" height="400"/></a> 
+  <a href="Screenshots/mobile/analytics-mobile.png"><img src="Screenshots/mobile/analytics-mobile.png" height="400"/></a> 
+  <a href="Screenshots/mobile/ai-task-mobile.png"><img src="Screenshots/mobile/ai-task-mobile.png" height="400"/></a>
 </p>
 
 <p align="center">
-  <a href="Screenshots/mobile/task-creating-mobile.png"><img src="docs/screens/mobile/task-creating-mobile.png" height="400"/></a> 
-  <a href="Screenshots/mobile/task-repetition-mobile.png"><img src="docs/screens/mobile/task-repetition-mobile.png" height="400"/></a> 
-  <a href="Screenshots/mobile/notifications-mobile.png"><img src="docs/screens/mobile/notifications-mobile.png" height="400"/></a> 
-  <a href="Screenshots/mobile/subtask-type-mobile.png"><img src="docs/screens/mobile/subtask-type-mobile.png" height="400"/></a>
+  <a href="Screenshots/mobile/task-creating-mobile.png"><img src="Screenshots/mobile/task-creating-mobile.png" height="400"/></a> 
+  <a href="Screenshots/mobile/task-repetition-mobile.png"><img src="Screenshots/mobile/task-repetition-mobile.png" height="400"/></a> 
+  <a href="Screenshots/mobile/notifications-mobile.png"><img src="Screenshots/mobile/notifications-mobile.png" height="400"/></a> 
+  <a href="Screenshots/mobile/subtask-type-mobile.png"><img src="Screenshots/mobile/subtask-type-mobile.png" height="400"/></a>
 </p>
